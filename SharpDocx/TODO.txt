@@ -1,5 +1,4 @@
-﻿-Inheritance: insert hyperlink.
--Code in headers/footers
+﻿-Code in headers/footers
 -Insert merge fields.
 -Map.Replace should update Text, Map and Elements OR shouldn't be a method of Map.
 

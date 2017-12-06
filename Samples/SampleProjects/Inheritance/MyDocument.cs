@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using DocumentFormat.OpenXml.Wordprocessing;
 using SharpDocx;
 
 namespace Inheritance
@@ -30,6 +32,25 @@ namespace Inheritance
             {
                 typeof(MyDocument).Assembly.Location
             };
+        }
+
+        protected void CreateHyperlink(string text, string url)
+        {
+            // This method will be called from Inheritance.cs.docx.
+            var id = $"r{Guid.NewGuid().ToString("N")}";
+
+            var hyperlink = new Hyperlink(
+                new RunProperties(new RunStyle { Val = "Hyperlink" }),
+                new Run(new Text(text)))
+            {
+                History = true,
+                Id = id,
+            };
+
+            this.Package.MainDocumentPart.AddHyperlinkRelationship(
+                new Uri(url, UriKind.Absolute), true, id);
+
+            this.CurrentCodeBlock.Placeholder.Parent.InsertAfterSelf(hyperlink);
         }
     }
 }
