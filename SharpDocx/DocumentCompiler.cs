@@ -49,7 +49,7 @@ namespace {Namespace}
             // Copy the template to a temporary file, so it can be opened even when the template is open in Word.
             // This makes testing templates a lot easier.
             var tempFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString("d") + ".cs.docx";
-            System.IO.File.Copy(viewPath, tempFilePath, true);
+            System.IO.File.Copy(viewPath, tempFilePath, true);            
 
             try
             {
@@ -120,7 +120,11 @@ namespace {Namespace}
             List<string> referencedAssemblies)
         {
             // Create the compiler.
+#if NET35
+            var options = new Dictionary<string, string> { { "CompilerVersion", "v3.5" } };
+#else
             var options = new Dictionary<string, string> { { "CompilerVersion", "v4.0" } };
+#endif
             CodeDomProvider compiler = new CSharpCodeProvider(options);
 
             // Add compiler options.
@@ -146,7 +150,7 @@ namespace {Namespace}
             // Add referenced assemblies.
             parameters.ReferencedAssemblies.Add("mscorlib.dll");
             parameters.ReferencedAssemblies.Add("System.dll");
-            parameters.ReferencedAssemblies.Add("DocumentFormat.OpenXml.dll");
+            parameters.ReferencedAssemblies.Add(typeof(WordprocessingDocument).Assembly.Location);
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
 
             if (referencedAssemblies != null)
