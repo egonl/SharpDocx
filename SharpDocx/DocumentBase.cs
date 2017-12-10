@@ -37,10 +37,12 @@ namespace SharpDocx
                 this.Map = CharacterMap.Create(this.Package.MainDocumentPart.Document.Body);
                 this.CodeBlocks = CodeBlockFactory.Create(this.Map, true);
 
-                // Update Map, since we modified the document.
-                this.Map = CharacterMap.Create(this.Package.MainDocumentPart.Document.Body);
-
                 InvokeDocumentCode();
+
+                foreach (CodeBlock cb in this.CodeBlocks)
+                {
+                    cb.RemoveEmptyParagraphs();
+                }
 
                 this.Package.Save();
                 this.Package.Close();

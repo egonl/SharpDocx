@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DocumentFormat.OpenXml.Wordprocessing;
 using SharpDocx.Models;
 
 namespace SharpDocx
@@ -23,7 +24,9 @@ namespace SharpDocx
                 codeBlocks.Add(new CodeBlock
                 {
                     StartIndex = startTagIndex,
+                    StartText = map[startTagIndex].Element as Text,
                     EndIndex = endTagIndex + 1,
+                    EndText = map[endTagIndex + 1].Element as Text,
                     Code = map.Text.Substring(startTagIndex + 2, endTagIndex - startTagIndex - 2)
                 });
 
@@ -72,6 +75,9 @@ namespace SharpDocx
                     }
                 }
             }
+
+            // Update the map, since we modified the document.
+            map.Recreate();
 
             return codeBlocks;
         }

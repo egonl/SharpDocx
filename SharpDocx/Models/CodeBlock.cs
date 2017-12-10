@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using DocumentFormat.OpenXml.Wordprocessing;
+using SharpDocx.Extensions;
 
 namespace SharpDocx.Models
 {
-    public class CodeBlock : TextPart
+    public class CodeBlock : MapPart
     {
         public string Code { get; set; }
 
@@ -14,6 +15,8 @@ namespace SharpDocx.Models
         public string Condition { get; set; }
 
         public Text EndConditionalPart { get; set; }
+
+        public Text StartText, EndText;
 
         public int CurlyBracketLevelIncrement
         {
@@ -69,6 +72,21 @@ namespace SharpDocx.Models
             }
 
             return null;
+        }
+
+        public void RemoveEmptyParagraphs()
+        {
+            var startParagraph = this.StartText.GetParent<Paragraph>();
+            if (startParagraph != null && startParagraph.Parent != null && !startParagraph.HasText())
+            {
+                startParagraph.Remove();
+            }
+
+            var endParagraph = this.EndText.GetParent<Paragraph>();
+            if (endParagraph != null && endParagraph.Parent != null && !endParagraph.HasText())
+            {
+                endParagraph.Remove();
+            }
         }
     }
 }
