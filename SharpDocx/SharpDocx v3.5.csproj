@@ -64,8 +64,8 @@
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Models\CodeBlock.cs" />
     <Compile Include="CodeBlockFactory.cs" />
-    <Compile Include="Models\TextPart.cs" />
     <Compile Include="Extensions\OpenXmlElementExtensions.cs" />
+    <Compile Include="Models\MapPart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

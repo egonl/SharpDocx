@@ -1,6 +1,6 @@
 ﻿namespace SharpDocx.Models
 {
-    public class TextPart
+    public class MapPart
     {
         public int StartIndex;
         public int EndIndex;

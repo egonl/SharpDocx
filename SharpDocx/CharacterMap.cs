@@ -117,7 +117,7 @@ namespace SharpDocx
             var i = this.Text.IndexOf(oldValue, startIndex, stringComparison);
             while (i != -1)
             {
-                TextPart part = new TextPart
+                MapPart part = new MapPart
                 {
                     StartIndex = i,
                     EndIndex = i + oldValue.Length - 1,
@@ -132,7 +132,7 @@ namespace SharpDocx
             this.Recreate();
         }
 
-        private void Replace(TextPart part, string newText)
+        private void Replace(MapPart part, string newText)
         {
             var startText = this[part.StartIndex].Element as Text;
             var startIndex = this[part.StartIndex].Index;
@@ -197,7 +197,7 @@ namespace SharpDocx
             }
         }
 
-        public Text ReplaceWithText(TextPart part, string newText)
+        public Text ReplaceWithText(MapPart part, string newText)
         {
             var startText = this[part.StartIndex].Element as Text;
             var startIndex = this[part.StartIndex].Index;
