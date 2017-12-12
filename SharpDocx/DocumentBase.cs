@@ -82,12 +82,12 @@ namespace SharpDocx
             this.Map.Delete(this.CurrentCodeBlock.Placeholder, this.CurrentCodeBlock.EndConditionalPart);
         }
 
-        protected void CreateParagraph()
+        protected void AppendParagraph()
         {
             this.ParagraphAppender.Append(this.CurrentCodeBlock);
         }
 
-        protected void CreateRow()
+        protected void AppendRow()
         {
             this.RowAppender.Append(this.CurrentCodeBlock);
         }
