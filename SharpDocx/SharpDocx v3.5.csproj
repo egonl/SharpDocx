@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CharacterMap.cs" />
+    <Compile Include="CodeBlockBuilder.cs" />
     <Compile Include="ElementAppender.cs" />
     <Compile Include="Ide.cs" />
     <Compile Include="ImageHelper.cs" />

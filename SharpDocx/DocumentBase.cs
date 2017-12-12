@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -34,22 +35,9 @@ namespace SharpDocx
 
             using (this.Package = WordprocessingDocument.Open(documentPath, true))
             {
-                this.Map = CharacterMap.Create(this.Package.MainDocumentPart.Document.Body);
-                this.CodeBlocks = CodeBlockFactory.Create(this.Map, true);
-
-                foreach (var footerPart in this.Package.MainDocumentPart.FooterParts)
-                {
-                    var footerMap = CharacterMap.Create(footerPart.Footer);
-                    var footerBlocks = CodeBlockFactory.Create(footerMap, true);
-                    this.CodeBlocks.InsertRange(0, footerBlocks);
-                }
-
-                foreach (var headerPart in this.Package.MainDocumentPart.HeaderParts)
-                {
-                    var headerMap = CharacterMap.Create(headerPart.Header);
-                    var headerBlocks = CodeBlockFactory.Create(headerMap, true);
-                    this.CodeBlocks.InsertRange(0, headerBlocks);
-                }
+                var codeBlockBuilder = new CodeBlockBuilder(this.Package, true);
+                this.CodeBlocks = codeBlockBuilder.CodeBlocks;
+                this.Map = codeBlockBuilder.BodyMap;
 
                 InvokeDocumentCode();
 
@@ -89,6 +77,11 @@ namespace SharpDocx
         protected string ToString(object o)
         {
             return o?.ToString() ?? string.Empty;
+        }
+
+        public void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
+        {
+            this.Map.Replace(oldValue, newValue, startIndex, stringComparison);
         }
 
         protected void DeleteCodeBlock()

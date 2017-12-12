@@ -5,7 +5,7 @@ using SharpDocx.Models;
 
 namespace SharpDocx
 {
-    public static class CodeBlockFactory
+    internal static class CodeBlockFactory
     {
         public static List<CodeBlock> Create(CharacterMap map, bool replaceCodeWithPlaceholder)
         {
@@ -75,9 +75,6 @@ namespace SharpDocx
                     }
                 }
             }
-
-            // Update the map, since we modified the document.
-            map.Recreate();
 
             return codeBlocks;
         }

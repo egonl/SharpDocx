@@ -112,12 +112,12 @@ namespace SharpDocx
             return 0;
         }
 
-        public void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
+        internal void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
         {
             var i = this.Text.IndexOf(oldValue, startIndex, stringComparison);
             while (i != -1)
             {
-                MapPart part = new MapPart
+                var part = new MapPart
                 {
                     StartIndex = i,
                     EndIndex = i + oldValue.Length - 1,

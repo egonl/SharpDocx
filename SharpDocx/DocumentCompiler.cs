@@ -55,23 +55,8 @@ namespace {Namespace}
             {
                 using (var package = WordprocessingDocument.Open(tempFilePath, false))
                 {
-                    var bodyMap = CharacterMap.Create(package.MainDocumentPart.Document.Body);
-                    codeBlocks = CodeBlockFactory.Create(bodyMap, false);
-
-                    foreach (var footerPart in package.MainDocumentPart.FooterParts)
-                    {
-                        var footerMap = CharacterMap.Create(footerPart.Footer);
-                        var footerBlocks = CodeBlockFactory.Create(footerMap, false);
-                        codeBlocks.InsertRange(0, footerBlocks);
-                    }
-
-                    foreach (var headerPart in package.MainDocumentPart.HeaderParts)
-                    {
-                        var headerMap = CharacterMap.Create(headerPart.Header);
-                        var headerBlocks = CodeBlockFactory.Create(headerMap, false);
-                        codeBlocks.InsertRange(0, headerBlocks);
-                    }
-
+                    var codeBlockBuilder = new CodeBlockBuilder(package, false);
+                    codeBlocks = codeBlockBuilder.CodeBlocks;
                     package.Close();
                 }
             }
@@ -82,7 +67,6 @@ namespace {Namespace}
 
             var invokeDocumentCodeBody = new StringBuilder();
 
-            // Generate one case statement per code block.
             for (int i = 0; i < codeBlocks.Count; ++i)
             {
                 var cb = codeBlocks[i];
@@ -98,7 +82,6 @@ namespace {Namespace}
                     else if (cb.Conditional)
                     {
                         invokeDocumentCodeBody.Append($"if (!{cb.Condition}) {{{Environment.NewLine}");
-                        //executeScriptBody.Append($"// DeleteText{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"DeleteCodeBlock();");
                         invokeDocumentCodeBody.Append($"}}{Environment.NewLine}");
 
