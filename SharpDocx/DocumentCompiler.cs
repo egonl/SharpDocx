@@ -1,4 +1,4 @@
-﻿#define DEBUG0
+﻿#define DEBUG_DOCUMENT_CODE
 
 using System;
 using System.CodeDom.Compiler;
@@ -55,8 +55,23 @@ namespace {Namespace}
             {
                 using (var package = WordprocessingDocument.Open(tempFilePath, false))
                 {
-                    var map = CharacterMap.Create(package.MainDocumentPart.Document.Body);
-                    codeBlocks = CodeBlockFactory.Create(map, false);
+                    var bodyMap = CharacterMap.Create(package.MainDocumentPart.Document.Body);
+                    codeBlocks = CodeBlockFactory.Create(bodyMap, false);
+
+                    foreach (var footerPart in package.MainDocumentPart.FooterParts)
+                    {
+                        var footerMap = CharacterMap.Create(footerPart.Footer);
+                        var footerBlocks = CodeBlockFactory.Create(footerMap, false);
+                        codeBlocks.InsertRange(0, footerBlocks);
+                    }
+
+                    foreach (var headerPart in package.MainDocumentPart.HeaderParts)
+                    {
+                        var headerMap = CharacterMap.Create(headerPart.Header);
+                        var headerBlocks = CodeBlockFactory.Create(headerMap, false);
+                        codeBlocks.InsertRange(0, headerBlocks);
+                    }
+
                     package.Close();
                 }
             }
@@ -136,7 +151,7 @@ namespace {Namespace}
                 IncludeDebugInformation = false,                
             };
 
-#if DEBUG0
+#if DEBUG_DOCUMENT_CODE
             // Create an assembly with debug information and store it in a file. This allows us to step through the generated code.
             // Temporary files are stored in C:\Documents and Settings\computername\ASPNET\Local Settings\Temp and are not deleted automatically.
             parameters.GenerateInMemory = false;

@@ -37,6 +37,20 @@ namespace SharpDocx
                 this.Map = CharacterMap.Create(this.Package.MainDocumentPart.Document.Body);
                 this.CodeBlocks = CodeBlockFactory.Create(this.Map, true);
 
+                foreach (var footerPart in this.Package.MainDocumentPart.FooterParts)
+                {
+                    var footerMap = CharacterMap.Create(footerPart.Footer);
+                    var footerBlocks = CodeBlockFactory.Create(footerMap, true);
+                    this.CodeBlocks.InsertRange(0, footerBlocks);
+                }
+
+                foreach (var headerPart in this.Package.MainDocumentPart.HeaderParts)
+                {
+                    var headerMap = CharacterMap.Create(headerPart.Header);
+                    var headerBlocks = CodeBlockFactory.Create(headerMap, true);
+                    this.CodeBlocks.InsertRange(0, headerBlocks);
+                }
+
                 InvokeDocumentCode();
 
                 foreach (CodeBlock cb in this.CodeBlocks)
