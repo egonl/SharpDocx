@@ -85,6 +85,8 @@ namespace SharpDocx
 
         public int GetIndex(Text text)
         {
+            // Can be used to get the index of a CodeBlock.Placeholder.
+            // Then you can replace text that occurs after the code block only (instead of all text).
             var index = this.Elements.IndexOf(text);
             if (index == -1)
             {
@@ -112,7 +114,7 @@ namespace SharpDocx
             return 0;
         }
 
-        internal void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
+        public void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
         {
             var i = this.Text.IndexOf(oldValue, startIndex, stringComparison);
             while (i != -1)

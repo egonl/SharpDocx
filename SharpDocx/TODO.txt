@@ -1,8 +1,7 @@
-﻿-Code in headers/footers
--Insert merge fields.
--Map.Replace should update Text, Map and Elements OR shouldn't be a method of Map.
+﻿-Insert merge fields.
 
 Consider:
+-Support for DocumentFormat.OpenXml.Vml;.TextPath.String
 -Show inheritance model in Tutorial (see also https://msdn.microsoft.com/en-us/library/ms178138.aspx)
 -ElementAppender supports only one template row/paragraph in a code block at a time. Maybe support multiple templates per code block?
 -Implement ViewBag
