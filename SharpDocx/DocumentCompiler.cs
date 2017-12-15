@@ -1,4 +1,4 @@
-﻿#define DEBUG_DOCUMENT_CODE
+﻿//#define DEBUG_DOCUMENT_CODE
 
 using System;
 using System.CodeDom.Compiler;
@@ -136,7 +136,7 @@ namespace {Namespace}
 
 #if DEBUG_DOCUMENT_CODE
             // Create an assembly with debug information and store it in a file. This allows us to step through the generated code.
-            // Temporary files are stored in C:\Documents and Settings\computername\ASPNET\Local Settings\Temp and are not deleted automatically.
+            // Temporary files are stored in C:\Users\username\AppData\Local\Temp and are not deleted automatically.
             parameters.GenerateInMemory = false;
             parameters.IncludeDebugInformation = true;
             parameters.TempFiles = new TempFileCollection {KeepFiles = true};
