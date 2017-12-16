@@ -11,10 +11,12 @@ namespace Tutorial
             var viewPath = $"{BasePath}\\Views\\Tutorial.cs.docx";
             var documentPath = $"{BasePath}\\Documents\\Tutorial.docx";
 
-            //DocumentBase document = DocumentFactory.Create(viewPath);
-            //document.Generate(documentPath);
-
+#if DEBUG
             Ide.Start(viewPath, documentPath);
+#else
+            DocumentBase document = DocumentFactory.Create(viewPath);
+            document.Generate(documentPath);
+#endif
         }
     }
 }

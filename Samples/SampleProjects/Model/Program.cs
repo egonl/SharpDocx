@@ -21,11 +21,13 @@ namespace Model
                 Date = DateTime.Now.ToShortDateString(),
                 Countries = CountryRepository.GetCountries()
             };
-            
-            //var document = DocumentFactory.Create(viewPath, model);
-            //document.Generate(documentPath);
 
+#if DEBUG
             Ide.Start(viewPath, documentPath, model);
+#else
+            var document = DocumentFactory.Create(viewPath, model);
+            document.Generate(documentPath);
+#endif
         }
     }
 }

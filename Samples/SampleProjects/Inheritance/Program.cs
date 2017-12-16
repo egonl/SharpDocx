@@ -12,11 +12,13 @@ namespace Inheritance
             var viewPath = $"{BasePath}\\Views\\Inheritance.cs.docx";
             var documentPath = $"{BasePath}\\Documents\\Inheritance.docx";
 
-            //Ide.Start(viewPath, documentPath, null, typeof(MyDocument));
-
+#if DEBUG
+            Ide.Start(viewPath, documentPath, null, typeof(MyDocument));
+#else
             var myDocument = DocumentFactory.Create<MyDocument>(viewPath);
             myDocument.MyProperty = "excellent";
             myDocument.Generate(documentPath);
+#endif
         }
     }
 }
