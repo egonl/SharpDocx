@@ -1,5 +1,5 @@
 ﻿-Insert merge fields.
--Introduce a dirty flag for the map.
+-Image path should be configurable.
 
 Consider:
 -Show inheritance model in Tutorial (see also https://msdn.microsoft.com/en-us/library/ms178138.aspx).

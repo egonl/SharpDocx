@@ -33,9 +33,8 @@ namespace SharpDocx
 
             if (replaceCodeWithPlaceholder)
             {
-                // Update the map, since we modified the document.
-                // TODO: reconsider, maybe set a dirty flag and only update the map when really needed.
-                this.BodyMap.Recreate();
+                // Set the dirty flag on the map, since the document is modified.
+                this.BodyMap.IsDirty = true;
             }
         }
 
