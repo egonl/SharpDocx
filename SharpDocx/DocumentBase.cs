@@ -4,6 +4,7 @@ using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SharpDocx.Models;
+using SharpDocx.Extensions;
 
 namespace SharpDocx
 {
@@ -79,7 +80,7 @@ namespace SharpDocx
             return o?.ToString() ?? string.Empty;
         }
 
-        public void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
+        protected void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
         {
             this.Map.Replace(oldValue, newValue, startIndex, stringComparison);
         }
@@ -114,6 +115,12 @@ namespace SharpDocx
             }
 
             this.CurrentCodeBlock.Placeholder.InsertAfterSelf(drawing);
+
+            if (!this.CurrentCodeBlock.Placeholder.GetParent<Paragraph>().HasText())
+            {
+                // Insert a zero-width space, so the image doesn't get deleted by CodeBlock.RemoveEmptyParagraphs.
+                this.CurrentCodeBlock.Placeholder.Text = "\u200B";
+            }
         }
 
         protected long GetPageContentWidthInTwips()
