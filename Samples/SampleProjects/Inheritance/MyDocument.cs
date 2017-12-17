@@ -7,11 +7,6 @@ namespace Inheritance
 {
     public abstract class MyDocument : DocumentBase
     {
-        protected MyDocument()
-        {
-            MyProperty = "very thorough";
-        }
-
         public string MyProperty { get; set; }
 
         public new static List<string> GetUsingDirectives()
@@ -37,7 +32,7 @@ namespace Inheritance
         protected void CreateHyperlink(string text, string url)
         {
             // This method will be called from Inheritance.cs.docx.
-            var id = $"r{Guid.NewGuid().ToString("N")}";
+            var id = $"r{Guid.NewGuid():N}";
 
             var hyperlink = new Hyperlink(
                 new RunProperties(new RunStyle { Val = "Hyperlink" }),

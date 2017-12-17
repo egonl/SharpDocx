@@ -22,7 +22,9 @@ namespace SharpDocx
 
         protected WordprocessingDocument Package;
 
-        public string ViewPath { get; set; }
+        public string ImageDirectory { get; set; }
+
+        public string ViewPath { get; private set; }
 
         protected abstract void InvokeDocumentCode();
 
@@ -100,9 +102,14 @@ namespace SharpDocx
             this.RowAppender.Append(this.CurrentCodeBlock);
         }
 
-        protected void Image(string fileName, int percentage = 100)
+        protected void Image(string filePath, int percentage = 100)
         {
-            var filePath = $"{Path.GetDirectoryName(ViewPath)}\\..\\images\\{fileName}";
+            if (string.IsNullOrEmpty(Path.GetDirectoryName(filePath)) && 
+                !string.IsNullOrEmpty(ImageDirectory))
+            {
+                filePath = $"{ImageDirectory}\\{filePath}";
+            }
+
             var imageTypePart = ImageHelper.GetImagePartType(filePath);
 
             const long emusPerTwip = 635;

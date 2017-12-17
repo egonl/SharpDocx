@@ -10,7 +10,7 @@ namespace Model
     {
         private static readonly string BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..";
 
-        private static void Main(string[] args)
+        private static void Main()
         {
             var viewPath = $"{BasePath}\\Views\\Model.cs.docx";
             var documentPath = $"{BasePath}\\Documents\\Model.docx";

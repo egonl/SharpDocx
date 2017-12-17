@@ -4,7 +4,7 @@ namespace SharpDocx
 {
     public static class Ide
     {
-        public static void Start(string viewPath, string documentPath, object model = null, Type baseClassType = null)
+        public static void Start(string viewPath, string documentPath, object model = null, Type baseClassType = null, Action<DocumentBase> initializeDocument = null)
         {
             Console.WriteLine("Initializing SharpDocx IDE...");
 
@@ -19,6 +19,7 @@ namespace SharpDocx
                     Console.WriteLine();
                     Console.WriteLine($"Compiling '{viewPath}'.");
                     var document = DocumentFactory.Create(viewPath, model, baseClassType, true);
+                    initializeDocument?.Invoke(document);
                     document.Generate(documentPath);
                     Console.WriteLine($"Succesfully generated '{documentPath}'.");
                 }
