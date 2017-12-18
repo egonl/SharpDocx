@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 using System.Text;
 using SharpDocx.Models;
 using DocumentFormat.OpenXml.Packaging;
@@ -57,7 +59,6 @@ namespace {Namespace}
                 {
                     var codeBlockBuilder = new CodeBlockBuilder(package, false);
                     codeBlocks = codeBlockBuilder.CodeBlocks;
-                    package.Close();
                 }
             }
             finally
@@ -221,6 +222,7 @@ namespace {Namespace}
         }
     }
 
+    [Serializable]
     public class SharpDocxCompilationException : Exception
     {
         public string Errors;
@@ -230,6 +232,14 @@ namespace {Namespace}
         {
             this.SourceCode = code;
             this.Errors = errors;
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue(nameof(Errors), Errors);
+            info.AddValue(nameof(SourceCode), SourceCode);
         }
     }
 }

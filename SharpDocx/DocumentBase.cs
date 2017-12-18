@@ -50,7 +50,6 @@ namespace SharpDocx
                 }
 
                 this.Package.Save();
-                this.Package.Close();
             }
         }
 

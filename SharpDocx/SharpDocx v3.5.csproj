@@ -55,6 +55,7 @@
     <Compile Include="CharacterMap.cs" />
     <Compile Include="CodeBlockBuilder.cs" />
     <Compile Include="ElementAppender.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Ide.cs" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="Models\Character.cs" />
