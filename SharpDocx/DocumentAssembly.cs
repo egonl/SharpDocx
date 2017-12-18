@@ -102,7 +102,7 @@ namespace SharpDocx
 
         public object Instance()
         {
-            return _assembly.CreateInstance(DocumentCompiler.Namespace + "." + _className, null);
+            return _assembly.CreateInstance($"{DocumentCompiler.Namespace}.{_className}", null);
         }
 
         private static IEnumerable<Type> GetTypes(Type type)

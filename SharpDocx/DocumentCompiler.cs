@@ -1,4 +1,4 @@
-﻿//#define DEBUG_DOCUMENT_CODE
+﻿#define DEBUG_DOCUMENT_CODE
 
 #if !NET35
 using System.Linq;
@@ -24,38 +24,42 @@ namespace SharpDocx
         public const string Namespace = "SharpDocx";
 
         private static readonly string documentClassTemplate =
-            @"
-using System;
+            @"using System;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SharpDocx.Models;
 {UsingDirectives}
 
 namespace {Namespace}
 {
-	public class {ClassName} : {BaseClassName}
-	{
+    public class {ClassName} : {BaseClassName}
+    {
         public {ModelType} Model { get; set; }
 
-		protected override void InvokeDocumentCode()
-		{
+        protected override void InvokeDocumentCode()
+        {
 {InvokeDocumentCodeBody}
-		}
+        }
 
         protected override void SetModel(object model)
         {
             Model = model as {ModelType};
         }
-	}
+    }
 }";
 
-        internal static Assembly Compile(string viewPath, string className, string baseClassName, object model,
-            List<string> usingDirectives, List<string> referencedAssemblies)
+        internal static Assembly Compile(
+            string viewPath, 
+            string className, 
+            string baseClassName, 
+            object model,
+            List<string> usingDirectives, 
+            List<string> referencedAssemblies)
         {
             List<CodeBlock> codeBlocks;
 
             // Copy the template to a temporary file, so it can be opened even when the template is open in Word.
             // This makes testing templates a lot easier.
-            var tempFilePath = Path.GetTempPath() + Guid.NewGuid().ToString("d") + ".cs.docx";
+            var tempFilePath = $"{Path.GetTempPath()}{Guid.NewGuid():N}.cs.docx";
             File.Copy(viewPath, tempFilePath, true);
 
             try
@@ -83,20 +87,19 @@ namespace {Namespace}
                     if (cb.Code[0] == '=')
                     {
                         // Expand <%=SomeVar%> into <% Write(SomeVar); %>
-                        invokeDocumentCodeBody.Append(
-                            $"            Write({cb.Code.Substring(1)});{Environment.NewLine}");
+                        invokeDocumentCodeBody.Append($"            Write({cb.Code.Substring(1)});{Environment.NewLine}");
                     }
                     else if (cb.Conditional)
                     {
-                        invokeDocumentCodeBody.Append($"if (!{cb.Condition}) {{{Environment.NewLine}");
-                        invokeDocumentCodeBody.Append($"DeleteCodeBlock();");
-                        invokeDocumentCodeBody.Append($"}}{Environment.NewLine}");
+                        invokeDocumentCodeBody.Append($"            if (!{cb.Condition}) {{{Environment.NewLine}");
+                        invokeDocumentCodeBody.Append($"                DeleteCodeBlock();{Environment.NewLine}");
+                        invokeDocumentCodeBody.Append($"            }}{Environment.NewLine}");
 
-                        invokeDocumentCodeBody.Append(cb.Code);
+                        invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}");
                     }
                     else
                     {
-                        invokeDocumentCodeBody.Append(cb.Code);
+                        invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}");
                     }
                 }
 
@@ -147,7 +150,7 @@ namespace {Namespace}
             parameters.GenerateInMemory = false;
             parameters.IncludeDebugInformation = true;
             parameters.TempFiles = new TempFileCollection {KeepFiles = true};
-            parameters.OutputAssembly = parameters.TempFiles.BasePath + ".dll"; // BasePath is *not* path, but a path with some random filename
+            parameters.OutputAssembly = $"{parameters.TempFiles.BasePath}.dll";
 #else 
             // Create an assembly in memory and do not include debug information. Fast, but you can't step through the code.
             parameters.CompilerOptions = "/target:library /optimize";
