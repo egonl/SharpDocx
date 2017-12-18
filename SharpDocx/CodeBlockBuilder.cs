@@ -8,13 +8,13 @@ namespace SharpDocx
 {
     internal class CodeBlockBuilder
     {
-        public CharacterMap BodyMap { get; }
-
         public List<CodeBlock> CodeBlocks { get; }
+
+        public CharacterMap BodyMap { get; }
 
         public CodeBlockBuilder(WordprocessingDocument package, bool replaceCodeWithPlaceholder)
         {
-            this.CodeBlocks = new List<CodeBlock>();
+            CodeBlocks = new List<CodeBlock>();
 
             foreach (var headerPart in package.MainDocumentPart.HeaderParts)
             {
@@ -28,20 +28,20 @@ namespace SharpDocx
                 AppendCodeBlocks(footerMap, replaceCodeWithPlaceholder);
             }
 
-            this.BodyMap = CharacterMap.Create(package.MainDocumentPart.Document.Body);
-            AppendCodeBlocks(this.BodyMap, replaceCodeWithPlaceholder);
+            BodyMap = CharacterMap.Create(package.MainDocumentPart.Document.Body);
+            AppendCodeBlocks(BodyMap, replaceCodeWithPlaceholder);
 
             if (replaceCodeWithPlaceholder)
             {
                 // Set the dirty flag on the map, since the document is modified.
-                this.BodyMap.IsDirty = true;
+                BodyMap.IsDirty = true;
             }
         }
 
         private void AppendCodeBlocks(CharacterMap map, bool replaceCodeWithPlaceholder)
         {
             var startTagIndex = map.Text.IndexOf("<%", 0);
-            var firstCodeBlockIndex = this.CodeBlocks.Count;
+            var firstCodeBlockIndex = CodeBlocks.Count;
 
             while (startTagIndex != -1)
             {
@@ -51,7 +51,7 @@ namespace SharpDocx
                     throw new Exception("No end tag found for code.");
                 }
 
-                this.CodeBlocks.Add(new CodeBlock
+                CodeBlocks.Add(new CodeBlock
                 {
                     StartIndex = startTagIndex,
                     StartText = map[startTagIndex].Element as Text,
@@ -65,35 +65,35 @@ namespace SharpDocx
 
             if (replaceCodeWithPlaceholder)
             {
-                for (var i = this.CodeBlocks.Count - 1; i >= firstCodeBlockIndex; --i)
+                for (var i = CodeBlocks.Count - 1; i >= firstCodeBlockIndex; --i)
                 {
                     // Replace the code of each code block with an empty Text element.
-                    var codeBlock = this.CodeBlocks[i];
+                    var codeBlock = CodeBlocks[i];
                     codeBlock.Placeholder = map.ReplaceWithText(codeBlock, null);
                     //codeBlock.Placeholder = map.ReplaceWithText(codeBlock, $"CB{i}");
                 }
             }
 
-            for (var i = firstCodeBlockIndex; i < this.CodeBlocks.Count; ++i)
+            for (var i = firstCodeBlockIndex; i < CodeBlocks.Count; ++i)
             {
-                var cb = this.CodeBlocks[i];
+                var cb = CodeBlocks[i];
 
-                if (cb.Code.Replace(" ", "").StartsWith("if(") && this.CodeBlocks[i].CurlyBracketLevelIncrement > 0)
+                if (cb.Code.Replace(" ", "").StartsWith("if(") && CodeBlocks[i].CurlyBracketLevelIncrement > 0)
                 {
                     cb.Conditional = true;
                     cb.Condition = cb.GetExpressionInBrackets();
 
                     if (replaceCodeWithPlaceholder)
                     {
-                        var bracketLevel = this.CodeBlocks[i].CurlyBracketLevelIncrement;
+                        var bracketLevel = CodeBlocks[i].CurlyBracketLevelIncrement;
 
-                        for (var j = i + 1; j < this.CodeBlocks.Count; ++j)
+                        for (var j = i + 1; j < CodeBlocks.Count; ++j)
                         {
-                            bracketLevel += this.CodeBlocks[j].CurlyBracketLevelIncrement;
+                            bracketLevel += CodeBlocks[j].CurlyBracketLevelIncrement;
 
                             if (bracketLevel <= 0)
                             {
-                                cb.EndConditionalPart = this.CodeBlocks[j].Placeholder;
+                                cb.EndConditionalPart = CodeBlocks[j].Placeholder;
                                 break;
                             }
                         }

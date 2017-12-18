@@ -35,17 +35,17 @@ namespace Inheritance
             var id = $"r{Guid.NewGuid():N}";
 
             var hyperlink = new Hyperlink(
-                new RunProperties(new RunStyle { Val = "Hyperlink" }),
+                new RunProperties(new RunStyle {Val = "Hyperlink"}),
                 new Run(new Text(text)))
             {
                 History = true,
-                Id = id,
+                Id = id
             };
 
-            this.Package.MainDocumentPart.AddHyperlinkRelationship(
+            Package.MainDocumentPart.AddHyperlinkRelationship(
                 new Uri(url, UriKind.Absolute), true, id);
 
-            this.CurrentCodeBlock.Placeholder.Parent.InsertAfterSelf(hyperlink);
+            CurrentCodeBlock.Placeholder.Parent.InsertAfterSelf(hyperlink);
         }
     }
 }

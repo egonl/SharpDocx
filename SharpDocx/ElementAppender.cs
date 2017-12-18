@@ -1,33 +1,33 @@
-﻿using SharpDocx.Extensions;
+﻿using DocumentFormat.OpenXml;
+using SharpDocx.Extensions;
 using SharpDocx.Models;
-using DocumentFormat.OpenXml;
 
 namespace SharpDocx
 {
     public class ElementAppender<T> where T : OpenXmlElement
     {
-        private T lastElement;
-        private CodeBlock elementCodeBlock;
-        private T templateElement;
+        private CodeBlock _elementCodeBlock;
+        private T _lastElement;
+        private T _templateElement;
 
         public void Append(CodeBlock currentCodeBlock)
         {
-            if (this.elementCodeBlock != currentCodeBlock)
+            if (_elementCodeBlock != currentCodeBlock)
             {
                 // First paragraph/row only.
-                this.elementCodeBlock = currentCodeBlock;
-                this.templateElement = currentCodeBlock.Placeholder.GetParent<T>();
-                var newParagraph = this.templateElement.Clone() as T;
-                this.templateElement.InsertAfterSelf(newParagraph);
-                this.lastElement = newParagraph;
-                this.templateElement.Remove();
+                _elementCodeBlock = currentCodeBlock;
+                _templateElement = currentCodeBlock.Placeholder.GetParent<T>();
+                var newParagraph = _templateElement.Clone() as T;
+                _templateElement.InsertAfterSelf(newParagraph);
+                _lastElement = newParagraph;
+                _templateElement.Remove();
             }
             else
             {
                 // Subsequent paragraphs/rows.
-                var newParagraph = this.templateElement.Clone() as T;
-                this.lastElement.InsertAfterSelf(newParagraph);
-                this.lastElement = newParagraph;
+                var newParagraph = _templateElement.Clone() as T;
+                _lastElement.InsertAfterSelf(newParagraph);
+                _lastElement = newParagraph;
             }
         }
     }

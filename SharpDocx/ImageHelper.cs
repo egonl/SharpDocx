@@ -11,7 +11,11 @@ namespace SharpDocx
 {
     public static class ImageHelper
     {
-        public static Drawing CreateDrawing(WordprocessingDocument package, Stream imageStream, ImagePartType imagePartType, int percentage, long maxWidthInEmus)
+        public static Drawing CreateDrawing(
+            WordprocessingDocument package, 
+            Stream imageStream,
+            ImagePartType imagePartType, 
+            int percentage, long maxWidthInEmus)
         {
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
             var img = new BitmapImage();
@@ -39,7 +43,7 @@ namespace SharpDocx
             {
                 var ratio = heightEmus * 1.0m / widthEmus;
                 widthEmus = maxWidthInEmus;
-                heightEmus = (long)(widthEmus * ratio);
+                heightEmus = (long) (widthEmus * ratio);
             }
 
             if (percentage != 100)

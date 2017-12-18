@@ -2,36 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SharpDocx.Models;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
+using SharpDocx.Models;
 
 namespace SharpDocx
 {
     public class CharacterMap
     {
-        private readonly List<OpenXmlElement> elements = new List<OpenXmlElement>();
+        private readonly List<OpenXmlElement> _elements = new List<OpenXmlElement>();
 
-        private readonly List<Character> map = new List<Character>();
+        private readonly List<Character> _map = new List<Character>();
 
-        private readonly StringBuilder textBuilder = new StringBuilder();
+        private readonly StringBuilder _textBuilder = new StringBuilder();
 
-        private OpenXmlCompositeElement rootElement;
+        private OpenXmlCompositeElement _rootElement;
 
-        private string text;
-
-        private bool isDirty;
+        private string _text;
 
         public Character this[int index]
         {
             get
             {
-                if (this.isDirty)
+                if (IsDirty)
                 {
-                    this.Recreate();
+                    Recreate();
                 }
 
-                return this.map[index];
+                return _map[index];
             }
         }
 
@@ -39,12 +37,12 @@ namespace SharpDocx
         {
             get
             {
-                if (this.isDirty)
+                if (IsDirty)
                 {
-                    this.Recreate();
+                    Recreate();
                 }
 
-                return this.text;
+                return _text;
             }
         }
 
@@ -52,45 +50,34 @@ namespace SharpDocx
         {
             get
             {
-                if (this.isDirty)
+                if (IsDirty)
                 {
-                    this.Recreate();
+                    Recreate();
                 }
 
-                return this.elements;
+                return _elements;
             }
         }
 
-        internal bool IsDirty
-        {
-            get
-            {
-                return this.isDirty;
-            }
-
-            set
-            {
-                this.isDirty = value;
-            }
-        }
+        internal bool IsDirty { get; set; }
 
         public static CharacterMap Create(OpenXmlCompositeElement ce)
         {
-            var m = new CharacterMap {rootElement = ce};
-            m.CreateMap(m.rootElement);
-            m.text = m.textBuilder.ToString();
-            m.isDirty = false;
+            var m = new CharacterMap {_rootElement = ce};
+            m.CreateMap(m._rootElement);
+            m._text = m._textBuilder.ToString();
+            m.IsDirty = false;
             return m;
         }
 
         private void Recreate()
         {
-            this.elements.Clear();
-            this.map.Clear();
-            this.textBuilder.Length = 0;
-            CreateMap(this.rootElement);
-            this.text = this.textBuilder.ToString();
-            this.isDirty = false;
+            _elements.Clear();
+            _map.Clear();
+            _textBuilder.Length = 0;
+            CreateMap(_rootElement);
+            _text = _textBuilder.ToString();
+            IsDirty = false;
         }
 
         private void CreateMap(OpenXmlCompositeElement ce)
@@ -102,19 +89,19 @@ namespace SharpDocx
                     CreateMap(child as OpenXmlCompositeElement);
                     if (child is Paragraph)
                     {
-                        this.map.Add(new Character
+                        _map.Add(new Character
                         {
                             Char = (char) 10,
                             Element = child,
                             Index = -1
                         });
 
-                        this.textBuilder.Append((char) 10);
+                        _textBuilder.Append((char) 10);
                     }
                 }
                 else
                 {
-                    this.elements.Add(child);
+                    _elements.Add(child);
                 }
 
                 if (child is Text)
@@ -122,7 +109,7 @@ namespace SharpDocx
                     var t = child as Text;
                     for (var i = 0; i < t.Text.Length; ++i)
                     {
-                        this.map.Add(new Character
+                        _map.Add(new Character
                         {
                             Char = t.Text[i],
                             Element = child,
@@ -130,47 +117,48 @@ namespace SharpDocx
                         });
                     }
 
-                    this.textBuilder.Append(t.Text);
+                    _textBuilder.Append(t.Text);
                 }
             }
 
-            this.elements.Add(ce);
+            _elements.Add(ce);
         }
 
         public int GetIndex(Text text)
         {
             // Can be used to get the index of a CodeBlock.Placeholder.
             // Then you can replace text that occurs after the code block only (instead of all text).
-            var index = this.Elements.IndexOf(text);
+            var index = Elements.IndexOf(text);
             if (index == -1)
             {
                 return -1;
             }
 
-            for (int i = index; i >= 0; --i)
+            for (var i = index; i >= 0; --i)
             {
-                var t = this.Elements[i] as Text;
+                var t = Elements[i] as Text;
                 if (t != null && t.Text.Length > 0)
                 {
-                    return this.map.IndexOf(this.map.First(c => c.Element == t && c.Index == t.Text.Length - 1));
+                    return _map.IndexOf(_map.First(c => c.Element == t && c.Index == t.Text.Length - 1));
                 }
             }
 
-            for (int i = index + 1; i < this.Elements.Count; ++i)
+            for (var i = index + 1; i < Elements.Count; ++i)
             {
-                var t = this.Elements[i] as Text;
+                var t = Elements[i] as Text;
                 if (t != null && t.Text.Length > 0)
                 {
-                    return this.map.IndexOf(this.map.First(c => c.Element == t && c.Index == 0));
+                    return _map.IndexOf(_map.First(c => c.Element == t && c.Index == 0));
                 }
             }
 
             return 0;
         }
 
-        internal void Replace(string oldValue, string newValue, int startIndex = 0, StringComparison stringComparison = StringComparison.CurrentCulture)
+        internal void Replace(string oldValue, string newValue, int startIndex = 0,
+            StringComparison stringComparison = StringComparison.CurrentCulture)
         {
-            var i = this.Text.IndexOf(oldValue, startIndex, stringComparison);
+            var i = Text.IndexOf(oldValue, startIndex, stringComparison);
             var dirty = i != -1;
 
             while (i != -1)
@@ -178,16 +166,16 @@ namespace SharpDocx
                 var part = new MapPart
                 {
                     StartIndex = i,
-                    EndIndex = i + oldValue.Length - 1,
+                    EndIndex = i + oldValue.Length - 1
                 };
 
                 Replace(part, newValue);
 
                 startIndex = i + newValue.Length;
-                i = this.Text.IndexOf(oldValue, startIndex, stringComparison);
+                i = Text.IndexOf(oldValue, startIndex, stringComparison);
             }
 
-            this.isDirty = dirty;
+            IsDirty = dirty;
         }
 
         private void Replace(MapPart part, string newText)
@@ -197,7 +185,7 @@ namespace SharpDocx
             var endText = this[part.EndIndex].Element as Text;
             var endIndex = this[part.EndIndex].Index;
 
-            List<OpenXmlElement> parents = new List<OpenXmlElement>();
+            var parents = new List<OpenXmlElement>();
             var parent = startText.Parent;
             while (parent != null)
             {
@@ -205,9 +193,9 @@ namespace SharpDocx
                 parent = parent.Parent;
             }
 
-            for (int i = this.Elements.IndexOf(endText); i >= this.Elements.IndexOf(startText); --i)
+            for (var i = Elements.IndexOf(endText); i >= Elements.IndexOf(startText); --i)
             {
-                var element = this.Elements[i];
+                var element = Elements[i];
 
                 if (parents.Contains(element))
                 {
@@ -262,13 +250,13 @@ namespace SharpDocx
             var endText = this[part.EndIndex].Element as Text;
             var endIndex = this[part.EndIndex].Index;
 
-            Text addedText = new Text
+            var addedText = new Text
             {
                 Text = newText,
-                Space = SpaceProcessingModeValues.Preserve,
+                Space = SpaceProcessingModeValues.Preserve
             };
 
-            List<OpenXmlElement> parents = new List<OpenXmlElement>();
+            var parents = new List<OpenXmlElement>();
             var parent = startText.Parent;
             while (parent != null)
             {
@@ -276,9 +264,9 @@ namespace SharpDocx
                 parent = parent.Parent;
             }
 
-            for (int i = this.Elements.IndexOf(endText); i >= this.Elements.IndexOf(startText); --i)
+            for (var i = Elements.IndexOf(endText); i >= Elements.IndexOf(startText); --i)
             {
-                var element = this.Elements[i];
+                var element = Elements[i];
 
                 if (parents.Contains(element))
                 {
@@ -333,13 +321,13 @@ namespace SharpDocx
 
         internal void Delete(OpenXmlElement startText, OpenXmlElement endText)
         {
-            List<OpenXmlElement> parents = new List<OpenXmlElement>();
+            var parents = new List<OpenXmlElement>();
             AddParents(startText, parents);
             AddParents(endText, parents);
 
-            for (int i = this.Elements.IndexOf(endText); i >= this.Elements.IndexOf(startText); --i)
+            for (var i = Elements.IndexOf(endText); i >= Elements.IndexOf(startText); --i)
             {
-                var element = this.Elements[i];
+                var element = Elements[i];
 
                 if (parents.Contains(element))
                 {
@@ -350,7 +338,7 @@ namespace SharpDocx
                 element.Remove();
             }
 
-            this.isDirty = true;
+            IsDirty = true;
         }
 
         private static void AddParents(OpenXmlElement element, List<OpenXmlElement> parents)

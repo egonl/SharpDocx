@@ -1,10 +1,12 @@
-﻿using SharpDocx;
+﻿using System.IO;
+using SharpDocx;
 
 namespace Tutorial
 {
     internal class Program
     {
-        static readonly string BasePath =  System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..";
+        private static readonly string BasePath =
+            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..";
 
         private static void Main()
         {

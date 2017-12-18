@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 
 namespace SharpDocx
 {
@@ -12,9 +13,10 @@ namespace SharpDocx
         private static readonly Hashtable Assemblies = new Hashtable();
         private static readonly object AssembliesLock = new object();
 
-        public static TBaseClass Create<TBaseClass>(string viewPath, object model = null, bool forceCompile = false) where TBaseClass : DocumentBase
+        public static TBaseClass Create<TBaseClass>(string viewPath, object model = null, bool forceCompile = false)
+            where TBaseClass : DocumentBase
         {
-            return (TBaseClass)Create(viewPath, model, typeof(TBaseClass), forceCompile);
+            return (TBaseClass) Create(viewPath, model, typeof(TBaseClass), forceCompile);
         }
 
         public static DocumentBase Create(
@@ -23,7 +25,7 @@ namespace SharpDocx
             Type baseClassType = null,
             bool forceCompile = false)
         {
-            viewPath = System.IO.Path.GetFullPath(viewPath);
+            viewPath = Path.GetFullPath(viewPath);
 
             if (baseClassType == null)
             {

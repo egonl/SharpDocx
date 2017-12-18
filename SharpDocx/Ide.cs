@@ -1,15 +1,21 @@
 ﻿using System;
+using System.IO;
 
 namespace SharpDocx
 {
     public static class Ide
     {
-        public static void Start(string viewPath, string documentPath, object model = null, Type baseClassType = null, Action<DocumentBase> initializeDocument = null)
+        public static void Start(
+            string viewPath,
+            string documentPath,
+            object model = null,
+            Type baseClassType = null,
+            Action<DocumentBase> initializeDocument = null)
         {
             Console.WriteLine("Initializing SharpDocx IDE...");
 
-            viewPath = System.IO.Path.GetFullPath(viewPath);
-            documentPath = System.IO.Path.GetFullPath(documentPath);
+            viewPath = Path.GetFullPath(viewPath);
+            documentPath = Path.GetFullPath(documentPath);
             ConsoleKeyInfo keyInfo;
 
             do

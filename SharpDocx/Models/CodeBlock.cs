@@ -6,6 +6,8 @@ namespace SharpDocx.Models
 {
     public class CodeBlock : MapPart
     {
+        public Text StartText, EndText;
+
         public string Code { get; set; }
 
         public Text Placeholder { get; set; }
@@ -15,8 +17,6 @@ namespace SharpDocx.Models
         public string Condition { get; set; }
 
         public Text EndConditionalPart { get; set; }
-
-        public Text StartText, EndText;
 
         public int CurlyBracketLevelIncrement
         {
@@ -76,14 +76,14 @@ namespace SharpDocx.Models
 
         public void RemoveEmptyParagraphs()
         {
-            var startParagraph = this.StartText.GetParent<Paragraph>();
-            if (startParagraph != null && startParagraph.Parent != null && !startParagraph.HasText())
+            var startParagraph = StartText.GetParent<Paragraph>();
+            if (startParagraph?.Parent != null && !startParagraph.HasText())
             {
                 startParagraph.Remove();
             }
 
-            var endParagraph = this.EndText.GetParent<Paragraph>();
-            if (endParagraph != null && endParagraph.Parent != null && !endParagraph.HasText())
+            var endParagraph = EndText.GetParent<Paragraph>();
+            if (endParagraph?.Parent != null && !endParagraph.HasText())
             {
                 endParagraph.Remove();
             }

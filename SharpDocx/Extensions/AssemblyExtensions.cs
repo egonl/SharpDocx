@@ -12,19 +12,19 @@ namespace SharpDocx.Extensions
             string method,
             object[] parameters)
         {
-            Module[] mods = assembly.GetModules(false);
-            Type t = mods[0].GetType(typeName);
-            MethodInfo mi = t.GetMethod(method);
-            return mi.Invoke(obj, parameters);
+            var mods = assembly.GetModules(false);
+            var t = mods[0].GetType(typeName);
+            var mi = t.GetMethod(method);
+            return mi?.Invoke(obj, parameters);
         }
 
         public static object CreateInstance(
-            this Assembly assembly, 
-            string typeName, 
+            this Assembly assembly,
+            string typeName,
             object[] parameters)
         {
-            Module[] mods = assembly.GetModules(false);
-            Type t = mods[0].GetType(typeName);
+            var mods = assembly.GetModules(false);
+            var t = mods[0].GetType(typeName);
             return Activator.CreateInstance(t, parameters);
         }
     }

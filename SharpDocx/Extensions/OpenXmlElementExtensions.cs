@@ -51,7 +51,7 @@ namespace SharpDocx.Extensions
             {
                 if (child.HasChildren)
                 {
-                    bool hasText = HasText(child as OpenXmlCompositeElement);
+                    var hasText = HasText(child as OpenXmlCompositeElement);
                     if (hasText)
                     {
                         return true;

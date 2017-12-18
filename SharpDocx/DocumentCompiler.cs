@@ -1,17 +1,21 @@
 ﻿//#define DEBUG_DOCUMENT_CODE
 
+#if !NET35
+using System.Linq;
+#endif
+
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
-using SharpDocx.Models;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.CSharp;
+using SharpDocx.Models;
 
 namespace SharpDocx
 {
@@ -44,14 +48,15 @@ namespace {Namespace}
 	}
 }";
 
-        internal static Assembly Compile(string viewPath, string className, string baseClassName, object model, List<string> usingDirectives, List<string> referencedAssemblies)
+        internal static Assembly Compile(string viewPath, string className, string baseClassName, object model,
+            List<string> usingDirectives, List<string> referencedAssemblies)
         {
             List<CodeBlock> codeBlocks;
 
             // Copy the template to a temporary file, so it can be opened even when the template is open in Word.
             // This makes testing templates a lot easier.
-            var tempFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString("d") + ".cs.docx";
-            System.IO.File.Copy(viewPath, tempFilePath, true);            
+            var tempFilePath = Path.GetTempPath() + Guid.NewGuid().ToString("d") + ".cs.docx";
+            File.Copy(viewPath, tempFilePath, true);
 
             try
             {
@@ -63,12 +68,12 @@ namespace {Namespace}
             }
             finally
             {
-                System.IO.File.Delete(tempFilePath);
+                File.Delete(tempFilePath);
             }
 
             var invokeDocumentCodeBody = new StringBuilder();
 
-            for (int i = 0; i < codeBlocks.Count; ++i)
+            for (var i = 0; i < codeBlocks.Count; ++i)
             {
                 var cb = codeBlocks[i];
                 invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
@@ -78,7 +83,8 @@ namespace {Namespace}
                     if (cb.Code[0] == '=')
                     {
                         // Expand <%=SomeVar%> into <% Write(SomeVar); %>
-                        invokeDocumentCodeBody.Append($"            Write({cb.Code.Substring(1)});{Environment.NewLine}");
+                        invokeDocumentCodeBody.Append(
+                            $"            Write({cb.Code.Substring(1)});{Environment.NewLine}");
                     }
                     else if (cb.Conditional)
                     {
@@ -120,9 +126,9 @@ namespace {Namespace}
         {
             // Create the compiler.
 #if NET35
-            var options = new Dictionary<string, string> { { "CompilerVersion", "v3.5" } };
+            var options = new Dictionary<string, string> {{"CompilerVersion", "v3.5"}};
 #else
-            var options = new Dictionary<string, string> { { "CompilerVersion", "v4.0" } };
+            var options = new Dictionary<string, string> {{"CompilerVersion", "v4.0"}};
 #endif
             CodeDomProvider compiler = new CSharpCodeProvider(options);
 
@@ -132,17 +138,17 @@ namespace {Namespace}
                 CompilerOptions = "/target:library",
                 GenerateExecutable = false,
                 GenerateInMemory = true,
-                IncludeDebugInformation = false,                
+                IncludeDebugInformation = false
             };
 
-#if DEBUG_DOCUMENT_CODE
+#if DEBUG_DOCUMENT_CODE 
             // Create an assembly with debug information and store it in a file. This allows us to step through the generated code.
             // Temporary files are stored in C:\Users\username\AppData\Local\Temp and are not deleted automatically.
             parameters.GenerateInMemory = false;
             parameters.IncludeDebugInformation = true;
             parameters.TempFiles = new TempFileCollection {KeepFiles = true};
             parameters.OutputAssembly = parameters.TempFiles.BasePath + ".dll"; // BasePath is *not* path, but a path with some random filename
-#else
+#else 
             // Create an assembly in memory and do not include debug information. Fast, but you can't step through the code.
             parameters.CompilerOptions = "/target:library /optimize";
 #endif
@@ -169,8 +175,8 @@ namespace {Namespace}
             if (results.Errors.HasErrors)
             {
                 var formattedCode = new StringBuilder();
-                string[] lines = sourceCode.Split('\n');
-                for (int i = 0; i < lines.Length; ++i)
+                var lines = sourceCode.Split('\n');
+                for (var i = 0; i < lines.Length; ++i)
                 {
                     formattedCode.Append($"{i + 1,5}  {lines[i]}\n");
                 }
@@ -179,7 +185,7 @@ namespace {Namespace}
                 foreach (CompilerError e in results.Errors)
                 {
                     // Do not show the name of the temporary file.
-                    e.FileName = ""; 
+                    e.FileName = "";
                     formattedErrors.Append($"Line {e.Line}: {e}{Environment.NewLine}{Environment.NewLine}");
                 }
 
@@ -230,8 +236,8 @@ namespace {Namespace}
 
         public SharpDocxCompilationException(string code, string errors)
         {
-            this.SourceCode = code;
-            this.Errors = errors;
+            SourceCode = code;
+            Errors = errors;
         }
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]

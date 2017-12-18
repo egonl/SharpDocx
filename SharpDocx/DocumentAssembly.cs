@@ -8,8 +8,8 @@ namespace SharpDocx
 {
     internal class DocumentAssembly
     {
-        private readonly Assembly assembly;
-        private readonly string className;
+        private readonly Assembly _assembly;
+        private readonly string _className;
 
         internal DocumentAssembly(
             string viewPath,
@@ -18,21 +18,28 @@ namespace SharpDocx
         {
             if (!File.Exists(viewPath))
             {
-                throw new ArgumentException("Could not find the file " + viewPath, nameof(viewPath));
+                throw new ArgumentException($"Could not find the file '{viewPath}'", nameof(viewPath));
+            }
+
+            if (baseClass == null)
+            {
+                throw new ArgumentNullException(nameof(baseClass));                
             }
 
             // Load base class assembly.
             var a = Assembly.LoadFrom(baseClass.Assembly.Location);
             if (a == null)
             {
-                throw new ArgumentException("Can't load assembly '" + baseClass.Assembly + "'", nameof(baseClass));
+                throw new ArgumentException($"Can't load assembly '{baseClass.Assembly}'", nameof(baseClass));
             }
 
             // Get the base class type.
             var t = a.GetType(baseClass.FullName);
             if (t == null)
             {
-                throw new ArgumentException("Can't find base class '" + baseClass.FullName + "' in assembly '" + baseClass.Assembly + "'", nameof(baseClass));
+                throw new ArgumentException(
+                    $"Can't find base class '{baseClass.FullName}' in assembly '{baseClass.Assembly}'",
+                    nameof(baseClass));
             }
 
             // Check base class type.
@@ -81,12 +88,12 @@ namespace SharpDocx
             }
 
             // Create a unique class name.
-            this.className = $"SharpDocument_{Guid.NewGuid():N}";
+            _className = $"SharpDocument_{Guid.NewGuid():N}";
 
             // Create an assembly for this class.
-            this.assembly = DocumentCompiler.Compile(
+            _assembly = DocumentCompiler.Compile(
                 viewPath,
-                this.className,
+                _className,
                 baseClass.Name,
                 model,
                 usingDirectives,
@@ -95,7 +102,7 @@ namespace SharpDocx
 
         public object Instance()
         {
-            return this.assembly.CreateInstance(DocumentCompiler.Namespace + "." + this.className, null);
+            return _assembly.CreateInstance(DocumentCompiler.Namespace + "." + _className, null);
         }
 
         private static IEnumerable<Type> GetTypes(Type type)
