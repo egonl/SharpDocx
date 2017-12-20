@@ -1,4 +1,4 @@
-﻿#define DEBUG_DOCUMENT_CODE
+﻿//#define DEBUG_DOCUMENT_CODE
 
 #if !NET35
 using System.Linq;
@@ -89,10 +89,11 @@ namespace {Namespace}
                         // Expand <%=SomeVar%> into <% Write(SomeVar); %>
                         invokeDocumentCodeBody.Append($"            Write({cb.Code.Substring(1)});{Environment.NewLine}");
                     }
-                    else if (cb.Conditional)
+                    else if (cb is ConditionalCodeBlock)
                     {
-                        invokeDocumentCodeBody.Append($"            if (!{cb.Condition}) {{{Environment.NewLine}");
-                        invokeDocumentCodeBody.Append($"                DeleteCodeBlock();{Environment.NewLine}");
+                        var ccb = (ConditionalCodeBlock) cb; 
+                        invokeDocumentCodeBody.Append($"            if (!{ccb.Condition}) {{{Environment.NewLine}");
+                        invokeDocumentCodeBody.Append($"                DeleteConditionalContent();{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"            }}{Environment.NewLine}");
 
                         invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}");

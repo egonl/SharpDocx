@@ -12,39 +12,32 @@ namespace SharpDocx.Models
 
         public Text Placeholder { get; set; }
 
-        public bool Conditional { get; set; }
+        public int CurlyBracketLevelIncrement => GetCurlyBracketLevelIncrement(Code);
 
-        public string Condition { get; set; }
-
-        public Text EndConditionalPart { get; set; }
-
-        public int CurlyBracketLevelIncrement
+        public static int GetCurlyBracketLevelIncrement(string code)
         {
-            get
+            // Note: since this isn't a proper C# parser, this code won't work properly when there are curly brackets in comments/strings/etc.
+            var increment = 0;
+
+            foreach (var c in code)
             {
-                // Note: since this isn't a proper C# parser, this code won't work properly when there are curly brackets in comments/strings/etc.
-                var increment = 0;
-
-                foreach (var c in Code)
+                if (c == '{')
                 {
-                    if (c == '{')
-                    {
-                        ++increment;
-                    }
-                    else if (c == '}')
-                    {
-                        --increment;
-                    }
+                    ++increment;
                 }
-
-                return increment;
+                else if (c == '}')
+                {
+                    --increment;
+                }
             }
+
+            return increment;
         }
 
-        public string GetExpressionInBrackets(int startIndex = 0)
+        public static string GetExpressionInBrackets(string code, int startIndex = 0)
         {
             // Note: same issue as above.
-            startIndex = Code.IndexOf("(", startIndex);
+            startIndex = code.IndexOf("(", startIndex);
             if (startIndex == -1)
             {
                 return null;
@@ -52,15 +45,15 @@ namespace SharpDocx.Models
 
             var expression = new StringBuilder();
             var increment = 0;
-            for (var i = startIndex; i < Code.Length; ++i)
+            for (var i = startIndex; i < code.Length; ++i)
             {
-                expression.Append(Code[i]);
+                expression.Append(code[i]);
 
-                if (Code[i] == '(')
+                if (code[i] == '(')
                 {
                     ++increment;
                 }
-                else if (Code[i] == ')')
+                else if (code[i] == ')')
                 {
                     --increment;
                 }

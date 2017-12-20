@@ -51,60 +51,75 @@ namespace SharpDocx
                     throw new Exception("No end tag found for code.");
                 }
 
-                CodeBlocks.Add(new CodeBlock
-                {
-                    StartIndex = startTagIndex,
-                    StartText = map[startTagIndex].Element as Text,
-                    EndIndex = endTagIndex + 1,
-                    EndText = map[endTagIndex + 1].Element as Text,
-                    Code = map.Text.Substring(startTagIndex + 2, endTagIndex - startTagIndex - 2)
-                });
+                var code = map.Text.Substring(startTagIndex + 2, endTagIndex - startTagIndex - 2);
+                var cb = GetCodeBlock(code);
+                cb.StartIndex = startTagIndex;
+                cb.StartText = map[startTagIndex].Element as Text;
+                cb.EndIndex = endTagIndex + 1;
+                cb.EndText = map[endTagIndex + 1].Element as Text;
+                cb.Code = code;
+                CodeBlocks.Add(cb);
 
                 startTagIndex = map.Text.IndexOf("<%", endTagIndex + 2);
             }
 
-            if (replaceCodeWithPlaceholder)
+            if (!replaceCodeWithPlaceholder)
             {
-                for (var i = CodeBlocks.Count - 1; i >= firstCodeBlockIndex; --i)
-                {
-                    // Replace the code of each code block with an empty Text element.
-                    var codeBlock = CodeBlocks[i];
-                    codeBlock.Placeholder = map.ReplaceWithText(codeBlock, null);
-                    //codeBlock.Placeholder = map.ReplaceWithText(codeBlock, $"CB{i}");
-                }
+                return;
+            }
+
+            for (var i = CodeBlocks.Count - 1; i >= firstCodeBlockIndex; --i)
+            {
+                // Replace the code of each code block with an empty Text element.
+                var cb = CodeBlocks[i];
+                cb.Placeholder = map.ReplaceWithText(cb, null);
+                //cb.Placeholder = map.ReplaceWithText(cb, $"CB{i}");
             }
 
             for (var i = firstCodeBlockIndex; i < CodeBlocks.Count; ++i)
             {
-                var cb = CodeBlocks[i];
-
-                if (cb.Code.Replace(" ", "").StartsWith("if(") && CodeBlocks[i].CurlyBracketLevelIncrement > 0)
+                // Find out where conditional content ends.
+                var cb = CodeBlocks[i] as ConditionalCodeBlock;
+                if (cb != null)
                 {
-                    cb.Conditional = true;
-                    cb.Condition = cb.GetExpressionInBrackets();
+                    var bracketLevel = cb.CurlyBracketLevelIncrement;
 
-                    if (replaceCodeWithPlaceholder)
+                    for (var j = i + 1; j < CodeBlocks.Count; ++j)
                     {
-                        var bracketLevel = CodeBlocks[i].CurlyBracketLevelIncrement;
+                        bracketLevel += CodeBlocks[j].CurlyBracketLevelIncrement;
 
-                        for (var j = i + 1; j < CodeBlocks.Count; ++j)
+                        if (bracketLevel <= 0)
                         {
-                            bracketLevel += CodeBlocks[j].CurlyBracketLevelIncrement;
-
-                            if (bracketLevel <= 0)
-                            {
-                                cb.EndConditionalPart = CodeBlocks[j].Placeholder;
-                                break;
-                            }
+                            cb.EndConditionalPart = CodeBlocks[j].Placeholder;
+                            break;
                         }
+                    }
 
-                        if (cb.EndConditionalPart == null)
-                        {
-                            throw new Exception("Conditional block is not terminated with '<% } %>'.");
-                        }
+                    if (cb.EndConditionalPart == null)
+                    {
+                        throw new Exception("Conditional code block is not terminated with '<% } %>'.");
                     }
                 }
             }
+        }
+
+        private static CodeBlock GetCodeBlock(string code)
+        {
+            CodeBlock cb;
+
+            if (code.Replace(" ", "").StartsWith("if(") && CodeBlock.GetCurlyBracketLevelIncrement(code) > 0)
+            {
+                cb = new ConditionalCodeBlock
+                {
+                    Condition = CodeBlock.GetExpressionInBrackets(code),
+                };
+            }
+            else
+            {
+                cb = new CodeBlock();
+            }
+
+            return cb;
         }
     }
 }

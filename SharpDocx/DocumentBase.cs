@@ -87,9 +87,10 @@ namespace SharpDocx
             Map.Replace(oldValue, newValue, startIndex, stringComparison);
         }
 
-        protected void DeleteCodeBlock()
+        protected void DeleteConditionalContent()
         {
-            Map.Delete(CurrentCodeBlock.Placeholder, CurrentCodeBlock.EndConditionalPart);
+            var ccb = (ConditionalCodeBlock) CurrentCodeBlock;
+            Map.Delete(ccb.Placeholder, ccb.EndConditionalPart);
         }
 
         protected void AppendParagraph()
