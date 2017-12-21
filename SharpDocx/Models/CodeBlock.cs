@@ -12,7 +12,7 @@ namespace SharpDocx.Models
 
         public int CurlyBracketLevelIncrement => GetCurlyBracketLevelIncrement(Code);
 
-        public Text StartText, EndText;
+        internal Text StartText, EndText;
 
         internal void RemoveEmptyParagraphs()
         {
