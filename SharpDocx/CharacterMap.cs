@@ -87,21 +87,22 @@ namespace SharpDocx
                 if (child.HasChildren)
                 {
                     CreateMap(child as OpenXmlCompositeElement);
-                    if (child is Paragraph)
-                    {
-                        _map.Add(new Character
-                        {
-                            Char = (char) 10,
-                            Element = child,
-                            Index = -1
-                        });
-
-                        _textBuilder.Append((char) 10);
-                    }
                 }
                 else
                 {
                     _elements.Add(child);
+                }
+
+                if (child is Paragraph || child is Break)
+                {
+                    _map.Add(new Character
+                    {
+                        Char = (char)10,
+                        Element = child,
+                        Index = -1
+                    });
+
+                    _textBuilder.Append((char)10);
                 }
 
                 if (child is Text)

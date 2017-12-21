@@ -73,7 +73,23 @@ namespace SharpDocx
 
         protected void Write(object o)
         {
-            CurrentCodeBlock.Placeholder.Text = ToString(o);
+            string s = ToString(o);
+
+            var lines = s.Split('\n');
+            if (lines.Length == 1)
+            {
+                CurrentCodeBlock.Placeholder.Text = s;
+                return;
+            }
+
+            CurrentCodeBlock.Placeholder.Text = lines[0];
+            var lastText = CurrentCodeBlock.Placeholder;
+
+            for (int i = 1; i < lines.Length; ++i)
+            {
+                var br = lastText.InsertAfterSelf(new Break());
+                lastText = br.InsertAfterSelf(new Text(lines[i]));
+            }
         }
 
         protected string ToString(object o)
