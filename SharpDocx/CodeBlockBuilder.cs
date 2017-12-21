@@ -40,6 +40,8 @@ namespace SharpDocx
 
         private void AppendCodeBlocks(CharacterMap map, bool replaceCodeWithPlaceholder)
         {
+            var mapParts = new Dictionary<CodeBlock, MapPart>();
+
             var startTagIndex = map.Text.IndexOf("<%", 0);
             var firstCodeBlockIndex = CodeBlocks.Count;
 
@@ -53,13 +55,11 @@ namespace SharpDocx
 
                 var code = map.Text.Substring(startTagIndex + 2, endTagIndex - startTagIndex - 2);
                 var cb = GetCodeBlock(code);
-                cb.StartIndex = startTagIndex;
                 cb.StartText = map[startTagIndex].Element as Text;
-                cb.EndIndex = endTagIndex + 1;
                 cb.EndText = map[endTagIndex + 1].Element as Text;
                 cb.Code = code;
                 CodeBlocks.Add(cb);
-
+                mapParts.Add(cb, new MapPart { StartIndex = startTagIndex, EndIndex = endTagIndex + 1});
                 startTagIndex = map.Text.IndexOf("<%", endTagIndex + 2);
             }
 
@@ -72,8 +72,8 @@ namespace SharpDocx
             {
                 // Replace the code of each code block with an empty Text element.
                 var cb = CodeBlocks[i];
-                cb.Placeholder = map.ReplaceWithText(cb, null);
-                //cb.Placeholder = map.ReplaceWithText(cb, $"CB{i}");
+                cb.Placeholder = map.ReplaceWithText(mapParts[cb], null);
+                //cb.Placeholder = map.ReplaceWithText(mapParts[cb], $"CB{i}");
             }
 
             for (var i = firstCodeBlockIndex; i < CodeBlocks.Count; ++i)

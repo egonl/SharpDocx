@@ -4,15 +4,30 @@ using SharpDocx.Extensions;
 
 namespace SharpDocx.Models
 {
-    public class CodeBlock : MapPart
+    public class CodeBlock
     {
-        public Text StartText, EndText;
-
         public string Code { get; set; }
 
         public Text Placeholder { get; set; }
 
         public int CurlyBracketLevelIncrement => GetCurlyBracketLevelIncrement(Code);
+
+        public Text StartText, EndText;
+
+        internal void RemoveEmptyParagraphs()
+        {
+            var startParagraph = StartText.GetParent<Paragraph>();
+            if (startParagraph?.Parent != null && !startParagraph.HasText())
+            {
+                startParagraph.Remove();
+            }
+
+            var endParagraph = EndText.GetParent<Paragraph>();
+            if (endParagraph?.Parent != null && !endParagraph.HasText())
+            {
+                endParagraph.Remove();
+            }
+        }
 
         public static int GetCurlyBracketLevelIncrement(string code)
         {
@@ -65,21 +80,6 @@ namespace SharpDocx.Models
             }
 
             return null;
-        }
-
-        public void RemoveEmptyParagraphs()
-        {
-            var startParagraph = StartText.GetParent<Paragraph>();
-            if (startParagraph?.Parent != null && !startParagraph.HasText())
-            {
-                startParagraph.Remove();
-            }
-
-            var endParagraph = EndText.GetParent<Paragraph>();
-            if (endParagraph?.Parent != null && !endParagraph.HasText())
-            {
-                endParagraph.Remove();
-            }
         }
     }
 }
