@@ -54,7 +54,9 @@
   <ItemGroup>
     <Compile Include="CharacterMap.cs" />
     <Compile Include="CodeBlockBuilder.cs" />
-    <Compile Include="Directive.cs" />
+    <Compile Include="CodeBlocks\CodeBlock.cs" />
+    <Compile Include="CodeBlocks\ConditionalText.cs" />
+    <Compile Include="CodeBlocks\Directive.cs" />
     <Compile Include="ElementAppender.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -66,9 +68,7 @@
     <Compile Include="DocumentBase.cs" />
     <Compile Include="DocumentFactory.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
-    <Compile Include="Models\CodeBlock.cs" />
     <Compile Include="Extensions\OpenXmlElementExtensions.cs" />
-    <Compile Include="Models\ConditionalCodeBlock.cs" />
     <Compile Include="Models\MapPart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

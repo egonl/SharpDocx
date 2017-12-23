@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using SharpDocx.Extensions;
-using SharpDocx.Models;
 
-namespace SharpDocx
+namespace SharpDocx.CodeBlocks
 {
     public class Directive : CodeBlock
     {
@@ -19,7 +18,7 @@ namespace SharpDocx
 
             do
             {
-                stringExpression = GetExpressionInApostrophes(code, startIndex);
+                stringExpression = code.GetExpressionInApostrophes(startIndex);
                 if (stringExpression != null)
                 {
                     // Replace attribute values enclosed in apostrophes with guids to avoid parsing problems later.

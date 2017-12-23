@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
-using SharpDocx.Models;
 
 namespace SharpDocx
 {
     public abstract class DocumentBase
     {
+        public string ImageDirectory { get; set; }
+
+        public string ViewPath { get; private set; }
+
         protected readonly ElementAppender<Paragraph> ParagraphAppender = new ElementAppender<Paragraph>();
 
         protected readonly ElementAppender<TableRow> RowAppender = new ElementAppender<TableRow>();
@@ -21,10 +25,6 @@ namespace SharpDocx
         protected CharacterMap Map;
 
         protected WordprocessingDocument Package;
-
-        public string ImageDirectory { get; set; }
-
-        public string ViewPath { get; private set; }
 
         protected abstract void InvokeDocumentCode();
 
@@ -73,7 +73,7 @@ namespace SharpDocx
 
         protected void Write(object o)
         {
-            string s = ToString(o);
+            var s = ToString(o);
 
             var lines = s.Split('\n');
             if (lines.Length == 1)
@@ -85,7 +85,7 @@ namespace SharpDocx
             CurrentCodeBlock.Placeholder.Text = lines[0];
             var lastText = CurrentCodeBlock.Placeholder;
 
-            for (int i = 1; i < lines.Length; ++i)
+            for (var i = 1; i < lines.Length; ++i)
             {
                 var br = lastText.InsertAfterSelf(new Break());
                 lastText = br.InsertAfterSelf(new Text(lines[i]));
@@ -105,7 +105,7 @@ namespace SharpDocx
 
         protected void DeleteConditionalContent()
         {
-            var ccb = (ConditionalCodeBlock) CurrentCodeBlock;
+            var ccb = (ConditionalText) CurrentCodeBlock;
             Map.Delete(ccb.Placeholder, ccb.EndConditionalPart);
         }
 

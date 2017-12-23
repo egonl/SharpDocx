@@ -15,7 +15,7 @@ using System.Security.Permissions;
 using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.CSharp;
-using SharpDocx.Models;
+using SharpDocx.CodeBlocks;
 
 namespace SharpDocx
 {
@@ -101,9 +101,9 @@ namespace {Namespace}
                             AddReferencedAssembly(directive, referencedAssemblies);
                         }
                     }
-                    else if (cb is ConditionalCodeBlock)
+                    else if (cb is ConditionalText)
                     {
-                        var ccb = (ConditionalCodeBlock) cb;
+                        var ccb = (ConditionalText) cb;
                         invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"            if (!{ccb.Condition}) {{{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"                DeleteConditionalContent();{Environment.NewLine}");

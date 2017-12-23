@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml;
+using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
-using SharpDocx.Models;
 
 namespace SharpDocx
 {

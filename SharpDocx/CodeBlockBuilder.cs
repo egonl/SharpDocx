@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
 using SharpDocx.Models;
 
@@ -79,14 +80,14 @@ namespace SharpDocx
             for (var i = firstCodeBlockIndex; i < CodeBlocks.Count; ++i)
             {
                 // Find out where conditional content ends.
-                var cb = CodeBlocks[i] as ConditionalCodeBlock;
+                var cb = CodeBlocks[i] as ConditionalText;
                 if (cb != null)
                 {
-                    var bracketLevel = cb.CurlyBracketLevelIncrement;
+                    var bracketLevel = cb.Code.GetCurlyBracketLevelIncrement();
 
                     for (var j = i + 1; j < CodeBlocks.Count; ++j)
                     {
-                        bracketLevel += CodeBlocks[j].CurlyBracketLevelIncrement;
+                        bracketLevel += CodeBlocks[j].Code.GetCurlyBracketLevelIncrement();
 
                         if (bracketLevel <= 0)
                         {
@@ -113,11 +114,12 @@ namespace SharpDocx
             {
                 cb = new Directive(code.Substring(1));
             }
-            else if (code.StartsWith("if(") && CodeBlock.GetCurlyBracketLevelIncrement(code) > 0)
+            else if (code.Replace(" ", String.Empty).StartsWith("if(") &&
+                     code.GetCurlyBracketLevelIncrement() > 0)
             {
-                cb = new ConditionalCodeBlock(code)
+                cb = new ConditionalText(code)
                 {
-                    Condition = CodeBlock.GetExpressionInBrackets(code),
+                    Condition = code.GetExpressionInBrackets(),
                 };
             }
             else
