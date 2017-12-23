@@ -54,7 +54,9 @@
   <ItemGroup>
     <Compile Include="CharacterMap.cs" />
     <Compile Include="CodeBlockBuilder.cs" />
+    <Compile Include="Directive.cs" />
     <Compile Include="ElementAppender.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Ide.cs" />
     <Compile Include="ImageHelper.cs" />

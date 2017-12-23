@@ -14,6 +14,11 @@ namespace SharpDocx.Models
 
         internal Text StartText, EndText;
 
+        public CodeBlock(string code)
+        {
+            Code = code;
+        }
+
         internal void RemoveEmptyParagraphs()
         {
             var startParagraph = StartText.GetParent<Paragraph>();
@@ -49,10 +54,10 @@ namespace SharpDocx.Models
             return increment;
         }
 
-        public static string GetExpressionInBrackets(string code, int startIndex = 0)
+        public static string GetExpression(string code, char startExpression, char endExpression, int startIndex = 0)
         {
             // Note: same issue as above.
-            startIndex = code.IndexOf("(", startIndex);
+            startIndex = code.IndexOf(startExpression, startIndex);
             if (startIndex == -1)
             {
                 return null;
@@ -64,11 +69,11 @@ namespace SharpDocx.Models
             {
                 expression.Append(code[i]);
 
-                if (code[i] == '(')
+                if (code[i] == startExpression)
                 {
                     ++increment;
                 }
-                else if (code[i] == ')')
+                else if (code[i] == endExpression)
                 {
                     --increment;
                 }
@@ -80,6 +85,40 @@ namespace SharpDocx.Models
             }
 
             return null;
+        }
+
+        public static string GetExpressionInBrackets(string code, int startIndex = 0)
+        {
+            return GetExpression(code, '(', ')', startIndex);
+        }
+
+        public static string GetExpression(string code, string startOrEndTag, int startIndex = 0, bool removeStartAndEndTag = true)
+        {
+            // The start/end tag can be escaped with '\'.
+            code = code.Replace("\\" + startOrEndTag, "b260231509a148aa9d751a5a9d79abd7");
+
+            startIndex = code.IndexOf(startOrEndTag, startIndex);
+            if (startIndex == -1)
+            {
+                return null;
+            }
+
+            var endIndex = code.IndexOf(startOrEndTag, startIndex + startOrEndTag.Length);
+            if (endIndex == -1)
+            {
+                return null;
+            }
+
+            code = removeStartAndEndTag 
+                ? code.Substring(startIndex + 1, endIndex - startIndex - 1) 
+                : code.Substring(startIndex, endIndex - startIndex + 1);
+
+            return code.Replace("b260231509a148aa9d751a5a9d79abd7", "\\" + startOrEndTag);
+        }
+
+        public static string GetExpressionInApostrophes(string code, int startIndex = 0, bool removeApostrophes = true)
+        {
+            return GetExpression(code, "\"", startIndex, removeApostrophes);
         }
     }
 }

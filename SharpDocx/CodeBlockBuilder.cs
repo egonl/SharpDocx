@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using SharpDocx.Extensions;
 using SharpDocx.Models;
 
 namespace SharpDocx
@@ -57,7 +58,6 @@ namespace SharpDocx
                 var cb = GetCodeBlock(code);
                 cb.StartText = map[startTagIndex].Element as Text;
                 cb.EndText = map[endTagIndex + 1].Element as Text;
-                cb.Code = code;
                 CodeBlocks.Add(cb);
                 mapParts.Add(cb, new MapPart { StartIndex = startTagIndex, EndIndex = endTagIndex + 1});
                 startTagIndex = map.Text.IndexOf("<%", endTagIndex + 2);
@@ -107,16 +107,22 @@ namespace SharpDocx
         {
             CodeBlock cb;
 
-            if (code.Replace(" ", "").StartsWith("if(") && CodeBlock.GetCurlyBracketLevelIncrement(code) > 0)
+            code = code.RemoveRedundantWhitespace();
+
+            if (code.StartsWith("@"))
             {
-                cb = new ConditionalCodeBlock
+                cb = new Directive(code.Substring(1));
+            }
+            else if (code.StartsWith("if(") && CodeBlock.GetCurlyBracketLevelIncrement(code) > 0)
+            {
+                cb = new ConditionalCodeBlock(code)
                 {
                     Condition = CodeBlock.GetExpressionInBrackets(code),
                 };
             }
             else
             {
-                cb = new CodeBlock();
+                cb = new CodeBlock(code);
             }
 
             return cb;

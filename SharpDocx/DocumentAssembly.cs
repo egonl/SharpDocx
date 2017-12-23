@@ -49,38 +49,33 @@ namespace SharpDocx
             }
 
             // Get user defined using directives by calling the static BaseDocument.GetUsingDirectives method.
-            var usingDirectives = (List<string>) a.Invoke(
-                baseClass.FullName,
-                null,
-                "GetUsingDirectives",
-                null);
+            var usingDirectives =
+                (List<string>) a.Invoke(
+                    baseClass.FullName,
+                    null,
+                    "GetUsingDirectives",
+                    null)
+                ?? new List<string>();
+            
 
             // Get user defined assemblies to reference.
-            var referencedAssemblies = (List<string>) a.Invoke(
-                baseClass.FullName,
-                null,
-                "GetReferencedAssemblies",
-                null);
+            var referencedAssemblies =
+                (List<string>) a.Invoke(
+                    baseClass.FullName,
+                    null,
+                    "GetReferencedAssemblies",
+                    null)
+                ?? new List<string>();
 
             if (model != null)
             {
                 // Add namespace(s) of Model.
-                if (usingDirectives == null)
-                {
-                    usingDirectives = new List<string>();
-                }
-
                 foreach (var type in GetTypes(model.GetType()))
                 {
                     usingDirectives.Add($"using {type.Namespace};");
                 }
 
                 // Reference Model assembly/assemblies.
-                if (referencedAssemblies == null)
-                {
-                    referencedAssemblies = new List<string>();
-                }
-
                 foreach (var type in GetTypes(model.GetType()))
                 {
                     referencedAssemblies.Add(type.Assembly.Location);

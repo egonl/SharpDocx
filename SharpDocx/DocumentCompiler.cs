@@ -80,31 +80,44 @@ namespace {Namespace}
             for (var i = 0; i < codeBlocks.Count; ++i)
             {
                 var cb = codeBlocks[i];
-                invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
 
                 if (!string.IsNullOrEmpty(cb.Code))
                 {
                     if (cb.Code[0] == '=')
                     {
                         // Expand <%=SomeVar%> into <% Write(SomeVar); %>
+                        invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"            Write({cb.Code.Substring(1)});{Environment.NewLine}");
+                    }
+                    else if (cb is Directive)
+                    {
+                        var directive = (Directive) cb;
+                        if (directive.Name.Equals("import"))
+                        {
+                            AddUsingDirective(directive, usingDirectives);
+                        }
+                        else if (directive.Name.Equals("assembly"))
+                        {
+                            AddReferencedAssembly(directive, referencedAssemblies);
+                        }
                     }
                     else if (cb is ConditionalCodeBlock)
                     {
-                        var ccb = (ConditionalCodeBlock) cb; 
+                        var ccb = (ConditionalCodeBlock) cb;
+                        invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"            if (!{ccb.Condition}) {{{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"                DeleteConditionalContent();{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"            }}{Environment.NewLine}");
 
-                        invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}");
+                        invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}{Environment.NewLine}");
                     }
                     else
                     {
-                        invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}");
+                        invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
+                        invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}{Environment.NewLine}");
                     }
                 }
 
-                invokeDocumentCodeBody.Append(Environment.NewLine);
             }
 
             var modelType = "string";
@@ -122,6 +135,35 @@ namespace {Namespace}
             script.Replace("{ModelType}", modelType);
             script.Replace("{InvokeDocumentCodeBody}", invokeDocumentCodeBody.ToString());
             return Compile(script.ToString(), referencedAssemblies);
+        }
+
+        private static void AddUsingDirective(Directive directive, List<string> usingDirectives)
+        {
+            // Support for <%@ Import Namespace="System.Collections.Generic" %>
+            if (!directive.Attributes.ContainsKey("namespace"))
+            {
+                throw new Exception($"The Import directive requires a Namespace attribute in '{directive.Code}'.");
+            }
+
+            usingDirectives.Add($"using {directive.Attributes["namespace"]};");
+        }
+
+        private static void AddReferencedAssembly(Directive directive, List<string> referencedAssemblies)
+        {
+            // Support for <%@ Assembly Name="System.Speech" %>
+            if (!directive.Attributes.ContainsKey("name"))
+            {
+                throw new Exception($"The Assembly directive requires a Name attribute in '{directive.Code}'.");
+            }
+
+            var assembly = directive.Attributes["name"];
+            if (!assembly.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) &&
+                !assembly.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
+            {
+                assembly = assembly + ".dll";
+            }
+
+            referencedAssemblies.Add(assembly);
         }
 
         private static Assembly Compile(

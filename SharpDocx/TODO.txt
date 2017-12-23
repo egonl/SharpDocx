@@ -1,4 +1,6 @@
-﻿-Insert merge fields.
+﻿-Multiple calls to write in the same code block should be handled correctly.
+-Insert merge fields.
+-Directive sample.
 
 Consider:
 -Show inheritance model in Tutorial (see also https://msdn.microsoft.com/en-us/library/ms178138.aspx).

@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using System.Runtime.CompilerServices;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace SharpDocx.Models
 {
@@ -10,5 +11,9 @@ namespace SharpDocx.Models
         public string Condition { get; set; }
 
         public Text EndConditionalPart { get; set; }
+
+        public ConditionalCodeBlock(string code) : base(code)
+        {            
+        }
     }
 }
