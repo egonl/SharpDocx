@@ -102,6 +102,12 @@ namespace SharpDocx
                     }
                 }
             }
+
+            for (var i = firstCodeBlockIndex; i < CodeBlocks.Count; ++i)
+            {
+                var appender = CodeBlocks[i] as Appender;
+                appender?.Initialize();
+            }
         }
 
         private static CodeBlock GetCodeBlock(string code)
@@ -114,13 +120,15 @@ namespace SharpDocx
             {
                 cb = new Directive(code.Substring(1));
             }
+            else if (code.Contains("AppendParagraph") || code.Contains("AppendRow"))
+            {
+                // TODO: match whole words only. 
+                cb = new Appender(code);
+            }
             else if (code.Replace(" ", String.Empty).StartsWith("if(") &&
                      code.GetCurlyBracketLevelIncrement() > 0)
             {
-                cb = new ConditionalText(code)
-                {
-                    Condition = code.GetExpressionInBrackets(),
-                };
+                cb = new ConditionalText(code);
             }
             else
             {

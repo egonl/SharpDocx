@@ -14,10 +14,6 @@ namespace SharpDocx
 
         public string ViewPath { get; private set; }
 
-        protected readonly ElementAppender<Paragraph> ParagraphAppender = new ElementAppender<Paragraph>();
-
-        protected readonly ElementAppender<TableRow> RowAppender = new ElementAppender<TableRow>();
-
         protected List<CodeBlock> CodeBlocks;
 
         protected CodeBlock CurrentCodeBlock;
@@ -111,12 +107,14 @@ namespace SharpDocx
 
         protected void AppendParagraph()
         {
-            ParagraphAppender.Append(CurrentCodeBlock);
+            var appender = CurrentCodeBlock as Appender;
+            appender.Append<Paragraph>();
         }
 
         protected void AppendRow()
         {
-            RowAppender.Append(CurrentCodeBlock);
+            var appender = CurrentCodeBlock as Appender;
+            appender.Append<TableRow>();
         }
 
         protected void Image(string filePath, int percentage = 100)

@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Wordprocessing;
+using SharpDocx.Extensions;
 
 namespace SharpDocx.CodeBlocks
 {
@@ -13,6 +14,7 @@ namespace SharpDocx.CodeBlocks
 
         public ConditionalText(string code) : base(code)
         {
+            Condition = code.GetExpressionInBrackets();
         }
     }
 }

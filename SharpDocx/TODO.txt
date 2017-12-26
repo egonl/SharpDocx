@@ -1,16 +1,14 @@
 ﻿-Multiple calls to write in the same code block should be handled correctly.
+-Mention Model and Inhertitance in Tutorial.
 -Insert merge fields.
--Directive sample.
 
 Consider:
--Show inheritance model in Tutorial (see also https://msdn.microsoft.com/en-us/library/ms178138.aspx).
--ElementAppender supports only one template row/paragraph in a code block at a time. Maybe support multiple templates per code block.
--Implement ViewBag.
+-Show inheritance model in Tutorial (e.g. https://msdn.microsoft.com/en-us/library/ms178138.aspx).
 -Use a proper C# parser, so there are no potential issues with e.g. brackets in strings/comments/etc.
 -Support code blocks in DocumentFormat.OpenXml.Vml.TextPath.String.
--Use XML documentation comments.
+-Implement ViewBag.
 -Support C# 6.
--Create samples with a nice form / barcode / complex model (maybe a model based on https://www.theimdbapi.org/).
+-Create sample with a complex form.
 
 Won't fix:
 -Support contructed generic types as Model in .NET v3.5. 
