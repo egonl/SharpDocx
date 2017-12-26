@@ -36,6 +36,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\DocumentViewModel.cs" />
     <Compile Include="Program.cs" />
