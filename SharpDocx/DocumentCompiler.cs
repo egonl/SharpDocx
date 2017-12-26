@@ -40,7 +40,7 @@ namespace {Namespace}
 {InvokeDocumentCodeBody}
         }
 
-        protected override void SetModel(object model)
+        public override void SetModel(object model)
         {
             Model = model as {ModelType};
         }

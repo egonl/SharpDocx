@@ -24,7 +24,7 @@ namespace SharpDocx
 
         protected abstract void InvokeDocumentCode();
 
-        protected abstract void SetModel(object model);
+        public abstract void SetModel(object model);
 
         public void Generate(string documentPath)
         {
