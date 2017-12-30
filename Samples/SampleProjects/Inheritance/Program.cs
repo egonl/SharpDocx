@@ -14,10 +14,10 @@ namespace Inheritance
             var documentPath = $"{BasePath}\\Documents\\Inheritance.docx";
 
 #if DEBUG
-            Ide.Start(viewPath, documentPath, null, typeof(MyDocument), f => ((MyDocument) f).MyProperty = "excellent");
+            Ide.Start(viewPath, documentPath, null, typeof(MyDocument), f => ((MyDocument) f).MyProperty = "The code");
 #else
             var myDocument = DocumentFactory.Create<MyDocument>(viewPath);
-            myDocument.MyProperty = "excellent";
+            myDocument.MyProperty = "The Code";
             myDocument.Generate(documentPath);
 #endif
         }
