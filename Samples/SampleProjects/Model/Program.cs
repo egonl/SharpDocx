@@ -22,7 +22,7 @@ namespace Model
             //var countries = new List<Country> { new Country { Name = "Porosika" } };
             var countries = CountryRepository.GetCountries();
 
-            var model = new DocumentViewModel
+            var model = new MyViewModel
             {
                 Title = "Model Sample",
                 Date = DateTime.Now.ToShortDateString(),

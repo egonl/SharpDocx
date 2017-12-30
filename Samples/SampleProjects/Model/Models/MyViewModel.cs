@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Model.Models
 {
-    public class DocumentViewModel
+    public class MyViewModel
     {
         public string Title { get; set; }
         public string Date { get; set; }
