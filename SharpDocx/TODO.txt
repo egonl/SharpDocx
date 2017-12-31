@@ -1,14 +1,12 @@
-﻿-Multiple calls to write in the same code block should be handled correctly.
--Mention Model and Inhertitance in Tutorial.
--Insert merge fields.
+﻿-Fix bug in Inheritance sample.
 
 Consider:
--Show inheritance model in Tutorial (e.g. https://msdn.microsoft.com/en-us/library/ms178138.aspx).
 -Use a proper C# parser, so there are no potential issues with e.g. brackets in strings/comments/etc.
 -Support code blocks in DocumentFormat.OpenXml.Vml.TextPath.String.
+-Insert merge fields.
+-Multiple calls to write in the same code block should result in concatenated text.
 -Implement ViewBag.
 -Support C# 6.
--Create sample with a complex form.
 
 Won't fix:
 -Support contructed generic types as Model in .NET v3.5. 
