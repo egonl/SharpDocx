@@ -35,8 +35,9 @@ namespace Inheritance
             var id = $"r{Guid.NewGuid():N}";
 
             var hyperlink = new Hyperlink(
-                new RunProperties(new RunStyle {Val = "Hyperlink"}),
-                new Run(new Text(text)))
+                new Run(
+                    new RunProperties(new RunStyle { Val = "Hyperlink" }),
+                    new Text(text)))
             {
                 History = true,
                 Id = id

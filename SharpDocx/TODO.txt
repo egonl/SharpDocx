@@ -1,12 +1,12 @@
-﻿-Fix bug in Inheritance sample.
-
+﻿
 Consider:
+-Support C# 6.
 -Use a proper C# parser, so there are no potential issues with e.g. brackets in strings/comments/etc.
 -Support code blocks in DocumentFormat.OpenXml.Vml.TextPath.String.
+-Implement a better CreateHyperlink method, because the one in the Inheritance sample doesn't always insert the link at the right place.
 -Insert merge fields.
 -Multiple calls to write in the same code block should result in concatenated text.
 -Implement ViewBag.
--Support C# 6.
 
 Won't fix:
 -Support contructed generic types as Model in .NET v3.5. 
