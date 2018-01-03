@@ -14,7 +14,11 @@ namespace SharpDocx.CodeBlocks
 
         internal Text EndText { get; set; }
 
-        public CodeBlock(string code)
+        private CodeBlock()
+        {
+        }
+
+        internal CodeBlock(string code)
         {
             Code = code;
         }

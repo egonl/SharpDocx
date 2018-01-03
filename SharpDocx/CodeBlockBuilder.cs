@@ -20,17 +20,17 @@ namespace SharpDocx
 
             foreach (var headerPart in package.MainDocumentPart.HeaderParts)
             {
-                var headerMap = CharacterMap.Create(headerPart.Header);
+                var headerMap = new CharacterMap(headerPart.Header);
                 AppendCodeBlocks(headerMap, replaceCodeWithPlaceholder);
             }
 
             foreach (var footerPart in package.MainDocumentPart.FooterParts)
             {
-                var footerMap = CharacterMap.Create(footerPart.Footer);
+                var footerMap = new CharacterMap(footerPart.Footer);
                 AppendCodeBlocks(footerMap, replaceCodeWithPlaceholder);
             }
 
-            BodyMap = CharacterMap.Create(package.MainDocumentPart.Document.Body);
+            BodyMap = new CharacterMap(package.MainDocumentPart.Document.Body);
             AppendCodeBlocks(BodyMap, replaceCodeWithPlaceholder);
 
             if (replaceCodeWithPlaceholder)

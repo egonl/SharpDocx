@@ -6,7 +6,7 @@ namespace SharpDocx.CodeBlocks
     /// <summary>
     ///     ConditionalText is used to conditionally show or hide Word elements.
     /// </summary>
-    public class ConditionalText : CodeBlock
+    internal class ConditionalText : CodeBlock
     {
         public string Condition { get; set; }
 

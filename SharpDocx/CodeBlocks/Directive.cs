@@ -4,7 +4,7 @@ using SharpDocx.Extensions;
 
 namespace SharpDocx.CodeBlocks
 {
-    public class Directive : CodeBlock
+    internal class Directive : CodeBlock
     {
         public string Name { get; }
 

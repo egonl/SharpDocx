@@ -5,7 +5,7 @@ using SharpDocx.Extensions;
 
 namespace SharpDocx.CodeBlocks
 {
-    public class Appender : CodeBlock
+    internal class Appender : CodeBlock
     {
         private OpenXmlElement _lastElement;
         private OpenXmlCompositeElement _newElement;

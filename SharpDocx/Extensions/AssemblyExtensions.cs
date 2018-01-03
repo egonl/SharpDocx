@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace SharpDocx.Extensions
 {
-    public static class AssemblyExtensions
+    internal static class AssemblyExtensions
     {
         public static object Invoke(
             this Assembly assembly,

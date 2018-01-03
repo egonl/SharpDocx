@@ -61,13 +61,12 @@ namespace SharpDocx
 
         internal bool IsDirty { get; set; }
 
-        public static CharacterMap Create(OpenXmlCompositeElement ce)
+        public CharacterMap(OpenXmlCompositeElement ce)
         {
-            var m = new CharacterMap {_rootElement = ce};
-            m.CreateMap(m._rootElement);
-            m._text = m._textBuilder.ToString();
-            m.IsDirty = false;
-            return m;
+            _rootElement = ce;
+            CreateMap(_rootElement);
+            _text = _textBuilder.ToString();
+            IsDirty = false;
         }
 
         private void Recreate()
