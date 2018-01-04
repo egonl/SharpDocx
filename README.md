@@ -1,3 +1,5 @@
+[![NuGet](https://img.shields.io/nuget/v/SharpDocx.svg)](https://www.nuget.org/packages/SharpDocx/)
+[![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/egonl/SharpDocx/blob/master/LICENSE)
 # SharpDocx
 *C# library for creating Word documents*
 
