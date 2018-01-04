@@ -33,7 +33,7 @@ namespace {Namespace}
 {
     public class {ClassName} : {BaseClassName}
     {
-        public {ModelType} Model { get; set; }
+        public {ModelTypeName} Model { get; set; }
 
         protected override void InvokeDocumentCode()
         {
@@ -42,7 +42,18 @@ namespace {Namespace}
 
         public override void SetModel(object model)
         {
-            Model = model as {ModelType};
+            if (model == null)
+            {
+                Model = null;
+                return;
+            }
+
+            Model = model as {ModelTypeName};
+
+            if (Model == null)
+            {
+                throw new ArgumentException(""Model is not of type {ModelTypeName}"", ""model"");
+            }
         }
     }
 }";
@@ -51,7 +62,7 @@ namespace {Namespace}
             string viewPath, 
             string className, 
             string baseClassName, 
-            object model,
+            Type modelType,
             List<string> usingDirectives, 
             List<string> referencedAssemblies)
         {
@@ -120,11 +131,7 @@ namespace {Namespace}
 
             }
 
-            var modelType = "string";
-            if (model != null)
-            {
-                modelType = FormatType(model.GetType());
-            }
+            var modelTypeName = modelType != null ? FormatType(modelType) : "string";
 
             var script = new StringBuilder();
             script.Append(documentClassTemplate);
@@ -132,7 +139,7 @@ namespace {Namespace}
             script.Replace("{Namespace}", Namespace);
             script.Replace("{ClassName}", className);
             script.Replace("{BaseClassName}", baseClassName);
-            script.Replace("{ModelType}", modelType);
+            script.Replace("{ModelTypeName}", modelTypeName);
             script.Replace("{InvokeDocumentCodeBody}", invokeDocumentCodeBody.ToString());
             return Compile(script.ToString(), referencedAssemblies);
         }

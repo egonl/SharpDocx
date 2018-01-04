@@ -45,7 +45,7 @@ namespace SharpDocx
                     da = new DocumentAssembly(
                         viewPath,
                         baseClassType,
-                        model);
+                        model?.GetType());
 
                     Assemblies[viewPath + baseClassName + modelTypeName] = da;
                 }

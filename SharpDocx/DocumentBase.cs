@@ -26,8 +26,13 @@ namespace SharpDocx
 
         public abstract void SetModel(object model);
 
-        public void Generate(string documentPath)
+        public void Generate(string documentPath, object model = null)
         {
+            if (model != null)
+            {
+                SetModel(model);
+            }
+
             documentPath = Path.GetFullPath(documentPath);
 
             File.Copy(ViewPath, documentPath, true);

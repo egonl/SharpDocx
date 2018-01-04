@@ -14,7 +14,7 @@ namespace SharpDocx
         internal DocumentAssembly(
             string viewPath,
             Type baseClass,
-            object model)
+            Type modelType)
         {
             if (!File.Exists(viewPath))
             {
@@ -67,17 +67,13 @@ namespace SharpDocx
                     null)
                 ?? new List<string>();
 
-            if (model != null)
+            if (modelType != null)
             {
-                // Add namespace(s) of Model.
-                foreach (var type in GetTypes(model.GetType()))
+                // Add namespace(s) of Model and reference Model assembly/assemblies.
+
+                foreach (var type in GetTypes(modelType))
                 {
                     usingDirectives.Add($"using {type.Namespace};");
-                }
-
-                // Reference Model assembly/assemblies.
-                foreach (var type in GetTypes(model.GetType()))
-                {
                     referencedAssemblies.Add(type.Assembly.Location);
                 }
             }
@@ -90,7 +86,7 @@ namespace SharpDocx
                 viewPath,
                 _className,
                 baseClass.Name,
-                model,
+                modelType,
                 usingDirectives,
                 referencedAssemblies);
         }

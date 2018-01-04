@@ -37,9 +37,15 @@ namespace Model
             Ide.Start(viewPath, documentPath, model);
 #else
             var document = DocumentFactory.Create(viewPath, model);
+            var startTime = DateTime.Now;
 
-            for (int i = 0; i < 10; ++i)
+            for (int i = 0; (DateTime.Now - startTime).TotalSeconds < 1; ++i)
             {
+                // Create a new model for each document.
+                //model = new MyViewModel { Title = $"Model Sample Part {i+1}", Countries = new List<Country>()};
+                //document.Generate($"{BasePath}\\Documents\\Model {i}.docx", model);
+
+                // Reuse the initial model.
                 model.Title = $"Model Sample Part {i}";
                 document.Generate($"{BasePath}\\Documents\\Model {i}.docx");
             }
