@@ -45,10 +45,10 @@ namespace SharpDocx
             // Check base class type.
             if (t != typeof(DocumentBase) && !t.IsSubclassOf(typeof(DocumentBase)))
             {
-                throw new ArgumentException("baseClass should be a BaseDocument derived type", nameof(baseClass));
+                throw new ArgumentException("baseClass should be a DocumentBase derived type", nameof(baseClass));
             }
 
-            // Get user defined using directives by calling the static BaseDocument.GetUsingDirectives method.
+            // Get user defined using directives by calling the static DocumentBase.GetUsingDirectives method.
             var usingDirectives =
                 (List<string>) a.Invoke(
                     baseClass.FullName,

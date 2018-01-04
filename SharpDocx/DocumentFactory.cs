@@ -6,7 +6,7 @@ namespace SharpDocx
 {
     // DocumentFactory purpose:
     // -Generate and cache DocumentAssemblies;
-    // -Create instances of a BaseDocument derived type.
+    // -Create instances of a DocumentBase derived type.
 
     public static class DocumentFactory
     {
