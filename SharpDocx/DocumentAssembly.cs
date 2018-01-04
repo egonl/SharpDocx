@@ -70,7 +70,6 @@ namespace SharpDocx
             if (modelType != null)
             {
                 // Add namespace(s) of Model and reference Model assembly/assemblies.
-
                 foreach (var type in GetTypes(modelType))
                 {
                     usingDirectives.Add($"using {type.Namespace};");
