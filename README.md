@@ -1,6 +1,8 @@
+# SharpDocx
 [![NuGet](https://img.shields.io/nuget/v/SharpDocx.svg)](https://www.nuget.org/packages/SharpDocx/)
 [![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/egonl/SharpDocx/blob/master/LICENSE)
-# SharpDocx
+[![AppVeyor](https://img.shields.io/appveyor/ci/egonl/SharpDocx.svg)](https://ci.appveyor.com/project/egonl/SharpDocx/branch/master)
+
 *C# library for creating Word documents*
 
 SharpDocx is inspired by Web technologies like ASP.NET and JSP. Developers familiar with those technologies should feel right at home.
