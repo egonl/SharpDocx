@@ -1,6 +1,9 @@
-﻿using System;
+﻿//#define SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
+
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SharpDocx.CodeBlocks;
@@ -26,6 +29,10 @@ namespace SharpDocx
 
         public abstract void SetModel(object model);
 
+#if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
+        private static readonly Mutex PackageMutex = new Mutex(false);
+#endif
+
         public void Generate(string documentPath, object model = null)
         {
             if (model != null)
@@ -37,19 +44,36 @@ namespace SharpDocx
 
             File.Copy(ViewPath, documentPath, true);
 
-            using (Package = WordprocessingDocument.Open(documentPath, true))
+#if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
+            // Due to a bug in System.IO.Packaging writing large uncompressed parts (>10MB) isn't thread safe in .NET 3.5.
+            // Workaround: make writing in all threads and processes sequential.
+            // Microsoft fixed this in .NET 4.5 (see https://maheshkumar.wordpress.com/2014/10/21/).
+            PackageMutex.WaitOne(Timeout.Infinite, false);
+
+            try
             {
-                var codeBlockBuilder = new CodeBlockBuilder(Package, true);
-                CodeBlocks = codeBlockBuilder.CodeBlocks;
-                Map = codeBlockBuilder.BodyMap;
-
-                InvokeDocumentCode();
-
-                foreach (var cb in CodeBlocks)
+#endif
+                using (Package = WordprocessingDocument.Open(documentPath, true))
                 {
-                    cb.RemoveEmptyParagraphs();
+                    var codeBlockBuilder = new CodeBlockBuilder(Package, true);
+                    CodeBlocks = codeBlockBuilder.CodeBlocks;
+                    Map = codeBlockBuilder.BodyMap;
+
+                    InvokeDocumentCode();
+
+                    foreach (var cb in CodeBlocks)
+                    {
+                        cb.RemoveEmptyParagraphs();
+                    }
                 }
+
+#if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
             }
+            finally
+            {
+                PackageMutex.ReleaseMutex();
+            }
+#endif
         }
 
         // Override this static method if you want to specify additional using directives.
@@ -96,6 +120,13 @@ namespace SharpDocx
             return o?.ToString() ?? string.Empty;
         }
 
+#if NET35
+        protected void Replace(string oldValue, string newValue)
+        {
+            Replace(oldValue, newValue, 0, StringComparison.CurrentCulture);
+        }
+#endif
+
         protected void Replace(string oldValue, string newValue, int startIndex = 0,
             StringComparison stringComparison = StringComparison.CurrentCulture)
         {
@@ -119,6 +150,13 @@ namespace SharpDocx
             var appender = CurrentCodeBlock as Appender;
             appender.Append<TableRow>();
         }
+
+#if NET35
+        protected void Image(string filePath)
+        {
+            Image(filePath, 100);
+        }
+#endif
 
         protected void Image(string filePath, int percentage = 100)
         {
