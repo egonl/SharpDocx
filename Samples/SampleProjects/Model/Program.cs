@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Model.Models;
 using Model.Repositories;
 using SharpDocx;
@@ -15,41 +16,57 @@ namespace Model
 
         private static void Main()
         {
+#if DEBUG
             var viewPath = $"{BasePath}\\Views\\Model.cs.docx";
-            var documentPath = $"{BasePath}\\Documents\\Model.docx";
+            var documentPath = $"{BasePath}\\Documents\\Model.docx";            
+            var model = CreateViewModel();
 
+            Ide.Start(viewPath, documentPath, model);
+#else
+            var startTime = DateTime.Now;
+            var documentCount = 100;
+
+            // Single threaded performance test.
+            for (int i = 0; i < documentCount; ++i)
+            {
+                GenerateDocument(i);
+            }
+
+            // Multi threaded performance test.
+            //Parallel.For(0, documentCount, GenerateDocument);
+
+            var totalSeconds = (DateTime.Now - startTime).TotalSeconds;
+            Console.WriteLine($"Generated {documentCount} documents in {totalSeconds:N2}s ({documentCount / totalSeconds:N2} documents/s).");
+            Console.ReadKey();
+#endif
+        }
+
+        private static void GenerateDocument(int i)
+        {
+            var viewPath = $"{BasePath}\\Views\\Model.cs.docx";
+            var documentPath = $"{BasePath}\\Documents\\Model {i}.docx";
+            var model = CreateViewModel();
+
+            var document = DocumentFactory.Create(viewPath, model);
+            document.Generate(documentPath);
+        }
+
+        private static MyViewModel CreateViewModel()
+        {
             //var countries = new List<Country>();
             //var countries = new List<Country> { new Country { Name = "Porosika" } };
             var countries = CountryRepository.GetCountries();
 
-            var model = new MyViewModel
+            return new MyViewModel
             {
                 Title = "Model Sample",
                 Date = DateTime.Now.ToShortDateString(),
                 Countries = countries,
                 AveragePopulation = countries.Count > 0
-                    ? (int)countries.Average(c => c.Population)
-                    : (int?)null,
+                    ? (int) countries.Average(c => c.Population)
+                    : (int?) null,
                 AverageDateProclaimed = GetAverageDateProclaimed(countries)
             };
-
-#if DEBUG
-            Ide.Start(viewPath, documentPath, model);
-#else
-            var document = DocumentFactory.Create(viewPath, model);
-            var startTime = DateTime.Now;
-
-            for (int i = 0; (DateTime.Now - startTime).TotalSeconds < 1; ++i)
-            {
-                // Create a new model for each document.
-                //model = new MyViewModel { Title = $"Model Sample Part {i+1}", Countries = new List<Country>()};
-                //document.Generate($"{BasePath}\\Documents\\Model {i}.docx", model);
-
-                // Reuse the initial model.
-                model.Title = $"Model Sample Part {i}";
-                document.Generate($"{BasePath}\\Documents\\Model {i}.docx");
-            }
-#endif
         }
 
         private static DateTime? GetAverageDateProclaimed(List<Country> countries)

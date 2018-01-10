@@ -1,5 +1,6 @@
 ﻿
 Consider:
+-Reuse image parts where possible. 
 -Support C# 6.
 -Use a proper C# parser, so there are no potential issues with e.g. brackets in strings/comments/etc.
 -Support code blocks in DocumentFormat.OpenXml.Vml.TextPath.String.

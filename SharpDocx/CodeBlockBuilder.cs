@@ -30,11 +30,17 @@ namespace SharpDocx
                 AppendCodeBlocks(footerMap, replaceCodeWithPlaceholder);
             }
 
-            var endnotesMap = new CharacterMap(package.MainDocumentPart.EndnotesPart.Endnotes);
-            AppendCodeBlocks(endnotesMap, replaceCodeWithPlaceholder);
+            if (package.MainDocumentPart.EndnotesPart != null)
+            {
+                var endnotesMap = new CharacterMap(package.MainDocumentPart.EndnotesPart.Endnotes);
+                AppendCodeBlocks(endnotesMap, replaceCodeWithPlaceholder);
+            }
 
-            var footnotesMap = new CharacterMap(package.MainDocumentPart.FootnotesPart.Footnotes);
-            AppendCodeBlocks(footnotesMap, replaceCodeWithPlaceholder);
+            if (package.MainDocumentPart.FootnotesPart != null)
+            {
+                var footnotesMap = new CharacterMap(package.MainDocumentPart.FootnotesPart.Footnotes);
+                AppendCodeBlocks(footnotesMap, replaceCodeWithPlaceholder);
+            }
 
             BodyMap = new CharacterMap(package.MainDocumentPart.Document.Body);
             AppendCodeBlocks(BodyMap, replaceCodeWithPlaceholder);
