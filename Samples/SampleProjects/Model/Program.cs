@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if !NET35 
 using System.Threading.Tasks;
+#endif
 using Model.Models;
 using Model.Repositories;
 using SharpDocx;
@@ -12,7 +14,7 @@ namespace Model
     internal class Program
     {
         private static readonly string BasePath =
-            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..";
+            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..\..";
 
         private static void Main()
         {

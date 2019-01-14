@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;net35;netstandard2.0</TargetFrameworks>
+    <RootNamespace>SharpDocx</RootNamespace>
+    <Version>1.2.0.0</Version>
+    <Authors>egonl</Authors>
+    <Product>SharpDocx</Product>
+    <PackageId>MyApp</PackageId>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>C# based template engine for generating Word documents</Description>
+    <Copyright>Copyright 2017-2019 egonl</Copyright>
+    <PackageLicenseUrl>https://github.com/egonl/SharpDocx/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/egonl/SharpDocx</PackageProjectUrl>
+    <!-- <PackageIconUrl>Icon URL</PackageIconUrl> -->
+    <!-- <RepositoryUrl>Repo URL</RepositoryUrl> -->
+    <!-- <RepositoryType>Repo type</RepositoryType> -->
+    <!-- <PackageTags>Tags</PackageTags> -->
+    <PackageReleaseNotes>Release</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="lib\**" />
+    <Compile Remove="nupkg\**" />
+    <EmbeddedResource Remove="lib\**" />
+    <EmbeddedResource Remove="nupkg\**" />
+    <None Remove="lib\**" />
+    <None Remove="nupkg\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.8.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
+      <Version>2.10.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
+    <Reference Include="PresentationCore" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="PresentationCore" />
+  </ItemGroup>
+
+</Project>

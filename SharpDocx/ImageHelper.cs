@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+#if NET35 || NET45
 using System.Windows.Media.Imaging;
+#endif
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
@@ -17,6 +19,10 @@ namespace SharpDocx
             ImagePartType imagePartType, 
             int percentage, long maxWidthInEmus)
         {
+#if !(NET35 || NET45)
+            // TODO: fix me.
+            return null;
+#else
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
             var img = new BitmapImage();
 
@@ -54,6 +60,7 @@ namespace SharpDocx
 
             var drawing = GetDrawing(package.MainDocumentPart.GetIdOfPart(imagePart), widthEmus, heightEmus);
             return drawing;
+#endif
         }
 
         public static ImagePartType GetImagePartType(string filePath)
@@ -63,7 +70,6 @@ namespace SharpDocx
             {
                 throw new ArgumentException("Unknown extension", filePath);
             }
-
 
             // TODO: test which types actually work.
             ImagePartType? type = null;

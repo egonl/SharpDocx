@@ -1,4 +1,6 @@
-﻿
+﻿Todo:
+-Implement ImageHelper.CreateDrawing for .NET Standard.
+
 Consider:
 -Reuse image parts where possible. 
 -Support C# 6.

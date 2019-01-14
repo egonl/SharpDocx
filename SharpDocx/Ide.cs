@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace SharpDocx
@@ -37,6 +38,16 @@ namespace SharpDocx
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                }
+
+                try
+                {              
+                    // Show the generated document.
+                    Process.Start(documentPath);
+                }
+                catch
+                {
+                    // Ignored.
                 }
 
                 Console.WriteLine("Press Esc to exit, any other key to retry . . .");

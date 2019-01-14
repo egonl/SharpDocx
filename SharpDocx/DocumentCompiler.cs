@@ -4,8 +4,16 @@
 using System.Linq;
 #endif
 
-using System;
+#if NET35 || NET45
 using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+#else
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,7 +22,6 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
 using DocumentFormat.OpenXml.Packaging;
-using Microsoft.CSharp;
 using SharpDocx.CodeBlocks;
 
 namespace SharpDocx
@@ -177,11 +184,12 @@ namespace {Namespace}
             string sourceCode,
             List<string> referencedAssemblies)
         {
+#if NET35 || NET45
             // Create the compiler.
 #if NET35
             var options = new Dictionary<string, string> {{"CompilerVersion", "v3.5"}};
 #else
-            var options = new Dictionary<string, string> {{"CompilerVersion", "v4.0"}};
+            var options = new Dictionary<string, string> { { "CompilerVersion", "v4.0" } };
 #endif
             CodeDomProvider compiler = new CSharpCodeProvider(options);
 
@@ -247,6 +255,73 @@ namespace {Namespace}
 
             // Return the assembly.
             return results.CompiledAssembly;
+#else
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+
+            var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
+            var references = new List<MetadataReference> 
+            {
+                MetadataReference.CreateFromFile(Assembly.GetExecutingAssembly().Location),
+                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(WordprocessingDocument).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(DocumentBase).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(List<>).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.Xml.XmlAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "mscorlib.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "netstandard.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Core.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Runtime.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Collections.dll")),
+            };
+
+            if (referencedAssemblies != null)
+            {
+                foreach (var ra in referencedAssemblies)
+                {
+                    references.Add(MetadataReference.CreateFromFile(ra));
+                }
+            }
+
+            string assemblyName = Path.GetRandomFileName();
+
+            CSharpCompilation compilation = CSharpCompilation.Create(
+                assemblyName,
+                new[] { syntaxTree },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            using (var ms = new MemoryStream())
+            {
+                EmitResult result = compilation.Emit(ms);
+
+                if (!result.Success)
+                {
+                    var formattedCode = new StringBuilder();
+                    var lines = sourceCode.Split('\n');
+                    for (var i = 0; i < lines.Length; ++i)
+                    {
+                        formattedCode.Append($"{i + 1,5}  {lines[i]}\n");
+                    }
+
+                    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
+                        diagnostic.IsWarningAsError || 
+                        diagnostic.Severity == DiagnosticSeverity.Error);
+
+                    var formattedErrors = new StringBuilder();
+                    foreach (Diagnostic diagnostic in failures)
+                    {
+                        // TODO: show line number 
+                        formattedErrors.AppendLine($"{diagnostic.Id}: {diagnostic.GetMessage()}");
+                    }
+
+                    throw new SharpDocxCompilationException(formattedCode.ToString(), formattedErrors.ToString());
+                }
+
+                ms.Seek(0, SeekOrigin.Begin);
+                return Assembly.Load(ms.ToArray());
+            }
+#endif
         }
 
         private static string FormatUsingDirectives(List<string> usingDirectives)

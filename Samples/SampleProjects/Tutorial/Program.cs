@@ -6,7 +6,7 @@ namespace Tutorial
     internal class Program
     {
         private static readonly string BasePath =
-            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..";
+            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..\..";
 
         private static void Main()
         {
