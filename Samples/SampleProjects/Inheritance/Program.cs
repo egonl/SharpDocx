@@ -6,12 +6,12 @@ namespace Inheritance
     internal class Program
     {
         private static readonly string BasePath =
-            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..\..";
+            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"/../../../../..";
 
         private static void Main()
         {
-            var viewPath = $"{BasePath}\\Views\\Inheritance.cs.docx";
-            var documentPath = $"{BasePath}\\Documents\\Inheritance.docx";
+            var viewPath = $"{BasePath}/Views/Inheritance.cs.docx";
+            var documentPath = $"{BasePath}/Documents/Inheritance.docx";
 
 #if DEBUG
             Ide.Start(viewPath, documentPath, null, typeof(MyDocument), f => ((MyDocument) f).MyProperty = "The code");

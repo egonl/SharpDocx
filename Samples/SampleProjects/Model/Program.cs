@@ -14,13 +14,13 @@ namespace Model
     internal class Program
     {
         private static readonly string BasePath =
-            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"\..\..\..\..\..";
+            Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"/../../../../..";
 
         private static void Main()
         {
 #if DEBUG
-            var viewPath = $"{BasePath}\\Views\\Model.cs.docx";
-            var documentPath = $"{BasePath}\\Documents\\Model.docx";            
+            var viewPath = $"{BasePath}/Views/Model.cs.docx";
+            var documentPath = $"{BasePath}/Documents/Model.docx";            
             var model = CreateViewModel();
 
             Ide.Start(viewPath, documentPath, model);
