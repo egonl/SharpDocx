@@ -29,6 +29,16 @@ namespace SharpDocx
                     initializeDocument?.Invoke(document);
                     document.Generate(documentPath);
                     Console.WriteLine($"Succesfully generated '{documentPath}'.");
+
+                    try
+                    {              
+                        // Show the generated document.
+                        Process.Start(documentPath);
+                    }
+                    catch
+                    {
+                        // Ignored.
+                    }
                 }
                 catch (SharpDocxCompilationException e)
                 {
@@ -38,16 +48,6 @@ namespace SharpDocx
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                }
-
-                try
-                {              
-                    // Show the generated document.
-                    Process.Start(documentPath);
-                }
-                catch
-                {
-                    // Ignored.
                 }
 
                 Console.WriteLine("Press Esc to exit, any other key to retry . . .");
