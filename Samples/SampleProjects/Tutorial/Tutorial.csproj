@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <!-- The tutorial doesn't support netcoreapp2.1 yet. The Inheritance and Model sample do, however. -->
-    <TargetFrameworks>net45;net35</TargetFrameworks>
+    <TargetFrameworks>net45;net35;netcoreapp2.0</TargetFrameworks>
     <RootNamespace>Tutorial</RootNamespace>
   </PropertyGroup>
 

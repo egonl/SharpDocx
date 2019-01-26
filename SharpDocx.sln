@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpDocx", "SharpDocx\SharpDocx.csproj", "{11025F4C-5F88-4CBF-A29D-494260BF71F8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{469F76BC-D622-4AB7-B71E-DA7F265E7E05} = {469F76BC-D622-4AB7-B71E-DA7F265E7E05}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tutorial", "Samples\SampleProjects\Tutorial\Tutorial.csproj", "{2ED2D5D4-0AA3-4DFC-B249-3941340DF1C2}"
 EndProject
@@ -13,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Samples\SampleProj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inheritance", "Samples\SampleProjects\Inheritance\Inheritance.csproj", "{3D8D60E1-5B3B-47B7-97E5-996F8906DF76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpImage", "SharpImage\SharpImage.csproj", "{469F76BC-D622-4AB7-B71E-DA7F265E7E05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpImage", "SharpImage\SharpImage.csproj", "{469F76BC-D622-4AB7-B71E-DA7F265E7E05}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Views", "Views", "{28BE5D1E-9170-44D4-89C4-A0C8086021CC}"
 	ProjectSection(SolutionItems) = preProject

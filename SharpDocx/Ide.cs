@@ -50,6 +50,7 @@ namespace SharpDocx
                     Console.WriteLine(e);
                 }
 
+                GC.Collect();
                 Console.WriteLine("Press Esc to exit, any other key to retry . . .");
                 keyInfo = Console.ReadKey(true);
             } while (keyInfo.Key != ConsoleKey.Escape);

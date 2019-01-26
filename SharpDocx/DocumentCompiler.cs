@@ -1,5 +1,9 @@
 ﻿//#define DEBUG_DOCUMENT_CODE
 
+#if !(NET35 || NET45)
+#define AUTO_REFERENCE_SDK
+#endif
+
 #if !NET35
 using System.Linq;
 #endif
@@ -11,6 +15,7 @@ using Microsoft.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using SharpImage;
 #endif
 
 using System;
@@ -184,6 +189,9 @@ namespace {Namespace}
             string sourceCode,
             List<string> referencedAssemblies)
         {
+            Debug.WriteLine("***Source code***");
+            Debug.WriteLine(sourceCode);
+
 #if NET35 || NET45
             // Create the compiler.
 #if NET35
@@ -227,10 +235,16 @@ namespace {Namespace}
                 }
             }
 
+#if DEBUG
+            Debug.WriteLine("***References assemblies");
+            foreach (var reference in parameters.ReferencedAssemblies)
+            {
+                Debug.WriteLine(reference);
+            }
+#endif
+
             // Compile the code.
             var results = compiler.CompileAssemblyFromSource(parameters, sourceCode);
-            Debug.WriteLine("***source code***");
-            Debug.WriteLine(sourceCode);
 
             // Raise an SharpDocxCompilationException if errors occured.
             if (results.Errors.HasErrors)
@@ -258,35 +272,66 @@ namespace {Namespace}
 #else
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
 
-            var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
-            var references = new List<MetadataReference> 
+            // Get the path to the shared assemblies, e.g. C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.9.
+            var assemblyDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
+
+            var references = new List<MetadataReference>
             {
+                MetadataReference.CreateFromFile(Path.Combine(assemblyDir, "mscorlib.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(assemblyDir, "netstandard.dll")),
                 MetadataReference.CreateFromFile(Assembly.GetExecutingAssembly().Location),
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(WordprocessingDocument).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(DocumentBase).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(List<>).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(System.Xml.XmlAttribute).Assembly.Location),
-                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "mscorlib.dll")),
-                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "netstandard.dll")),
-                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.dll")),
-                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Core.dll")),
-                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Runtime.dll")),
-                MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Collections.dll")),
+                MetadataReference.CreateFromFile(typeof(DocumentBase).Assembly.Location)
             };
+
+#if AUTO_REFERENCE_SDK
+            // Auto reference all managed Microsoft- or System-DLL's.
+            foreach (var dllPath in Directory.GetFiles(assemblyDir, "*.dll"))
+            {
+                var fileName = Path.GetFileName(dllPath);
+                if (fileName.StartsWith("Microsoft.") || fileName.StartsWith("System."))
+                {
+                    using (var stream = File.OpenRead(dllPath))
+                    {
+                        if (IsManagedDll(stream))
+                        {
+                            references.Add(MetadataReference.CreateFromFile(dllPath));
+                        }
+                    }
+                }
+            }
+#else
+            // Only reference the bare minimum required DLL's. This saves around 10MB when running.
+            references.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
+            references.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyDir, "System.Runtime.dll")));
+            references.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyDir, "System.Collections.dll")));
+#endif
 
             if (referencedAssemblies != null)
             {
                 foreach (var ra in referencedAssemblies)
                 {
-                    references.Add(MetadataReference.CreateFromFile(ra));
+                    if (ra.Contains("\\") || ra.Contains("/"))
+                    {
+                        references.Add(MetadataReference.CreateFromFile(ra));
+                    }
+                    else
+                    {
+                        references.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyDir,ra)));
+                    }
                 }
             }
 
-            string assemblyName = Path.GetRandomFileName();
+#if DEBUG
+            Debug.WriteLine("***References assemblies");
+            foreach (var reference in references.OrderBy(r => r.Display))
+            {
+                Debug.WriteLine(reference.Display);
+            }
+#endif
 
             CSharpCompilation compilation = CSharpCompilation.Create(
-                assemblyName,
+                $"SharpAssembly_{Guid.NewGuid():N}",
                 new[] { syntaxTree },
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -311,7 +356,7 @@ namespace {Namespace}
                     var formattedErrors = new StringBuilder();
                     foreach (Diagnostic diagnostic in failures)
                     {
-                        // TODO: show line number 
+                        // TODO: show line number.
                         formattedErrors.AppendLine($"{diagnostic.Id}: {diagnostic.GetMessage()}");
                     }
 
@@ -354,6 +399,69 @@ namespace {Namespace}
 #endif
             return type.Name;
         }
+
+#if AUTO_REFERENCE_SDK
+        public static bool IsManagedDll(Stream dll)
+        {
+            // See https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#file-headers
+
+            using (var bh = new ByteHelper(dll))
+            {
+                bh.Seek(0, SeekOrigin.Begin);
+
+                // Check DOS header.
+                var dosSignature = bh.ReadUshort();
+                if (dosSignature != 0x5A4D)
+                {
+                    return false;
+                }
+
+                // Read location of PE signature.
+                bh.Seek(0x3C, SeekOrigin.Begin);
+                var peHeaderOffset = bh.ReadUint();
+                
+                // Check PE signature.
+                bh.Seek(peHeaderOffset, SeekOrigin.Begin);
+                var peSignature = bh.ReadUint();
+                if (peSignature != 0x4550)
+                {
+                    return false;
+                }
+
+                // Seek to and check optional header.
+                bh.Offset = peHeaderOffset + 24;
+                bh.Seek(0, SeekOrigin.Begin);
+                var optionalHeaderMagic = bh.ReadUshort();
+                bool isPe32Plus;
+                if (optionalHeaderMagic == 0x10B)
+                {
+                    isPe32Plus = false;
+                }
+                else if (optionalHeaderMagic == 0x20B)
+                {
+                    isPe32Plus = true;
+                }
+                else
+                {
+                    return false;
+                }
+
+                // Seek to and check NumberOfRvaAndSizes.
+                bh.Seek(isPe32Plus ? 108 : 92, SeekOrigin.Begin);
+                var numberOfRvaAndSizes = bh.ReadUint();
+                if (numberOfRvaAndSizes < 15)
+                {
+                    return false;
+                }
+
+                // Seek to and check CLR Runtime Header data directory.
+                bh.Seek(isPe32Plus ? 224 : 208, SeekOrigin.Begin);
+                var address = bh.ReadUint();
+                var size = bh.ReadUint();
+                return address != 0 && size != 0;
+            }
+        }
+#endif
     }
 
     [Serializable]
