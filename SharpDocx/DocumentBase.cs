@@ -163,7 +163,7 @@ namespace SharpDocx
             if (string.IsNullOrEmpty(Path.GetDirectoryName(filePath)) &&
                 !string.IsNullOrEmpty(ImageDirectory))
             {
-                filePath = $"{ImageDirectory}\\{filePath}";
+                filePath = $"{ImageDirectory}/{filePath}";
             }
 
             var imageTypePart = ImageHelper.GetImagePartType(filePath);
