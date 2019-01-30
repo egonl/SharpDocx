@@ -21,6 +21,10 @@ namespace SharpDocx
 
         protected CodeBlock CurrentCodeBlock;
 
+        protected TextBlock CurrentTextBlock = null;
+
+        protected Stack<TextBlock> CurrentTextBlockStack = new Stack<TextBlock>();
+
         protected CharacterMap Map;
 
         protected WordprocessingDocument Package;
@@ -55,7 +59,7 @@ namespace SharpDocx
 #endif
                 using (Package = WordprocessingDocument.Open(documentPath, true))
                 {
-                    var codeBlockBuilder = new CodeBlockBuilder(Package, true);
+                    var codeBlockBuilder = new CodeBlockBuilder(Package);
                     CodeBlocks = codeBlockBuilder.CodeBlocks;
                     Map = codeBlockBuilder.BodyMap;
 
@@ -133,22 +137,21 @@ namespace SharpDocx
             Map.Replace(oldValue, newValue, startIndex, stringComparison);
         }
 
-        protected void DeleteConditionalContent()
+        protected void AppendTextBlock()
         {
-            var ccb = (ConditionalText) CurrentCodeBlock;
-            Map.Delete(ccb.Placeholder, ccb.EndConditionalPart);
+            CurrentTextBlock.Append(CodeBlocks);
         }
 
         protected void AppendParagraph()
         {
-            var appender = CurrentCodeBlock as Appender;
-            appender.Append<Paragraph>();
+            var pa = CurrentCodeBlock as ParagraphAppender;
+            pa.Append();
         }
 
         protected void AppendRow()
         {
-            var appender = CurrentCodeBlock as Appender;
-            appender.Append<TableRow>();
+            var ra = CurrentCodeBlock as RowAppender;
+            ra.Append();
         }
 
 #if NET35

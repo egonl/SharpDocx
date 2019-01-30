@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>net45;net35;netstandard2.0</TargetFrameworks>
     <RootNamespace>SharpDocx</RootNamespace>
-    <Version>1.2.0.0</Version>
+    <Version>2.0.0.0</Version>
     <Authors>egonl</Authors>
     <Product>SharpDocx</Product>
     <PackageId>MyApp</PackageId>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>C# based template engine for generating Word documents</Description>
     <Copyright>Copyright 2017-2019 egonl</Copyright>

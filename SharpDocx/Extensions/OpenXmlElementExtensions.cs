@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 
@@ -64,6 +65,24 @@ namespace SharpDocx.Extensions
             }
 
             return false;
+        }
+
+        internal static OpenXmlCompositeElement GetElementBlockLevelParent(this OpenXmlElement element)
+        {
+            // Block level elements: see https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.wordprocessing.body?view=openxml-2.8.1
+            var parent = element.GetParent<Paragraph>() as OpenXmlCompositeElement;
+            if (parent != null)
+            {
+                return parent;
+            }
+
+            parent = element.GetParent<Table>() as OpenXmlCompositeElement;
+            if (parent != null)
+            {
+                return parent;
+            }
+
+            return null;
         }
     }
 }

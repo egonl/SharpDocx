@@ -38,6 +38,7 @@ namespace SharpDocx
         private static readonly string documentClassTemplate =
             @"using System;
 using DocumentFormat.OpenXml.Wordprocessing;
+using SharpDocx.CodeBlocks;
 using SharpDocx.Models;
 {UsingDirectives}
 
@@ -89,7 +90,7 @@ namespace {Namespace}
             {
                 using (var package = WordprocessingDocument.Open(tempFilePath, false))
                 {
-                    var codeBlockBuilder = new CodeBlockBuilder(package, false);
+                    var codeBlockBuilder = new CodeBlockBuilder(package);
                     codeBlocks = codeBlockBuilder.CodeBlocks;
                 }
             }
@@ -99,10 +100,19 @@ namespace {Namespace}
             }
 
             var invokeDocumentCodeBody = new StringBuilder();
+            Stack<TextBlock> currentTextBlockStack = new Stack<TextBlock>();
 
             for (var i = 0; i < codeBlocks.Count; ++i)
             {
                 var cb = codeBlocks[i];
+
+                var tb = cb as TextBlock;
+                if (tb != null)
+                {
+                    currentTextBlockStack.Push(tb);
+                    invokeDocumentCodeBody.Append($"            CurrentTextBlockStack.Push(CurrentTextBlock);{Environment.NewLine}");
+                    invokeDocumentCodeBody.Append($"            CurrentTextBlock = CodeBlocks[{i}] as TextBlock;{Environment.NewLine}");
+                }
 
                 if (!string.IsNullOrEmpty(cb.Code))
                 {
@@ -124,23 +134,23 @@ namespace {Namespace}
                             AddReferencedAssembly(directive, referencedAssemblies);
                         }
                     }
-                    else if (cb is ConditionalText)
-                    {
-                        var ccb = (ConditionalText) cb;
-                        invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
-                        invokeDocumentCodeBody.Append($"            if (!{ccb.Condition}) {{{Environment.NewLine}");
-                        invokeDocumentCodeBody.Append($"                DeleteConditionalContent();{Environment.NewLine}");
-                        invokeDocumentCodeBody.Append($"            }}{Environment.NewLine}");
-
-                        invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}{Environment.NewLine}");
-                    }
                     else
                     {
+                        if (currentTextBlockStack.Count > 0 && cb == currentTextBlockStack.Peek().EndingCodeBlock)
+                    {
+                            // Automatically insert AppendTextBlock before closing text block brace.
+                            invokeDocumentCodeBody.Append($"            AppendTextBlock();{Environment.NewLine}");
+                    }
                         invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}{Environment.NewLine}");
                     }
                 }
 
+                if (currentTextBlockStack.Count > 0 && cb == currentTextBlockStack.Peek().EndingCodeBlock)
+                {
+                    currentTextBlockStack.Pop();
+                    invokeDocumentCodeBody.Append($"            CurrentTextBlock = CurrentTextBlockStack.Pop();{Environment.NewLine}");
+                }
             }
 
             var modelTypeName = modelType != null ? FormatType(modelType) : "string";

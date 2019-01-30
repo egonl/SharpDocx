@@ -14,45 +14,42 @@ namespace SharpDocx
 
         public CharacterMap BodyMap { get; }
 
-        public CodeBlockBuilder(WordprocessingDocument package, bool replaceCodeWithPlaceholder)
+        public CodeBlockBuilder(WordprocessingDocument package)
         {
             CodeBlocks = new List<CodeBlock>();
 
             foreach (var headerPart in package.MainDocumentPart.HeaderParts)
             {
                 var headerMap = new CharacterMap(headerPart.Header);
-                AppendCodeBlocks(headerMap, replaceCodeWithPlaceholder);
+                AddCodeBlocks(headerMap);
             }
 
             foreach (var footerPart in package.MainDocumentPart.FooterParts)
             {
                 var footerMap = new CharacterMap(footerPart.Footer);
-                AppendCodeBlocks(footerMap, replaceCodeWithPlaceholder);
+                AddCodeBlocks(footerMap);
             }
 
             if (package.MainDocumentPart.EndnotesPart != null)
             {
                 var endnotesMap = new CharacterMap(package.MainDocumentPart.EndnotesPart.Endnotes);
-                AppendCodeBlocks(endnotesMap, replaceCodeWithPlaceholder);
+                AddCodeBlocks(endnotesMap);
             }
 
             if (package.MainDocumentPart.FootnotesPart != null)
             {
                 var footnotesMap = new CharacterMap(package.MainDocumentPart.FootnotesPart.Footnotes);
-                AppendCodeBlocks(footnotesMap, replaceCodeWithPlaceholder);
+                AddCodeBlocks(footnotesMap);
             }
 
             BodyMap = new CharacterMap(package.MainDocumentPart.Document.Body);
-            AppendCodeBlocks(BodyMap, replaceCodeWithPlaceholder);
+            AddCodeBlocks(BodyMap);
 
-            if (replaceCodeWithPlaceholder)
-            {
-                // Set the dirty flag on the map, since the document is modified.
-                BodyMap.IsDirty = true;
-            }
+            // Set the dirty flag on the map, since the document is modified.
+            BodyMap.IsDirty = true;
         }
 
-        private void AppendCodeBlocks(CharacterMap map, bool replaceCodeWithPlaceholder)
+        private void AddCodeBlocks(CharacterMap map)
         {
             var mapParts = new Dictionary<CodeBlock, MapPart>();
 
@@ -76,11 +73,6 @@ namespace SharpDocx
                 startTagIndex = map.Text.IndexOf("<%", endTagIndex + 2);
             }
 
-            if (!replaceCodeWithPlaceholder)
-            {
-                return;
-            }
-
             for (var i = CodeBlocks.Count - 1; i >= firstCodeBlockIndex; --i)
             {
                 // Replace the code of each code block with an empty Text element.
@@ -91,11 +83,11 @@ namespace SharpDocx
 
             for (var i = firstCodeBlockIndex; i < CodeBlocks.Count; ++i)
             {
-                // Find out where conditional content ends.
-                var cb = CodeBlocks[i] as ConditionalText;
-                if (cb != null)
+                // Find out where text block ends.
+                var tb = CodeBlocks[i] as TextBlock;
+                if (tb != null)
                 {
-                    var bracketLevel = cb.Code.GetCurlyBracketLevelIncrement();
+                    var bracketLevel = tb.Code.GetCurlyBracketLevelIncrement();
 
                     for (var j = i + 1; j < CodeBlocks.Count; ++j)
                     {
@@ -103,22 +95,21 @@ namespace SharpDocx
 
                         if (bracketLevel <= 0)
                         {
-                            cb.EndConditionalPart = CodeBlocks[j].Placeholder;
+                            tb.EndingCodeBlock = CodeBlocks[j];
                             break;
                         }
                     }
 
-                    if (cb.EndConditionalPart == null)
+                    if (tb.EndingCodeBlock == null)
                     {
-                        throw new Exception("Conditional code block is not terminated with '<% } %>'.");
+                        throw new Exception("TextBlock is not terminated with '<% } %>'.");
                     }
                 }
             }
 
-            for (var i = firstCodeBlockIndex; i < CodeBlocks.Count; ++i)
-            {
-                var appender = CodeBlocks[i] as Appender;
-                appender?.Initialize();
+            for (var i = CodeBlocks.Count - 1; i >= firstCodeBlockIndex; --i)
+            {               
+                CodeBlocks[i].Initialize();
             }
         }
 
@@ -132,15 +123,27 @@ namespace SharpDocx
             {
                 cb = new Directive(code.Substring(1));
             }
-            else if (code.Contains("AppendParagraph") || code.Contains("AppendRow"))
+            else if (code.Contains("AppendParagraph"))
             {
                 // TODO: match whole words only. 
-                cb = new Appender(code);
+                cb = new ParagraphAppender(code);
             }
-            else if (code.Replace(" ", String.Empty).StartsWith("if(") &&
-                     code.GetCurlyBracketLevelIncrement() > 0)
+            else if (code.Contains("AppendRow"))
             {
-                cb = new ConditionalText(code);
+                // TODO: match whole words only. 
+                cb = new RowAppender(code);
+            }
+            else if (code.GetCurlyBracketLevelIncrement() > 0)
+            {
+                if (code.Contains("{!"))
+                {
+                    code = code.Replace("{!", "{");
+                    cb = new CodeBlock(code);
+                }
+                else
+                {
+                    cb = new TextBlock(code);                                    
+                }
             }
             else
             {

@@ -14,8 +14,11 @@ namespace SharpDocx.CodeBlocks
 
         internal Text EndText { get; set; }
 
+        internal InsertionPoint CurrentInsertionPoint { get; set; }
+
         private CodeBlock()
         {
+            CurrentInsertionPoint = null;
         }
 
         internal CodeBlock(string code)
@@ -52,6 +55,10 @@ namespace SharpDocx.CodeBlocks
             }
 
             return true;
+        }
+
+        internal virtual void Initialize()
+        {
         }
     }
 }
