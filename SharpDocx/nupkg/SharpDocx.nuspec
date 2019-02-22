@@ -2,20 +2,23 @@
 <package >
   <metadata>
     <id>SharpDocx</id>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <authors>egonl</authors>
     <owners>egonl</owners>
     <licenseUrl>https://github.com/egonl/SharpDocx/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/egonl/SharpDocx</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<summary>Create simple and complex Word documents with ease</summary>
     <description>Framework for creating Word documents 
-- Use C# code inside Word documents.
+- Use C# code inside Word documents for inserting text, images or tables.
 - Supports the MVC pattern, where the view is a Word document.
-- Create simple and complex documents with ease.
-- High performance.
+- Supports .NET Framework 3.5/4.5 and .NET Standard 2.0.
 - Based on Microsoft's Open XML SDK.
 - Source code, tutorial and sample code on GitHub.</description>
-    <releaseNotes>Version 1.1.0
+    <releaseNotes>Version 1.2.0 - February 22, 2019
+- Added support for .NET Standard 2.0.
+
+Version 1.1.0 - January 4, 2018
 - Some performance improvements.
 - You can now specify a view model when calling Document.Generate.
 - Tidied up API.
@@ -25,11 +28,14 @@ Version 1.0.0 - January 1, 2018
     <copyright>Copyright 2018</copyright>
     <tags>openxml office word document sharpdocx</tags>
     <dependencies>
-      <dependency id="DocumentFormat.OpenXml" version="2.7.2" />
+      <dependency id="DocumentFormat.OpenXml" version="2.8.1" />
+      <dependency id="Microsoft.CodeAnalysis.CSharp" version="2.10.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\lib\net35\release\SharpDocx.*" target="lib/net35" />
-    <file src="..\lib\net45\release\SharpDocx.*" target="lib/net45" />
+    <file src="..\bin\Release\net35\SharpDocx.*" target="lib/net35" />
+    <file src="..\bin\Release\net45\SharpDocx.*" target="lib/net45" />
+    <file src="..\bin\Release\netstandard2.0\SharpDocx.*" target="lib/netstandard2.0" />
+    <file src="..\bin\Release\netstandard2.0\SharpImage.*" target="lib/netstandard2.0" />
   </files>
 </package>

@@ -1,10 +1,7 @@
-﻿Todo:
--Implement ImageHelper.CreateDrawing for .NET Standard.
-
-Consider:
+﻿Consider:
 -Reuse image parts where possible. 
 -Support C# 6.
--Use a proper C# parser, so there are no potential issues with e.g. brackets in strings/comments/etc.
+-Use a proper C# parser, so there are no potential issues with e.g. brackets in strings/comments/etc. Maybe use Roslyn for this?
 -Support code blocks in DocumentFormat.OpenXml.Vml.TextPath.String.
 -Implement a better CreateHyperlink method, because the one in the Inheritance sample doesn't always insert the link at the right place.
 -Insert merge fields.
