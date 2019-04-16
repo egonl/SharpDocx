@@ -124,7 +124,9 @@ namespace SharpDocx
                     PackageMutex.ReleaseMutex();
                 }
 #endif
-            return outputstream;
+                // Reset position of stream.
+                outputstream.Seek(0, SeekOrigin.Begin);
+                return outputstream;
             
         }
 
