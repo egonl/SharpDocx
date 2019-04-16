@@ -76,6 +76,58 @@ namespace SharpDocx
 #endif
         }
 
+
+        public MemoryStream Generate(object model = null)
+        {
+            if (model != null)
+            {
+                SetModel(model);
+            }
+
+            MemoryStream outputstream;
+
+            using (var viewStream = File.Open(ViewPath, FileMode.Open))
+            {
+                var viewBytes = new Byte[viewStream.Length];
+                viewStream.Read(viewBytes,0,Convert.ToInt32(viewStream.Length));
+                outputstream = new MemoryStream();
+                outputstream.Write(viewBytes, 0, Convert.ToInt32(viewStream.Length));
+            }
+
+#if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
+            // Due to a bug in System.IO.Packaging writing large uncompressed parts (>10MB) isn't thread safe in .NET 3.5.
+            // Workaround: make writing in all threads and processes sequential.
+            // Microsoft fixed this in .NET 4.5 (see https://maheshkumar.wordpress.com/2014/10/21/).
+            PackageMutex.WaitOne(Timeout.Infinite, false);
+
+            try
+            {
+#endif
+                using (Package = WordprocessingDocument.Open(outputstream, true))
+                {
+                    var codeBlockBuilder = new CodeBlockBuilder(Package, true);
+                    CodeBlocks = codeBlockBuilder.CodeBlocks;
+                    Map = codeBlockBuilder.BodyMap;
+
+                    InvokeDocumentCode();
+
+                    foreach (var cb in CodeBlocks)
+                    {
+                        cb.RemoveEmptyParagraphs();
+                    }
+                }
+
+#if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
+                }
+                finally
+                {
+                    PackageMutex.ReleaseMutex();
+                }
+#endif
+            return outputstream;
+            
+        }
+
         // Override this static method if you want to specify additional using directives.
         public static List<string> GetUsingDirectives()
         {
