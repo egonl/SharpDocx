@@ -35,7 +35,7 @@ namespace SharpDocx.CodeBlocks
                 .RemoveRedundantWhitespace()
                 .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
-            Name = tagContents[0].ToLower();
+            Name = tagContents[0].ToLowerInvariant();
 
             for (var i = 1; i < tagContents.Length; ++i)
             {
