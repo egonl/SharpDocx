@@ -30,7 +30,9 @@ namespace SharpDocx.CodeBlocks
         {
             base.Initialize();
 
-            var previousElement = Placeholder.GetElementBlockLevelParent().PreviousSibling() as OpenXmlCompositeElement;
+            var previousElement =
+                Placeholder.GetElementBlockLevelParent().PreviousSibling() as OpenXmlCompositeElement ??
+                Placeholder.GetElementBlockLevelParent().InsertBeforeSelf(new Paragraph());
             previousElement.SetAttribute(new OpenXmlAttribute { LocalName = "IpId", Value = CurrentInsertionPoint.Id });
             CurrentInsertionPoint.Element = previousElement;
 
