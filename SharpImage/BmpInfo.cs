@@ -24,9 +24,17 @@ namespace SharpImage
 
                 bh.Seek(38, SeekOrigin.Begin);
                 var pixelsPerMeterH = (int) bh.ReadUint();
-                DpiH = PixelsPerMeterToPixelsPerInch(pixelsPerMeterH);
+                var dpiH = PixelsPerMeterToPixelsPerInch(pixelsPerMeterH);
+                if (dpiH > 0)
+                {
+                    DpiH = dpiH;
+                }
                 var pixelsPerMeterV = (int) bh.ReadUint();
-                DpiV = PixelsPerMeterToPixelsPerInch(pixelsPerMeterV);
+                var dpiV = PixelsPerMeterToPixelsPerInch(pixelsPerMeterV);
+                if (dpiV > 0)
+                {
+                    DpiV = dpiV;
+                }
             }
         }
     }

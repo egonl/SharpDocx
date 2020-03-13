@@ -9,8 +9,8 @@ namespace SharpImage
         public int Width { get; protected set; }
         public int Height { get; protected set; }
 
-        public int DpiH { get; protected set; }
-        public int DpiV { get; protected set; }
+        public int DpiH { get; protected set; } = 96;
+        public int DpiV { get; protected set; } = 96;
 
         public abstract void Init(Stream stream);
 
