@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SharpDocx</id>
-    <version>2.0.2.0</version>
+    <version>2.0.3.0</version>
     <authors>egonl</authors>
     <owners>egonl</owners>
     <license type="expression">MIT</license>
@@ -15,7 +15,10 @@
 - Supports .NET Framework 3.5/4.5+ and .NET Standard 2.0.
 - Based on Microsoft's Open XML SDK.
 - Source code, tutorial and sample code on GitHub.</description>
-    <releaseNotes>Version 2.0.2.0 - March 14, 2020
+    <releaseNotes>Version 2.0.3.0 - July 28, 2020
+- Fixed issue #18.
+	
+Version 2.0.2.0 - March 14, 2020
 - Fixed issue #4 and #14.
 	
 Version 2.0.1.0 - February 7, 2020
@@ -36,7 +39,7 @@ Version 1.1.0 - January 4, 2018
 
 Version 1.0.0 - January 1, 2018
 - Initial version.</releaseNotes>
-    <copyright>Copyright 2018</copyright>
+    <copyright>Copyright 2018-2020</copyright>
     <tags>openxml office word document sharpdocx</tags>
     <dependencies>
       <group targetFramework="net35">
