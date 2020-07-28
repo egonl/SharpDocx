@@ -43,6 +43,12 @@ namespace SharpDocx.CodeBlocks
             {
                 endParagraph.Remove();
             }
+
+            var tb = this as TextBlock;
+            if (tb?.FirstInsertionPointParagraph.Parent != null) 
+            {
+                tb.FirstInsertionPointParagraph.Remove();
+            }
         }
 
         private bool CanDeleteParagraph(Paragraph paragraph)

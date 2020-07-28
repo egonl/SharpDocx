@@ -17,6 +17,7 @@ namespace SharpDocx.CodeBlocks
     public class TextBlock : CodeBlock
     {
         internal CodeBlock EndingCodeBlock;
+        internal Paragraph FirstInsertionPointParagraph;
 
         private Appender _appender;
         private readonly Body _body = new Body();
@@ -30,11 +31,10 @@ namespace SharpDocx.CodeBlocks
         {
             base.Initialize();
 
-            var previousElement =
-                Placeholder.GetElementBlockLevelParent().PreviousSibling() as OpenXmlCompositeElement ??
+            FirstInsertionPointParagraph =
                 Placeholder.GetElementBlockLevelParent().InsertBeforeSelf(new Paragraph());
-            previousElement.SetAttribute(new OpenXmlAttribute { LocalName = "IpId", Value = CurrentInsertionPoint.Id });
-            CurrentInsertionPoint.Element = previousElement;
+            FirstInsertionPointParagraph.SetAttribute(new OpenXmlAttribute { LocalName = "IpId", Value = CurrentInsertionPoint.Id });
+            CurrentInsertionPoint.Element = FirstInsertionPointParagraph;
 
             GetBody(StartText, EndingCodeBlock.Placeholder);
             _appender = new Appender(_body);
