@@ -192,6 +192,15 @@ namespace {Namespace}
                 assembly = assembly + ".dll";
             }
 
+            if (assembly.StartsWith("~/") || assembly.StartsWith("~\\"))
+            {
+                // Work around for loading custom assemblies .NET Core:
+                //   <%@ Assembly Name="~/ClassLibrary1" %> 
+                // will search ClassLibrary1.dll in the same directory that contains SharpDocx.dll.
+                string path = Path.GetDirectoryName(typeof(DocumentBase).Assembly.Location);
+                assembly = path + assembly.Substring(1);
+            }
+
             referencedAssemblies.Add(assembly);
         }
 
