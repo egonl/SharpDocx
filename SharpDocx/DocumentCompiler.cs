@@ -383,7 +383,8 @@ namespace {Namespace}
                 }
 
                 ms.Seek(0, SeekOrigin.Begin);
-                return Assembly.Load(ms.ToArray());
+
+                return DocumentFactory.LoadContext != null ? DocumentFactory.LoadContext.LoadFromStream(ms) : Assembly.Load(ms.ToArray());
             }
 #endif
         }

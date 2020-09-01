@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpDocx", "SharpDocx\SharpDocx.csproj", "{11025F4C-5F88-4CBF-A29D-494260BF71F8}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		Samples\Documents\Tutorial.docx = Samples\Documents\Tutorial.docx
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadContext", "Samples\SampleProjects\LoadContext\LoadContext.csproj", "{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{469F76BC-D622-4AB7-B71E-DA7F265E7E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{469F76BC-D622-4AB7-B71E-DA7F265E7E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{469F76BC-D622-4AB7-B71E-DA7F265E7E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{3D8D60E1-5B3B-47B7-97E5-996F8906DF76} = {60ACA8F2-9057-4F58-ABF4-0278D2968EEA}
 		{28BE5D1E-9170-44D4-89C4-A0C8086021CC} = {60ACA8F2-9057-4F58-ABF4-0278D2968EEA}
 		{985BA596-7B45-4F2B-9A9E-A712408AF9D8} = {60ACA8F2-9057-4F58-ABF4-0278D2968EEA}
+		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8} = {60ACA8F2-9057-4F58-ABF4-0278D2968EEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F682D28B-E23F-4280-9FE6-AB5ABFDCB3F2}
