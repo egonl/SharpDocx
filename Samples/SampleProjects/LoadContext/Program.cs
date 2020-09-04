@@ -39,7 +39,8 @@ namespace LoadContext
             Console.WriteLine(string.Join(Environment.NewLine, assemblyNames));
 
             LoadContext.Unload();
-            
+            DocumentFactory.LoadContext = null;
+
             Console.WriteLine("Document Assemblies have been unloaded.");
         }
 
