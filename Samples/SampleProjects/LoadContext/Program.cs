@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Loader;
 using SharpDocx;
 
@@ -12,11 +11,28 @@ namespace LoadContext
         private static readonly string BasePath =
             Path.GetDirectoryName(typeof(Program).Assembly.Location) + @"/../../../../..";
 
-        static AssemblyLoadContext LoadContext = new TestAssemblyLoadContext(Path.GetDirectoryName(typeof(Program).Assembly.Location));
-
-        private static void Main()
+        public static void Main()
         {
-            DocumentFactory.LoadContext = LoadContext;
+            ExecuteTemplates(out var loadContextRef);
+
+            while (loadContextRef.IsAlive)
+            {
+                Console.WriteLine("Reference is still alive.");
+                //Console.WriteLine($"Loaded AssemblyCount: {AppDomain.CurrentDomain.GetAssemblies().Length}");
+                //Thread.Sleep(1000);
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+
+            Console.WriteLine("Document Assemblies have been unloaded.");
+            //Console.WriteLine($"Loaded AssemblyCount: {AppDomain.CurrentDomain.GetAssemblies().Length}");
+        }
+
+        private static void ExecuteTemplates(out WeakReference loadContextRef)
+        {
+            var loadCtx = new TestAssemblyLoadContext(Path.GetDirectoryName(typeof(Program).Assembly.Location));
+            DocumentFactory.LoadContext = loadCtx;
 
             var viewPath = $"{BasePath}/Views/Tutorial.cs.docx";
             var documentPath = $"{BasePath}/Documents/Tutorial.docx";
@@ -30,39 +46,18 @@ namespace LoadContext
             document.ImageDirectory = imageDirectory;
             document.Generate(documentPath);
 #endif
+            loadContextRef = new WeakReference(loadCtx);
+
             Console.WriteLine("---------------------Assemblies Loaded In the Default Context-------------------------------");
             var assemblyNames = AssemblyLoadContext.Default.Assemblies.Select(s => s.FullName).ToArray();
             Console.WriteLine(string.Join(Environment.NewLine, assemblyNames));
 
             Console.WriteLine("---------------------Assemblies Loaded In Context-------------------------------");
-             assemblyNames = LoadContext.Assemblies.Select(s => s.FullName).ToArray();
+             assemblyNames = loadCtx.Assemblies.Select(s => s.FullName).ToArray();
             Console.WriteLine(string.Join(Environment.NewLine, assemblyNames));
 
-            LoadContext.Unload();
+            loadCtx.Unload();
             DocumentFactory.LoadContext = null;
-
-            Console.WriteLine("Document Assemblies have been unloaded.");
-        }
-
-        class TestAssemblyLoadContext : AssemblyLoadContext
-        {
-            private readonly AssemblyDependencyResolver _resolver;
-
-            public TestAssemblyLoadContext(string mainAssemblyToLoadPath) : base(isCollectible: true)
-            {
-                _resolver = new AssemblyDependencyResolver(mainAssemblyToLoadPath);
-            }
-
-            protected override Assembly Load(AssemblyName name)
-            {
-                string assemblyPath = _resolver.ResolveAssemblyToPath(name);
-                if (assemblyPath != null)
-                {
-                    return LoadFromAssemblyPath(assemblyPath);
-                }
-
-                return null;
-            }
         }
     }
 }
