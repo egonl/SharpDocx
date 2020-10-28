@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net45;net35;netcoreapp2.0</TargetFrameworks>
     <RootNamespace>Tutorial</RootNamespace>
+    <StartupObject>Tutorial.ProgramStream</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
