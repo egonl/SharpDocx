@@ -10,36 +10,47 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
+using DocumentFormat.OpenXml;
+using System.Drawing;
 
 namespace SharpDocx
 {
     public static class ImageHelper
     {
         public static Drawing CreateDrawing(
-            WordprocessingDocument package, 
+            WordprocessingDocument package,
             Stream imageStream,
-            ImagePartType imagePartType, 
+            ImagePartType imagePartType,
             int percentage, long maxWidthInEmus)
         {
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
 #if NET35 || NET45
-            var img = new BitmapImage();
+
+            var img = Image.FromStream(imageStream);
+
+            var widthPx = img.Width;
+            var heightPx = img.Height;
+            var horzRezDpi = img.HorizontalResolution;
+            var vertRezDpi = img.VerticalResolution;
+
+            img.Dispose();
+            //var img = new BitmapImage();
 
             using (imageStream)
             {
-                img.BeginInit();
-                img.StreamSource = imageStream;
-                img.EndInit();
+                //img.BeginInit();
+                //img.StreamSource = imageStream;
+                //img.EndInit();
 
                 imageStream.Seek(0, SeekOrigin.Begin);
                 imagePart.FeedData(imageStream);
                 // imagePart will also dispose the stream.
             }
 
-            var widthPx = img.PixelWidth;
-            var heightPx = img.PixelHeight;
-            var horzRezDpi = img.DpiX;
-            var vertRezDpi = img.DpiY;
+            //var widthPx = img.PixelWidth;
+            //var heightPx = img.PixelHeight;
+            //var horzRezDpi = img.DpiX;
+            //var vertRezDpi = img.DpiY;
 #else
             ImageInfoBase imageInfo = null;
 
@@ -63,14 +74,14 @@ namespace SharpDocx
             var vertRezDpi = imageInfo.DpiV;
 #endif
             const int emusPerInch = 914400;
-            var widthEmus = (long) (widthPx / horzRezDpi * emusPerInch);
-            var heightEmus = (long) (heightPx / vertRezDpi * emusPerInch);
+            var widthEmus = (long)(widthPx / horzRezDpi * emusPerInch);
+            var heightEmus = (long)(heightPx / vertRezDpi * emusPerInch);
 
             if (widthEmus > maxWidthInEmus)
             {
                 var ratio = heightEmus * 1.0m / widthEmus;
                 widthEmus = maxWidthInEmus;
-                heightEmus = (long) (widthEmus * ratio);
+                heightEmus = (long)(widthEmus * ratio);
             }
 
             if (percentage != 100)
@@ -154,17 +165,27 @@ namespace SharpDocx
 
                 case ImagePartType.Tiff:
                     return ImageInfo.Type.Tiff;
+
+                case ImagePartType.Wmf:
+                case ImagePartType.Emf:
+                    return ImageInfo.Type.Metafile;
             }
 
             return ImageInfo.Type.Unknown;
         }
 #endif
 
+        /// <summary>
+        /// Fix problem with more images in document described here: https://github.com/python-openxml/python-docx/issues/455
+        /// </summary>
+        static UInt32 _id = 1000U;
+
         private static Drawing GetDrawing(string relationshipId, long widthEmus, long heightEmus)
         {
+
             return new Drawing(
                 new DW.Inline(
-                    new DW.Extent {Cx = widthEmus, Cy = heightEmus},
+                    new DW.Extent { Cx = widthEmus, Cy = heightEmus },
                     new DW.EffectExtent
                     {
                         LeftEdge = 0L,
@@ -174,11 +195,11 @@ namespace SharpDocx
                     },
                     new DW.DocProperties
                     {
-                        Id = 1,
-                        Name = "Picture 1"
+                        Id = (UInt32Value)(++_id),
+                        Name = $"Picture {_id}"
                     },
                     new DW.NonVisualGraphicFrameDrawingProperties(
-                        new A.GraphicFrameLocks {NoChangeAspect = true}),
+                        new A.GraphicFrameLocks { NoChangeAspect = true }),
                     new A.Graphic(
                         new A.GraphicData(
                                 new PIC.Picture(
@@ -192,7 +213,7 @@ namespace SharpDocx
                                     new PIC.BlipFill(
                                         new A.Blip(
                                             new A.BlipExtensionList(
-                                                new A.BlipExtension {Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}"}))
+                                                new A.BlipExtension { Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}" }))
                                         {
                                             Embed = relationshipId,
                                             CompressionState = A.BlipCompressionValues.Print
@@ -201,13 +222,13 @@ namespace SharpDocx
                                             new A.FillRectangle())),
                                     new PIC.ShapeProperties(
                                         new A.Transform2D(
-                                            new A.Offset {X = 0, Y = 0},
-                                            new A.Extents {Cx = widthEmus, Cy = heightEmus}),
+                                            new A.Offset { X = 0, Y = 0 },
+                                            new A.Extents { Cx = widthEmus, Cy = heightEmus }),
                                         new A.PresetGeometry(
                                                 new A.AdjustValueList())
-                                            {Preset = A.ShapeTypeValues.Rectangle}))
+                                        { Preset = A.ShapeTypeValues.Rectangle }))
                             )
-                            {Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture"})
+                        { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
                 )
                 {
                     DistanceFromTop = 0,

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net35;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net35</TargetFrameworks>
     <RootNamespace>SharpDocx</RootNamespace>
     <Version>2.0.4.0</Version>
     <Authors>egonl</Authors>
@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.12.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

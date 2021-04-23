@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 
 namespace SharpImage
 {
@@ -11,7 +12,8 @@ namespace SharpImage
             Gif,
             Jpeg,
             Png,
-            Tiff
+            Tiff,
+            Metafile
         }
 
         public static ImageInfoBase GetInfo(Type type, Stream stream)
@@ -34,6 +36,9 @@ namespace SharpImage
                     break;
                 case Type.Tiff:
                     info = new TiffInfo();
+                    break;
+                case Type.Metafile:
+                    info = new MetafileInfo();
                     break;
                 default:
                     return null;
@@ -65,6 +70,9 @@ namespace SharpImage
                 case ".tif":
                 case ".tiff":
                     return Type.Tiff;
+                case ".emf":
+                case ".wmf":
+                    return Type.Metafile;
             }
 
             return Type.Unknown;
