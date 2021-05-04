@@ -2,8 +2,6 @@
 using System.IO;
 #if NET35 || NET45
 using System.Windows.Media.Imaging;
-#else
-using SharpImage;
 #endif
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -24,7 +22,6 @@ namespace SharpDocx
             int percentage, long maxWidthInEmus)
         {
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
-#if NET35 || NET45
 
             var img = Image.FromStream(imageStream);
 
@@ -34,45 +31,14 @@ namespace SharpDocx
             var vertRezDpi = img.VerticalResolution;
 
             img.Dispose();
-            //var img = new BitmapImage();
 
             using (imageStream)
             {
-                //img.BeginInit();
-                //img.StreamSource = imageStream;
-                //img.EndInit();
-
                 imageStream.Seek(0, SeekOrigin.Begin);
                 imagePart.FeedData(imageStream);
                 // imagePart will also dispose the stream.
             }
 
-            //var widthPx = img.PixelWidth;
-            //var heightPx = img.PixelHeight;
-            //var horzRezDpi = img.DpiX;
-            //var vertRezDpi = img.DpiY;
-#else
-            ImageInfoBase imageInfo = null;
-
-            using (imageStream)
-            {
-                var type = GetImageInfoType(imagePartType);
-                imageInfo = ImageInfo.GetInfo(type, imageStream);
-                if (imageInfo == null)
-                {
-                    throw new ArgumentException("Unsupported image format.");
-                }
-
-                imageStream.Seek(0, SeekOrigin.Begin);
-                imagePart.FeedData(imageStream);
-                // imagePart will also dispose the stream.
-            }
-
-            var widthPx = imageInfo.Width;
-            var heightPx = imageInfo.Height;
-            var horzRezDpi = imageInfo.DpiH;
-            var vertRezDpi = imageInfo.DpiV;
-#endif
             const int emusPerInch = 914400;
             var widthEmus = (long)(widthPx / horzRezDpi * emusPerInch);
             var heightEmus = (long)(heightPx / vertRezDpi * emusPerInch);
@@ -146,34 +112,6 @@ namespace SharpDocx
             return type.Value;
         }
 
-#if !(NET35 || NET45)
-        public static ImageInfo.Type GetImageInfoType(ImagePartType imagePartType)
-        {
-            switch (imagePartType)
-            {
-                case ImagePartType.Bmp:
-                    return ImageInfo.Type.Bmp;
-
-                case ImagePartType.Gif:
-                    return ImageInfo.Type.Gif;
-
-                case ImagePartType.Jpeg:
-                    return ImageInfo.Type.Jpeg;
-
-                case ImagePartType.Png:
-                    return ImageInfo.Type.Png;
-
-                case ImagePartType.Tiff:
-                    return ImageInfo.Type.Tiff;
-
-                case ImagePartType.Wmf:
-                case ImagePartType.Emf:
-                    return ImageInfo.Type.Metafile;
-            }
-
-            return ImageInfo.Type.Unknown;
-        }
-#endif
 
         /// <summary>
         /// Fix problem with more images in document described here: https://github.com/python-openxml/python-docx/issues/455

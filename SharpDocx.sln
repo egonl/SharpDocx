@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpDocx", "SharpDocx\SharpDocx.csproj", "{11025F4C-5F88-4CBF-A29D-494260BF71F8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{469F76BC-D622-4AB7-B71E-DA7F265E7E05} = {469F76BC-D622-4AB7-B71E-DA7F265E7E05}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tutorial", "Samples\SampleProjects\Tutorial\Tutorial.csproj", "{2ED2D5D4-0AA3-4DFC-B249-3941340DF1C2}"
 EndProject
@@ -15,8 +12,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Samples\SampleProjects\Model\Model.csproj", "{52EB5015-D45B-4CAF-911B-4DD61FCC8C6C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inheritance", "Samples\SampleProjects\Inheritance\Inheritance.csproj", "{3D8D60E1-5B3B-47B7-97E5-996F8906DF76}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpImage", "SharpImage\SharpImage.csproj", "{469F76BC-D622-4AB7-B71E-DA7F265E7E05}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Views", "Views", "{28BE5D1E-9170-44D4-89C4-A0C8086021CC}"
 	ProjectSection(SolutionItems) = preProject
@@ -33,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadContext", "Samples\SampleProjects\LoadContext\LoadContext.csproj", "{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpImage", "SharpImage\SharpImage.csproj", "{AAE53D72-AB7E-4FD5-B4CF-29ADD5CA2E3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,14 +53,14 @@ Global
 		{3D8D60E1-5B3B-47B7-97E5-996F8906DF76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D8D60E1-5B3B-47B7-97E5-996F8906DF76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D8D60E1-5B3B-47B7-97E5-996F8906DF76}.Release|Any CPU.Build.0 = Release|Any CPU
-		{469F76BC-D622-4AB7-B71E-DA7F265E7E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{469F76BC-D622-4AB7-B71E-DA7F265E7E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{469F76BC-D622-4AB7-B71E-DA7F265E7E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{469F76BC-D622-4AB7-B71E-DA7F265E7E05}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D7245CD-AFC0-4324-A21B-FAB87BC3A5F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAE53D72-AB7E-4FD5-B4CF-29ADD5CA2E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAE53D72-AB7E-4FD5-B4CF-29ADD5CA2E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAE53D72-AB7E-4FD5-B4CF-29ADD5CA2E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAE53D72-AB7E-4FD5-B4CF-29ADD5CA2E3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
