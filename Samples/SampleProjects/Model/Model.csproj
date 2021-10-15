@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net45;net35</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net45;net35</TargetFrameworks>
     <RootNamespace>Model</RootNamespace>
   </PropertyGroup>
 
