@@ -63,8 +63,8 @@ namespace SharpDocx
             var vertRezDpi = imageInfo.DpiV;
 #endif
             const int emusPerInch = 914400;
-            var widthEmus = (long)(widthPx / horzRezDpi * emusPerInch);
-            var heightEmus = (long)(heightPx / vertRezDpi * emusPerInch);
+            var widthEmus = (long)(widthPx * emusPerInch / horzRezDpi);
+            var heightEmus = (long)(heightPx * emusPerInch / vertRezDpi);
 
             if (widthEmus > maxWidthInEmus)
             {
