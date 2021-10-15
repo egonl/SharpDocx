@@ -19,7 +19,7 @@ namespace SharpDocx.CodeBlocks
             base.Initialize();
 
             var previousElement = Placeholder.GetParent<TableRow>().PreviousSibling() as OpenXmlCompositeElement;
-            previousElement.SetAttribute(new OpenXmlAttribute { LocalName = "IpId", Value = CurrentInsertionPoint.Id });
+            previousElement.SetAttribute(new OpenXmlAttribute(null, "IpId", null, CurrentInsertionPoint.Id));
             CurrentInsertionPoint.Element = previousElement;
 
             var p = Placeholder.GetParent<TableRow>();

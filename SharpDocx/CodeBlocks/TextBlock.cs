@@ -33,7 +33,7 @@ namespace SharpDocx.CodeBlocks
 
             FirstInsertionPointParagraph =
                 Placeholder.GetElementBlockLevelParent().InsertBeforeSelf(new Paragraph());
-            FirstInsertionPointParagraph.SetAttribute(new OpenXmlAttribute { LocalName = "IpId", Value = CurrentInsertionPoint.Id });
+            FirstInsertionPointParagraph.SetAttribute(new OpenXmlAttribute(null, "IpId", null, CurrentInsertionPoint.Id));
             CurrentInsertionPoint.Element = FirstInsertionPointParagraph;
 
             GetBody(StartText, EndingCodeBlock.Placeholder);
