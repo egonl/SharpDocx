@@ -72,11 +72,11 @@ namespace {Namespace}
 }";
 
         internal static Assembly Compile(
-            string viewPath, 
-            string className, 
-            string baseClassName, 
+            string viewPath,
+            string className,
+            string baseClassName,
             Type modelType,
-            List<string> usingDirectives, 
+            List<string> usingDirectives,
             List<string> referencedAssemblies)
         {
             List<CodeBlock> codeBlocks;
@@ -124,7 +124,7 @@ namespace {Namespace}
                     }
                     else if (cb is Directive)
                     {
-                        var directive = (Directive) cb;
+                        var directive = (Directive)cb;
                         if (directive.Name.Equals("import"))
                         {
                             AddUsingDirective(directive, usingDirectives);
@@ -137,10 +137,10 @@ namespace {Namespace}
                     else
                     {
                         if (currentTextBlockStack.Count > 0 && cb == currentTextBlockStack.Peek().EndingCodeBlock)
-                    {
+                        {
                             // Automatically insert AppendTextBlock before closing text block brace.
                             invokeDocumentCodeBody.Append($"            AppendTextBlock();{Environment.NewLine}");
-                    }
+                        }
                         invokeDocumentCodeBody.Append($"            CurrentCodeBlock = CodeBlocks[{i}];{Environment.NewLine}");
                         invokeDocumentCodeBody.Append($"            {cb.Code.TrimStart()}{Environment.NewLine}");
                     }
@@ -336,7 +336,7 @@ namespace {Namespace}
                     }
                     else
                     {
-                        references.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyDir,ra)));
+                        references.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyDir, ra)));
                     }
                 }
             }
@@ -368,8 +368,8 @@ namespace {Namespace}
                         formattedCode.Append($"{i + 1,5}  {lines[i]}\n");
                     }
 
-                    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
-                        diagnostic.IsWarningAsError || 
+                    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
+                        diagnostic.IsWarningAsError ||
                         diagnostic.Severity == DiagnosticSeverity.Error);
 
                     var formattedErrors = new StringBuilder();
@@ -439,7 +439,7 @@ namespace {Namespace}
                 // Read location of PE signature.
                 bh.Seek(0x3C, SeekOrigin.Begin);
                 var peHeaderOffset = bh.ReadUint();
-                
+
                 // Check PE signature.
                 bh.Seek(peHeaderOffset, SeekOrigin.Begin);
                 var peSignature = bh.ReadUint();
