@@ -169,7 +169,13 @@ namespace SharpDocx
                 filePath = $"{ImageDirectory}/{filePath}";
             }
 
-            if (!File.Exists(filePath)) return;
+            if (!File.Exists(filePath))
+            {
+#if DEBUG
+                CurrentCodeBlock.Placeholder.Text = $"Image '{filePath}' not found.";
+#endif
+                return;
+            }
 
             var imageTypePart = ImageHelper.GetImagePartType(filePath);
 
