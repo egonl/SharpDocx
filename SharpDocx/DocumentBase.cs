@@ -169,6 +169,8 @@ namespace SharpDocx
                 filePath = $"{ImageDirectory}/{filePath}";
             }
 
+            if (!File.Exists(filePath)) return;
+
             var imageTypePart = ImageHelper.GetImagePartType(filePath);
 
             const long emusPerTwip = 635;
