@@ -31,12 +31,13 @@ namespace SharpDocx
                     Console.WriteLine($"Succesfully generated '{documentPath}'.");
 
                     try
-                    {              
+                    {
                         // Show the generated document.
                         Process.Start(documentPath);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Console.WriteLine(ex.Message);
                         // Ignored.
                     }
                 }
