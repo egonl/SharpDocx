@@ -18,7 +18,20 @@ namespace Inheritance
 #else
             var myDocument = DocumentFactory.Create<MyDocument>(viewPath);
             myDocument.MyProperty = "The Code";
-            myDocument.Generate(documentPath);
+            
+            // It's possible to generate a file or a stream.
+            
+            // 1. Generate a file
+            // myDocument.Generate(documentPath);
+
+            //2. Generate an output stream.
+            using (var outputStream = myDocument.Generate())
+            {
+                using (var outputFile = File.Open(documentPath, FileMode.Create))
+                {
+                    outputFile.Write(outputStream.GetBuffer(), 0, (int)outputStream.Length);
+                }
+            }
 #endif
         }
     }
