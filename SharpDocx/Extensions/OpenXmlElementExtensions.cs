@@ -62,6 +62,10 @@ namespace SharpDocx.Extensions
                 {
                     return true;
                 }
+                else if (child is Break)
+                {
+                    return true;
+                }
             }
 
             return false;
