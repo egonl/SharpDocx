@@ -55,13 +55,13 @@ Version 1.0.0 - January 1, 2018
     <tags>openxml office word document sharpdocx</tags>
     <dependencies>
       <group targetFramework="net35">
-        <dependency id="DocumentFormat.OpenXml" version="2.9.1" />
+        <dependency id="DocumentFormat.OpenXml" version="2.13.1" />
       </group>            
       <group targetFramework="net45">
-        <dependency id="DocumentFormat.OpenXml" version="2.9.1" />
+        <dependency id="DocumentFormat.OpenXml" version="2.13.1" />
       </group>            
       <group targetFramework="netstandard2.0">
-        <dependency id="DocumentFormat.OpenXml" version="2.9.1" />
+        <dependency id="DocumentFormat.OpenXml" version="2.13.1" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="2.10.0" />
       </group>
     </dependencies>
