@@ -1,1 +1,1 @@
-nuget pack SharpDocx.nuspec
+nuget pack SharpDocx.nuspec -Symbols -SymbolPackageFormat snupkg

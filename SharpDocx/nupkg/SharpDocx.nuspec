@@ -2,12 +2,13 @@
 <package >
   <metadata>
     <id>SharpDocx</id>
-    <version>2.0.4.0</version>
+    <version>2.0.4.1</version>
     <authors>egonl</authors>
     <owners>egonl</owners>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/egonl/SharpDocx</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <repository type="git" url="https://github.com/egonl/SharpDocx" commit="65aa9469eef2beac85e46ea3352bbd6d048723d2" />
     <summary>Create simple and complex Word documents with ease</summary>
     <description>Framework for creating Word documents 
 - Use C# code inside Word documents for inserting text, images or tables.

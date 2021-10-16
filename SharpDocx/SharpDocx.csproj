@@ -3,22 +3,25 @@
   <PropertyGroup>
     <TargetFrameworks>net45;net35;netstandard2.0</TargetFrameworks>
     <RootNamespace>SharpDocx</RootNamespace>
-    <Version>2.0.4.0</Version>
+    <Version>2.0.4.1</Version>
     <Authors>egonl</Authors>
     <Product>SharpDocx</Product>
     <PackageId>SharpDocx</PackageId>
-    <AssemblyVersion>2.0.4.0</AssemblyVersion>
-    <FileVersion>2.0.4.0</FileVersion>
+    <AssemblyVersion>2.0.4.1</AssemblyVersion>
+    <FileVersion>2.0.4.1</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>C# based template engine for generating Word documents</Description>
-    <Copyright>Copyright 2017-2020 egonl</Copyright>
+    <Copyright>Copyright 2017-2021 egonl</Copyright>
     <PackageLicenseUrl>https://github.com/egonl/SharpDocx/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/egonl/SharpDocx</PackageProjectUrl>
     <!-- <PackageIconUrl>Icon URL</PackageIconUrl> -->
-    <!-- <RepositoryUrl>Repo URL</RepositoryUrl> -->
-    <!-- <RepositoryType>Repo type</RepositoryType> -->
     <!-- <PackageTags>Tags</PackageTags> -->
     <PackageReleaseNotes>Release</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/egonl/SharpDocx</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +31,10 @@
     <EmbeddedResource Remove="nupkg\**" />
     <None Remove="lib\**" />
     <None Remove="nupkg\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
