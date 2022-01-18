@@ -20,20 +20,20 @@ namespace SharpDocx
 
         internal OpenXmlCompositeElement Append(OpenXmlCompositeElement insertionPoint)
         {
-            var elementsToMove = new List<OpenXmlCompositeElement>();
+            var elementsToMove = new List<OpenXmlElement>();
             foreach (var element in _workingBody.ChildElements)
             {
-                elementsToMove.Add(element as OpenXmlCompositeElement);
+                elementsToMove.Add(element);
             }
             
             foreach (var element in elementsToMove)
             {
                 element.Remove();
 
-                if (element.HasText())
+                if (element is OpenXmlCompositeElement ce && ce.HasText())
                 {
                     // Ignore empty paragraphs.
-                    insertionPoint = insertionPoint.InsertAfterSelf(element);
+                    insertionPoint = insertionPoint.InsertAfterSelf(ce);
                 }
             }
 
@@ -52,12 +52,12 @@ namespace SharpDocx
             var list = new List<Text>();
             foreach (var element in body.ChildElements)
             {
-                GetPlaceholdersRecursive(element as OpenXmlCompositeElement, list);
+                GetPlaceholdersRecursive(element as OpenXmlElement, list);
             }
             return list;
         }
 
-        private static void GetPlaceholdersRecursive(OpenXmlCompositeElement ce, List<Text> placeholders)
+        private static void GetPlaceholdersRecursive(OpenXmlElement ce, List<Text> placeholders)
         {
             foreach (var child in ce.ChildElements)
             {

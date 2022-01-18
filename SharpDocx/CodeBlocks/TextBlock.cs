@@ -66,12 +66,12 @@ namespace SharpDocx.CodeBlocks
                 return;
             }
 
-            var elementsToMove = new List<OpenXmlCompositeElement>();
-            var nextElement = startParent;
+            var elementsToMove = new List<OpenXmlElement>();
+            var nextElement = (OpenXmlElement)startParent;
             while (nextElement != endParent)
             {
                 elementsToMove.Add(nextElement);
-                nextElement = nextElement.NextSibling() as OpenXmlCompositeElement;
+                nextElement = nextElement.NextSibling();
             }
             elementsToMove.Add(endParent);
 
