@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 #if NET35 || NET45
 using System.Windows.Media.Imaging;
@@ -63,8 +63,8 @@ namespace SharpDocx
             var vertRezDpi = imageInfo.DpiV;
 #endif
             const int emusPerInch = 914400;
-            var widthEmus = (long)(widthPx * emusPerInch / horzRezDpi);
-            var heightEmus = (long)(heightPx * emusPerInch / vertRezDpi);
+            var widthEmus = (long)(widthPx / horzRezDpi) * emusPerInch;
+            var heightEmus = (long)(heightPx / vertRezDpi) * emusPerInch;
 
             if (widthEmus > maxWidthInEmus)
             {
