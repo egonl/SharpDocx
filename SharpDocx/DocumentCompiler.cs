@@ -81,6 +81,7 @@ namespace {Namespace}
         {
             List<CodeBlock> codeBlocks;
 
+#if DEBUG
             // Copy the template to a temporary file, so it can be opened even when the template is open in Word.
             // This makes testing templates a lot easier.
             var tempFilePath = $"{Path.GetTempPath()}{Guid.NewGuid():N}.cs.docx";
@@ -98,6 +99,13 @@ namespace {Namespace}
             {
                 File.Delete(tempFilePath);
             }
+#else
+            using (var package = WordprocessingDocument.Open(viewPath, false))
+            {
+                var codeBlockBuilder = new CodeBlockBuilder(package);
+                codeBlocks = codeBlockBuilder.CodeBlocks;
+            }
+#endif
 
             var invokeDocumentCodeBody = new StringBuilder();
             Stack<TextBlock> currentTextBlockStack = new Stack<TextBlock>();
@@ -229,14 +237,14 @@ namespace {Namespace}
                 IncludeDebugInformation = false
             };
 
-#if DEBUG_DOCUMENT_CODE 
+#if DEBUG_DOCUMENT_CODE
             // Create an assembly with debug information and store it in a file. This allows us to step through the generated code.
             // Temporary files are stored in C:\Users\username\AppData\Local\Temp and are not deleted automatically.
             parameters.GenerateInMemory = false;
             parameters.IncludeDebugInformation = true;
             parameters.TempFiles = new TempFileCollection {KeepFiles = true};
             parameters.OutputAssembly = $"{parameters.TempFiles.BasePath}.dll";
-#else 
+#else
             // Create an assembly in memory and do not include debug information. Fast, but you can't step through the code.
             parameters.CompilerOptions = "/target:library /optimize";
 #endif

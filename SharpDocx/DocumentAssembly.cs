@@ -16,11 +16,6 @@ namespace SharpDocx
             Type baseClass,
             Type modelType)
         {
-            if (!File.Exists(viewPath))
-            {
-                throw new ArgumentException($"Could not find the file '{viewPath}'", nameof(viewPath));
-            }
-
             if (baseClass == null)
             {
                 throw new ArgumentNullException(nameof(baseClass));                
@@ -72,7 +67,12 @@ namespace SharpDocx
                 // Add namespace(s) of Model and reference Model assembly/assemblies.
                 foreach (var type in GetTypes(modelType))
                 {
-                    usingDirectives.Add($"using {type.Namespace};");
+                    if (!string.IsNullOrEmpty(type.Namespace))
+                    {
+                        // See issue #38.
+                        usingDirectives.Add($"using {type.Namespace};");
+                    }
+
                     referencedAssemblies.Add(type.Assembly.Location);
                 }
             }

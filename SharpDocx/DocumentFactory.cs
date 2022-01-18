@@ -86,6 +86,13 @@ namespace SharpDocx
             bool forceCompile = false)
         {
             viewPath = Path.GetFullPath(viewPath);
+            
+            if (!File.Exists(viewPath))
+            {
+                throw new ArgumentException($"Could not find the file '{viewPath}'", nameof(viewPath));
+            }
+
+            var viewLastWriteTime = new FileInfo(viewPath).LastWriteTime.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
 
             if (baseClassType == null)
             {
@@ -98,7 +105,7 @@ namespace SharpDocx
 
             lock (AssembliesLock)
             {
-                da = (DocumentAssembly)Assemblies[viewPath + baseClassName + modelTypeName];
+                da = (DocumentAssembly)Assemblies[viewPath + viewLastWriteTime + baseClassName + modelTypeName];
 
                 if (da == null || forceCompile)
                 {
@@ -107,7 +114,7 @@ namespace SharpDocx
                         baseClassType,
                         model?.GetType());
 
-                    Assemblies[viewPath + baseClassName + modelTypeName] = da;
+                    Assemblies[viewPath + viewLastWriteTime + baseClassName + modelTypeName] = da;
                 }
             }
 
