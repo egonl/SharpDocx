@@ -33,7 +33,7 @@ namespace SharpDocx
                     try
                     {
                         // Show the generated document.
-                        Process.Start(documentPath);
+                        Process.Start(new ProcessStartInfo { FileName = documentPath, UseShellExecute = true });
                     }
                     catch (Exception ex)
                     {

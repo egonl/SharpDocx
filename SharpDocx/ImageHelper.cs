@@ -2,14 +2,14 @@
 using System.IO;
 #if NET35 || NET45
 using System.Windows.Media.Imaging;
-#else
-using SharpImage;
 #endif
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
+using DocumentFormat.OpenXml;
+using System.Drawing;
 
 namespace SharpDocx
 {
@@ -22,46 +22,23 @@ namespace SharpDocx
             int percentage, long maxWidthInEmus)
         {
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
-#if NET35 || NET45
-            var img = new BitmapImage();
+
+            var img = Image.FromStream(imageStream);
+
+            var widthPx = img.Width;
+            var heightPx = img.Height;
+            var horzRezDpi = img.HorizontalResolution;
+            var vertRezDpi = img.VerticalResolution;
+
+            img.Dispose();
 
             using (imageStream)
             {
-                img.BeginInit();
-                img.StreamSource = imageStream;
-                img.EndInit();
-
                 imageStream.Seek(0, SeekOrigin.Begin);
                 imagePart.FeedData(imageStream);
                 // imagePart will also dispose the stream.
             }
 
-            var widthPx = img.PixelWidth;
-            var heightPx = img.PixelHeight;
-            var horzRezDpi = img.DpiX;
-            var vertRezDpi = img.DpiY;
-#else
-            ImageInfoBase imageInfo = null;
-
-            using (imageStream)
-            {
-                var type = GetImageInfoType(imagePartType);
-                imageInfo = ImageInfo.GetInfo(type, imageStream);
-                if (imageInfo == null)
-                {
-                    throw new ArgumentException("Unsupported image format.");
-                }
-
-                imageStream.Seek(0, SeekOrigin.Begin);
-                imagePart.FeedData(imageStream);
-                // imagePart will also dispose the stream.
-            }
-
-            var widthPx = imageInfo.Width;
-            var heightPx = imageInfo.Height;
-            var horzRezDpi = imageInfo.DpiH;
-            var vertRezDpi = imageInfo.DpiV;
-#endif
             const int emusPerInch = 914400;
             var widthEmus = (long)(widthPx * emusPerInch / horzRezDpi);
             var heightEmus = (long)(heightPx * emusPerInch / vertRezDpi);
@@ -135,33 +112,15 @@ namespace SharpDocx
             return type.Value;
         }
 
-#if !(NET35 || NET45)
-        public static ImageInfo.Type GetImageInfoType(ImagePartType imagePartType)
-        {
-            switch (imagePartType)
-            {
-                case ImagePartType.Bmp:
-                    return ImageInfo.Type.Bmp;
 
-                case ImagePartType.Gif:
-                    return ImageInfo.Type.Gif;
-
-                case ImagePartType.Jpeg:
-                    return ImageInfo.Type.Jpeg;
-
-                case ImagePartType.Png:
-                    return ImageInfo.Type.Png;
-
-                case ImagePartType.Tiff:
-                    return ImageInfo.Type.Tiff;
-            }
-
-            return ImageInfo.Type.Unknown;
-        }
-#endif
+        /// <summary>
+        /// Fix problem with more images in document described here: https://github.com/python-openxml/python-docx/issues/455
+        /// </summary>
+        static UInt32 _id = 1000U;
 
         private static Drawing GetDrawing(string relationshipId, long widthEmus, long heightEmus)
         {
+
             return new Drawing(
                 new DW.Inline(
                     new DW.Extent { Cx = widthEmus, Cy = heightEmus },
@@ -174,8 +133,8 @@ namespace SharpDocx
                     },
                     new DW.DocProperties
                     {
-                        Id = 1,
-                        Name = "Picture 1"
+                        Id = (UInt32Value)(++_id),
+                        Name = $"Picture {_id}"
                     },
                     new DW.NonVisualGraphicFrameDrawingProperties(
                         new A.GraphicFrameLocks { NoChangeAspect = true }),
@@ -205,7 +164,7 @@ namespace SharpDocx
                                             new A.Extents { Cx = widthEmus, Cy = heightEmus }),
                                         new A.PresetGeometry(
                                                 new A.AdjustValueList())
-                                            {Preset = A.ShapeTypeValues.Rectangle}))
+                                        { Preset = A.ShapeTypeValues.Rectangle }))
                             )
                             { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
                 )

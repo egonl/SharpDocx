@@ -57,19 +57,19 @@ namespace SharpDocx
             try
             {
 #endif
-                using (Package = WordprocessingDocument.Open(documentPath, true))
+            using (Package = WordprocessingDocument.Open(documentPath, true))
+            {
+                var codeBlockBuilder = new CodeBlockBuilder(Package);
+                CodeBlocks = codeBlockBuilder.CodeBlocks;
+                Map = codeBlockBuilder.BodyMap;
+
+                InvokeDocumentCode();
+
+                foreach (var cb in CodeBlocks)
                 {
-                    var codeBlockBuilder = new CodeBlockBuilder(Package);
-                    CodeBlocks = codeBlockBuilder.CodeBlocks;
-                    Map = codeBlockBuilder.BodyMap;
-
-                    InvokeDocumentCode();
-
-                    foreach (var cb in CodeBlocks)
-                    {
-                        cb.RemoveEmptyParagraphs();
-                    }
+                    cb.RemoveEmptyParagraphs();
                 }
+            }
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
             }
@@ -225,21 +225,26 @@ namespace SharpDocx
 
             var imageTypePart = ImageHelper.GetImagePartType(filePath);
 
-            const long emusPerTwip = 635;
-            var maxWidthInEmus = GetPageContentWidthInTwips() * emusPerTwip;
+                const long emusPerTwip = 635;
+                var maxWidthInEmus = GetPageContentWidthInTwips() * emusPerTwip;
 
-            Drawing drawing;
-            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                drawing = ImageHelper.CreateDrawing(Package, fs, imageTypePart, percentage, maxWidthInEmus);
+                Drawing drawing;
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    drawing = ImageHelper.CreateDrawing(Package, fs, imageTypePart, percentage, maxWidthInEmus);
+                }
+
+                CurrentCodeBlock.Placeholder.InsertAfterSelf(drawing);
+
+                if (!CurrentCodeBlock.Placeholder.GetParent<Paragraph>().HasText())
+                {
+                    // Insert a zero-width space, so the image doesn't get deleted by CodeBlock.RemoveEmptyParagraphs.
+                    CurrentCodeBlock.Placeholder.Text = "\u200B";
+                }
             }
-
-            CurrentCodeBlock.Placeholder.InsertAfterSelf(drawing);
-
-            if (!CurrentCodeBlock.Placeholder.GetParent<Paragraph>().HasText())
+            else // image was not found
             {
-                // Insert a zero-width space, so the image doesn't get deleted by CodeBlock.RemoveEmptyParagraphs.
-                CurrentCodeBlock.Placeholder.Text = "\u200B";
+                CurrentCodeBlock.Placeholder.Text = $"Image '{filePath} was not found!";
             }
         }
 

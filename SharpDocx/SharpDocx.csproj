@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net35;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net35</TargetFrameworks>
     <RootNamespace>SharpDocx</RootNamespace>
-    <Version>2.1.0.0</Version>
+    <Version>2.0.5.1</Version>
     <Authors>egonl</Authors>
     <Product>SharpDocx</Product>
     <PackageId>SharpDocx</PackageId>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <FileVersion>2.1.0.0</FileVersion>
+    <AssemblyVersion>2.0.5.1</AssemblyVersion>
+    <FileVersion>2.0.5.1</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>C# based template engine for generating Word documents</Description>
     <Copyright>Copyright 2017-2021 egonl</Copyright>
@@ -34,11 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.13.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.12.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
