@@ -11,7 +11,8 @@ namespace SharpDocx
             string documentPath,
             object model = null,
             Type baseClassType = null,
-            Action<DocumentBase> initializeDocument = null)
+            Action<DocumentBase> initializeDocument = null,
+            string documentViewer = null)
         {
             Console.WriteLine("Initializing SharpDocx IDE...");
 
@@ -33,7 +34,16 @@ namespace SharpDocx
                     try
                     {
                         // Show the generated document.
-                        Process.Start(documentPath);
+                        if (documentViewer != null)
+                        {
+                            Process.Start(documentViewer, documentPath);
+                        }
+#if NET35 || NET45
+                        else
+                        {
+                            Process.Start(documentPath);
+                        }
+#endif                    
                     }
                     catch (Exception ex)
                     {
