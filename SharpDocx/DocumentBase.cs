@@ -215,7 +215,7 @@ namespace SharpDocx
                 filePath = $"{ImageDirectory}/{filePath}";
             }
 
-            if (!File.Exists(filePath))
+            if (File.Exists(filePath))
             {
                 var imageTypePart = ImageHelper.GetImagePartType(filePath);
 
