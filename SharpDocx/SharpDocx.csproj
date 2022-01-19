@@ -19,8 +19,6 @@
     <PackageReleaseNotes>Release</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/egonl/SharpDocx</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
