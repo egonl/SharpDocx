@@ -1,6 +1,6 @@
 ﻿//#define DEBUG_DOCUMENT_CODE
 
-#if !(NET35 || NET45)
+#if !(NET35 || NET46)
 #define AUTO_REFERENCE_SDK
 #endif
 
@@ -8,7 +8,7 @@
 using System.Linq;
 #endif
 
-#if NET35 || NET45
+#if NET35 || NET46
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 #else
@@ -211,7 +211,7 @@ namespace {Namespace}
             Debug.WriteLine("***Source code***");
             Debug.WriteLine(sourceCode);
 
-#if NET35 || NET45
+#if NET35 || NET46
             // Create the compiler.
 #if NET35
             var options = new Dictionary<string, string> {{"CompilerVersion", "v3.5"}};

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-#if NET35 || NET45
+#if NET35 || NET46
 using System.Windows.Media.Imaging;
 #endif
 using DocumentFormat.OpenXml.Packaging;

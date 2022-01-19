@@ -100,19 +100,19 @@ namespace SharpDocx
             try
             {
 #endif
-                using (Package = WordprocessingDocument.Open(outputstream, true))
+            using (Package = WordprocessingDocument.Open(outputstream, true))
+            {
+                var codeBlockBuilder = new CodeBlockBuilder(Package);
+                CodeBlocks = codeBlockBuilder.CodeBlocks;
+                Map = codeBlockBuilder.BodyMap;
+
+                InvokeDocumentCode();
+
+                foreach (var cb in CodeBlocks)
                 {
-                    var codeBlockBuilder = new CodeBlockBuilder(Package);
-                    CodeBlocks = codeBlockBuilder.CodeBlocks;
-                    Map = codeBlockBuilder.BodyMap;
-
-                    InvokeDocumentCode();
-
-                    foreach (var cb in CodeBlocks)
-                    {
-                        cb.RemoveEmptyParagraphs();
-                    }
+                    cb.RemoveEmptyParagraphs();
                 }
+            }
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
             }
@@ -217,13 +217,7 @@ namespace SharpDocx
 
             if (!File.Exists(filePath))
             {
-#if DEBUG
-                CurrentCodeBlock.Placeholder.Text = $"Image '{filePath}' not found.";
-#endif
-                return;
-            }
-
-            var imageTypePart = ImageHelper.GetImagePartType(filePath);
+                var imageTypePart = ImageHelper.GetImagePartType(filePath);
 
                 const long emusPerTwip = 635;
                 var maxWidthInEmus = GetPageContentWidthInTwips() * emusPerTwip;
