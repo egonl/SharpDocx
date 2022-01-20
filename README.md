@@ -3,7 +3,7 @@
 [![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/egonl/SharpDocx/blob/master/LICENSE)
 [![AppVeyor](https://img.shields.io/appveyor/ci/egonl/SharpDocx.svg)](https://ci.appveyor.com/project/egonl/SharpDocx/branch/master)
 
-*C# based template engine for generating Word documents*
+*Lightweight template engine for creating Word documents*
 
 Generating documents with SharpDocx is a two step process. First you create a view in Word. A view is a Word document which also contains C# code. Code can be inserted anywhere, e.g. <%= DateTime.Now %> would insert the current date and time.
 
@@ -19,4 +19,4 @@ If you want, you can specify a view model to be used in your view. Then you coul
 
 If you want to do something that's not supported by SharpDocx, you can do so by creating your own document subclass. See the Inheritance example.
 
-SharpDocx supports .NET Framework 3.5/4.5 and .NET Standard 2.0.
+SharpDocx supports .NET Framework 3.5/4.5 and .NET Standard 2.0. Since it supports .NET Standard 2.0 it can be used in .NET Core 3.1, .NET 5.0 and .NET 6.0 projects as well.
