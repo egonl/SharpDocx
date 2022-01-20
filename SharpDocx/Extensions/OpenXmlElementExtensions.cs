@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 
@@ -13,9 +12,9 @@ namespace SharpDocx.Extensions
 
             while (e != null)
             {
-                if (e is T)
+                if (e is T t)
                 {
-                    return e as T;
+                    return t;
                 }
 
                 e = e.Parent;
@@ -39,9 +38,9 @@ namespace SharpDocx.Extensions
                 {
                     GetTextRecursive(child as OpenXmlCompositeElement, sb);
                 }
-                else if (child is Text)
+                else if (child is Text t)
                 {
-                    sb.Append((child as Text).Text);
+                    sb.Append(t.Text);
                 }
             }
         }
@@ -58,12 +57,13 @@ namespace SharpDocx.Extensions
                         return true;
                     }
                 }
-                else if (child is Text && (child as Text).Text.Length > 0)
+                else if (child is Text t && t.Text.Length > 0)
                 {
                     return true;
                 }
-                else if (child is Break)
+                else if (child is Break b && b.Type != null && b.Type == BreakValues.Page)
                 {
+                    // Only preserve page breaks, see issue #36.
                     return true;
                 }
             }
