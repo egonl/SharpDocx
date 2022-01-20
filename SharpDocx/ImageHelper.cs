@@ -39,7 +39,7 @@ namespace SharpDocx
                 // imagePart will also dispose the stream.
             }
 
-            const int emusPerInch = 914400;
+            const long emusPerInch = 914400; // this must be a long otherwise the multiplication in the next line could lead to an overflow and negative number
             var widthEmus = (long)(widthPx * emusPerInch / horzRezDpi);
             var heightEmus = (long)(heightPx * emusPerInch / vertRezDpi);
 
@@ -120,7 +120,6 @@ namespace SharpDocx
 
         private static Drawing GetDrawing(string relationshipId, long widthEmus, long heightEmus)
         {
-
             return new Drawing(
                 new DW.Inline(
                     new DW.Extent { Cx = widthEmus, Cy = heightEmus },
@@ -144,8 +143,8 @@ namespace SharpDocx
                                     new PIC.NonVisualPictureProperties(
                                         new PIC.NonVisualDrawingProperties
                                         {
-                                            Id = 0,
-                                            Name = "New Bitmap Image.png"
+                                            Id = (UInt32Value)(++_id),
+                                            Name = $"Picture{_id}.png"
                                         },
                                         new PIC.NonVisualPictureDrawingProperties()),
                                     new PIC.BlipFill(
@@ -166,7 +165,7 @@ namespace SharpDocx
                                                 new A.AdjustValueList())
                                         { Preset = A.ShapeTypeValues.Rectangle }))
                             )
-                            { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+                        { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
                 )
                 {
                     DistanceFromTop = 0,
