@@ -2,21 +2,31 @@
 <package >
   <metadata>
     <id>SharpDocx</id>
-    <version>2.1.0.0</version>
+    <version>2.2.0</version>
     <authors>egonl</authors>
     <owners>egonl</owners>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/egonl/SharpDocx</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <repository type="git" url="https://github.com/egonl/SharpDocx" commit="b6c4ffcaf7df1d524bc183a05a36900d37b5acb2" />
-    <summary>Create simple and complex Word documents with ease</summary>
-    <description>Framework for creating Word documents 
-- Use C# code inside Word documents for inserting text, images or tables.
-- Supports the MVC pattern, where the view is a Word document.
-- Supports .NET Framework 3.5/4.5+ and .NET Standard 2.0.
+    <repository type="git" url="https://github.com/egonl/SharpDocx" />
+    <summary>Lightweight template engine for creating Word documents</summary>
+    <description>SharpDocx enables you to generate Word documents based on a view. The view itself is a Word document and can be as simple or complex as you want.
+- Use C# code inside the view for inserting text, images or tables.
+- Supports the MVC pattern, so you can use your own C# model in the template.
+- Supports .NET Framework 3.5/4.5+, .NET Standard 2.0, .NET Core 3.1, .NET 5.0 and .NET 6.0.
 - Based on Microsoft's Open XML SDK.
-- Source code, tutorial and sample code on GitHub.</description>
-    <releaseNotes>Version 2.1.0 - October 16, 2021
+- Source code, tutorial and examples on GitHub.</description>
+    <releaseNotes>Version 2.2.0 - January 20, 2022
+- Added support for Visual Studio Code and Visual Studio 2022.
+- If a view gets updated it will now be recompiled automatically.
+- A copy of the view to a temporary file is now only made in Debug builds.
+- The SharpDocx IDE now also supports a document viewer in .NET Core 3.1, .NET 5.0 and .NET 6.0. However, you have to specify the location of the viewer.
+- Added .NET 6.0 as a target framework for the samples.
+- Updated DocumentFormat.OpenXml to 2.15.0.
+- Fixed issue #37 (NullReferenceException).
+- Fixed large image overflow bug.
+    
+Version 2.1.0 - October 16, 2021
 - Added an overload for the Generate method that returns a stream (issue #8 and #9).
 - Added support for Source Link.
 - Updated samples to .NET Core 3.1.
@@ -51,17 +61,17 @@ Version 1.1.0 - January 4, 2018
 
 Version 1.0.0 - January 1, 2018
 - Initial version.</releaseNotes>
-    <copyright>Copyright 2018-2020</copyright>
+    <copyright>Copyright 2018-2022</copyright>
     <tags>openxml office word document sharpdocx</tags>
     <dependencies>
       <group targetFramework="net35">
-        <dependency id="DocumentFormat.OpenXml" version="2.13.1" />
+        <dependency id="DocumentFormat.OpenXml" version="2.15.0" />
       </group>            
       <group targetFramework="net45">
-        <dependency id="DocumentFormat.OpenXml" version="2.13.1" />
+        <dependency id="DocumentFormat.OpenXml" version="2.15.0" />
       </group>            
       <group targetFramework="netstandard2.0">
-        <dependency id="DocumentFormat.OpenXml" version="2.13.1" />
+        <dependency id="DocumentFormat.OpenXml" version="2.15.0" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="2.10.0" />
       </group>
     </dependencies>
