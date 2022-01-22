@@ -8,7 +8,7 @@
 Generating documents with SharpDocx is a two step process. First you create a view in Word. A view is a Word document which also contains C# code. Code can be inserted anywhere, e.g. <%= DateTime.Now %> would insert the current date and time.
 
 The next step is to create documents based on this view. This requires two lines of code:
-```
+```c#
 var document = DocumentFactory.Create("view.cs.docx");
 document.Generate("output.docx");
 ```
@@ -16,7 +16,7 @@ document.Generate("output.docx");
 Out of the box SharpDocx supports inserting text, tables, images and more. See the Tutorial sample (here's the [view](https://github.com/egonl/SharpDocx/raw/master/Samples/Views/Tutorial.cs.docx) and the [controller](https://github.com/egonl/SharpDocx/blob/master/Samples/SampleProjects/Tutorial/Program.cs), and here's the [generated document](https://github.com/egonl/SharpDocx/raw/master/Samples/Documents/Tutorial.docx)).
 
 If you want, you can specify a view model to be used in your view. Then you could write things like <% foreach (var item in Model.MyList) { %>. 
-```
+```c#
 var document = DocumentFactory.Create("view.cs.docx", myModel);
 document.Generate("output.docx", myModel);
 ```
