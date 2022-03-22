@@ -10,5 +10,6 @@ namespace Model.Models
         public List<Country> Countries { get; set; }
         public DateTime? AverageDateProclaimed { get; set; }
         public int? AveragePopulation { get; set; }
+        public string Image64 { get; set; }
     }
 }
