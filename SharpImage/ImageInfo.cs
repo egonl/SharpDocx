@@ -11,7 +11,8 @@ namespace SharpImage
             Gif,
             Jpeg,
             Png,
-            Tiff
+            Tiff,
+            Metafile
         }
 
         public static ImageInfoBase GetInfo(Type type, Stream stream)
@@ -34,6 +35,9 @@ namespace SharpImage
                     break;
                 case Type.Tiff:
                     info = new TiffInfo();
+                    break;
+                case Type.Metafile:
+                    info = new MetafileInfo();
                     break;
                 default:
                     return null;

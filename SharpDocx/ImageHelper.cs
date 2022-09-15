@@ -22,49 +22,17 @@ namespace SharpDocx
             int percentage, long maxWidthInEmus)
         {
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
-#if NET35 || NET45
-            var img = new BitmapImage();
 
-            using (imageStream)
-            {
-                img.BeginInit();
-                img.StreamSource = imageStream;
-                img.EndInit();
+            var img = System.Drawing.Image.FromStream(imageStream);
 
-                imageStream.Seek(0, SeekOrigin.Begin);
-                imagePart.FeedData(imageStream);
-                // imagePart will also dispose the stream.
-            }
+            var widthPx = img.Width;
+            var heightPx = img.Height;
+            var horzRezDpi = img.HorizontalResolution;
+            var vertRezDpi = img.VerticalResolution;
 
-            var widthPx = img.PixelWidth;
-            var heightPx = img.PixelHeight;
-            var horzRezDpi = (int)img.DpiX;
-            var vertRezDpi = (int)img.DpiY;
-#else
-            ImageInfoBase imageInfo = null;
-
-            using (imageStream)
-            {
-                var type = GetImageInfoType(imagePartType);
-                imageInfo = ImageInfo.GetInfo(type, imageStream);
-                if (imageInfo == null)
-                {
-                    throw new ArgumentException("Unsupported image format.");
-                }
-
-                imageStream.Seek(0, SeekOrigin.Begin);
-                imagePart.FeedData(imageStream);
-                // imagePart will also dispose the stream.
-            }
-
-            var widthPx = imageInfo.Width;
-            var heightPx = imageInfo.Height;
-            var horzRezDpi = imageInfo.DpiH;
-            var vertRezDpi = imageInfo.DpiV;
-#endif
-            const int emusPerInch = 914400;
-            var widthEmus = (long)widthPx * emusPerInch / horzRezDpi;
-            var heightEmus = (long)heightPx * emusPerInch / vertRezDpi;
+            const long emusPerInch = 914400; // this must be a long otherwise the multiplication in the next line could lead to an overflow and negative number
+            var widthEmus = (long)(widthPx * emusPerInch / horzRezDpi);
+            var heightEmus = (long)(heightPx * emusPerInch / vertRezDpi);
 
             if (widthEmus > maxWidthInEmus)
             {
@@ -160,6 +128,11 @@ namespace SharpDocx
         }
 #endif
 
+        /// <summary>
+        /// Fix problem with more images in document described here: https://github.com/python-openxml/python-docx/issues/455
+        /// </summary>
+        static UInt32 _id = 1000U;
+
         private static Drawing GetDrawing(string relationshipId, long widthEmus, long heightEmus)
         {
             return new Drawing(
@@ -174,8 +147,8 @@ namespace SharpDocx
                     },
                     new DW.DocProperties
                     {
-                        Id = 1,
-                        Name = "Picture 1"
+                        Id = (DocumentFormat.OpenXml.UInt32Value)(++_id),
+                        Name = $"Picture {_id}"
                     },
                     new DW.NonVisualGraphicFrameDrawingProperties(
                         new A.GraphicFrameLocks { NoChangeAspect = true }),
@@ -185,8 +158,8 @@ namespace SharpDocx
                                     new PIC.NonVisualPictureProperties(
                                         new PIC.NonVisualDrawingProperties
                                         {
-                                            Id = 0,
-                                            Name = "New Bitmap Image.png"
+                                            Id = (DocumentFormat.OpenXml.UInt32Value)(++_id),
+                                            Name = $"Picture{_id}.png"
                                         },
                                         new PIC.NonVisualPictureDrawingProperties()),
                                     new PIC.BlipFill(
