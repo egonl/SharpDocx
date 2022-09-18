@@ -6,8 +6,10 @@ using System.IO;
 using System.Threading;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
+using System.Diagnostics;
 
 namespace SharpDocx
 {
@@ -39,13 +41,7 @@ namespace SharpDocx
 
         public void Generate(string documentPath, object model = null)
         {
-            if (model != null)
-            {
-                SetModel(model);
-            }
-
             documentPath = Path.GetFullPath(documentPath);
-
             File.Copy(ViewPath, documentPath, true);
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
@@ -59,16 +55,7 @@ namespace SharpDocx
 #endif
                 using (Package = WordprocessingDocument.Open(documentPath, true))
                 {
-                    var codeBlockBuilder = new CodeBlockBuilder(Package);
-                    CodeBlocks = codeBlockBuilder.CodeBlocks;
-                    Map = codeBlockBuilder.BodyMap;
-
-                    InvokeDocumentCode();
-
-                    foreach (var cb in CodeBlocks)
-                    {
-                        cb.RemoveEmptyParagraphs();
-                    }
+                    GenerateInternal(model);
                 }
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
@@ -82,11 +69,6 @@ namespace SharpDocx
 
         public MemoryStream Generate(object model = null)
         {
-            if (model != null)
-            {
-                SetModel(model);
-            }
-
             var viewBytes = File.ReadAllBytes(ViewPath);
             MemoryStream outputstream = new MemoryStream();
             outputstream.Write(viewBytes, 0, viewBytes.Length);
@@ -102,16 +84,7 @@ namespace SharpDocx
 #endif
                 using (Package = WordprocessingDocument.Open(outputstream, true))
                 {
-                    var codeBlockBuilder = new CodeBlockBuilder(Package);
-                    CodeBlocks = codeBlockBuilder.CodeBlocks;
-                    Map = codeBlockBuilder.BodyMap;
-
-                    InvokeDocumentCode();
-
-                    foreach (var cb in CodeBlocks)
-                    {
-                        cb.RemoveEmptyParagraphs();
-                    }
+                    GenerateInternal(model);
                 }
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
@@ -124,6 +97,27 @@ namespace SharpDocx
             // Reset position of stream.
             outputstream.Seek(0, SeekOrigin.Begin);
             return outputstream;
+        }
+
+        protected void GenerateInternal(object model)
+        {
+            if (model != null)
+            {
+                SetModel(model);
+            }
+
+            var codeBlockBuilder = new CodeBlockBuilder(Package);
+            CodeBlocks = codeBlockBuilder.CodeBlocks;
+            Map = codeBlockBuilder.BodyMap;
+
+            InvokeDocumentCode();
+
+            foreach (var cb in CodeBlocks)
+            {
+                cb.RemoveEmptyParagraphs();
+            }
+
+            CreateUniqueDocPropertiesIds();
         }
 
         // Override this static method if you want to specify additional using directives.
@@ -265,5 +259,65 @@ namespace SharpDocx
 
             return width;
         }
+
+        private void CreateUniqueDocPropertiesIds()
+        {
+            // Duplicate DocProperties.Id might lead to issues when opening the file in Word, see https://github.com/python-openxml/python-docx/issues/455#issuecomment-357748310.
+            // Here we'll de-duplicate any duplicates.
+
+            var docProperties = GetDocProperties();
+            var usedIds = new List<uint>();
+
+            foreach (var docProperty in docProperties)
+            {
+                //Debug.Write($"ID was {docProperty.Id}");
+
+                while (usedIds.Contains(docProperty.Id))
+                {
+                    ++docProperty.Id;
+                }
+
+                usedIds.Add(docProperty.Id);
+
+                //Debug.WriteLine($" and is now {docProperty.Id}");
+            }
+        }
+
+        private List<DocProperties> GetDocProperties()
+        {
+            var list = new List<DocProperties>();
+            List<DocProperties> partialResult;
+
+            foreach (var headerPart in Package.MainDocumentPart.HeaderParts)
+            {
+                partialResult = headerPart.Header.GetAllElements<DocProperties>();
+                list.AddRange(partialResult);
+            }
+
+            foreach (var footerPart in Package.MainDocumentPart.FooterParts)
+            {
+                partialResult = footerPart.Footer.GetAllElements<DocProperties>();
+                list.AddRange(partialResult);
+            }
+
+            if (Package.MainDocumentPart.EndnotesPart != null)
+            {
+                partialResult = Package.MainDocumentPart.EndnotesPart.Endnotes.GetAllElements<DocProperties>();
+                list.AddRange(partialResult);
+            }
+
+            if (Package.MainDocumentPart.FootnotesPart != null)
+            {
+                partialResult = Package.MainDocumentPart.FootnotesPart.Footnotes.GetAllElements<DocProperties>();
+                list.AddRange(partialResult);
+            }
+
+            partialResult = Package.MainDocumentPart.Document.Body.GetAllElements<DocProperties>();
+            list.AddRange(partialResult);
+
+            return list;
+        }
+
+
     }
 }

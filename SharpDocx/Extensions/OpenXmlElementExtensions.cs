@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 
@@ -22,6 +23,29 @@ namespace SharpDocx.Extensions
 
             return null;
         }
+
+        public static List<T> GetAllElements<T>(this OpenXmlElement e) where T : OpenXmlElement
+        {
+            var list = new List<T>();
+            GetAllElementsRecursive(e, list);
+            return list;
+        }
+
+        private static void GetAllElementsRecursive<T>(OpenXmlElement e, List<T> list) where T : OpenXmlElement
+        {
+            foreach (var child in e.ChildElements)
+            {
+                if (child.HasChildren)
+                {
+                    GetAllElementsRecursive(child as OpenXmlElement, list);
+                }
+                else if (child is T)
+                {
+                    list.Add(child as T);
+                }
+            }
+        }
+
 
         public static string GetText(this OpenXmlCompositeElement ce)
         {
