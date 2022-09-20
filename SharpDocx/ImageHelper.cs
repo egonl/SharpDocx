@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-#if NET35 || NET45
+#if NET35 || NET46
 using System.Windows.Media.Imaging;
 #else
 using SharpImage;
@@ -103,7 +103,7 @@ namespace SharpDocx
             return type.Value;
         }
 
-#if !(NET35 || NET45)
+#if !(NET35 || NET46)
         public static ImageInfo.Type GetImageInfoType(ImagePartType imagePartType)
         {
             switch (imagePartType)
