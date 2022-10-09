@@ -97,7 +97,7 @@ namespace SharpDocx
 
         private static IEnumerable<Type> GetTypes(Type type)
         {
-#if !NET35
+#if NET45_OR_GREATER
             if (type.IsConstructedGenericType)
             {
                 foreach (var t in type.GenericTypeArguments)

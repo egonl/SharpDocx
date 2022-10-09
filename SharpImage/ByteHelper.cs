@@ -17,15 +17,21 @@ namespace SharpImage
         public ByteHelper(Stream stream)
         {
             Stream = stream;
+#if NET35 || NET40
+            _binaryReader = new BinaryReader(stream, Encoding.UTF8);
+#else
             _binaryReader = new BinaryReader(stream, Encoding.UTF8, true);
+#endif
         }
 
         public void Dispose()
         {
+#if !NET35 && !NET40
             if (_binaryReader != null)
             {
                 _binaryReader.Dispose();
             }
+#endif
         }
 
         public void Seek(long offset, SeekOrigin origin = SeekOrigin.Current)
