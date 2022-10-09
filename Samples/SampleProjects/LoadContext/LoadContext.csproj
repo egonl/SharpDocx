@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+      <!-- Possible TargetFrameworks: netcoreapp3.1, net5.0, net6.0 -->
+      <TargetFrameworks>net6.0</TargetFrameworks>
     <RootNamespace>LoadContext</RootNamespace>
   </PropertyGroup>
 
