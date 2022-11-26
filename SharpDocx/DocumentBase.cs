@@ -207,41 +207,8 @@ namespace SharpDocx
         }
 #endif
 
-        private static bool IsBase64String(string base64String)
-        {
-            if (string.IsNullOrEmpty(base64String)
-                || base64String.Length % 4 != 0
-                || base64String.Contains(" ")
-                || base64String.Contains("\t")
-                || base64String.Contains("\r")
-                || base64String.Contains("\n")
-                )
-            {
-                return false;
-            }
-            else
-            {
-                try
-                {
-                    Convert.FromBase64String(base64String);
-                    return true;
-                }
-                catch (Exception exception)
-                {
-                    throw;
-                }
-            }
-        }
-
         protected void ImageBase64Encoded(string base64String, string extension = "jpg", int percentage = 100)
         {
-            if (!IsBase64String(base64String))
-            {
-#if DEBUG
-                CurrentCodeBlock.Placeholder.Text = $"Image string is not base64 encoded!";
-#endif
-                return;
-            }
 
             Drawing drawing;
             var imageTypePart = ImageHelper.GetImagePartType($".{extension}");
@@ -249,7 +216,30 @@ namespace SharpDocx
             const long emusPerTwip = 635;
             var maxWidthInEmus = GetPageContentWidthInTwips() * emusPerTwip;
 
-            byte[] bytes = Convert.FromBase64String(base64String);
+            byte[] bytes;
+            try
+            {
+                bytes = Convert.FromBase64String(base64String);    
+            }
+            catch (FormatException exception)
+            {
+#if DEBUG
+                var error = $"ERROR: Image string is not a properly base64 encoded string! https://learn.microsoft.com/en-us/dotnet/api/system.convert.frombase64string?view=netstandard-2.0#remarks";
+                Console.WriteLine(error);
+                CurrentCodeBlock.Placeholder.Text = error;
+#endif                
+                return;
+            }
+            catch (ArgumentNullException exception)
+            {
+#if DEBUG
+                var error = $"ERROR: Image string can not be null!";
+                Console.WriteLine(error);
+                CurrentCodeBlock.Placeholder.Text = error;
+#endif                
+                return;                
+            }
+            
             using (MemoryStream ms = new MemoryStream(bytes))
             {
                 drawing = ImageHelper.CreateDrawing(Package, ms, imageTypePart, percentage, maxWidthInEmus);
