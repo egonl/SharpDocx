@@ -207,6 +207,63 @@ namespace SharpDocx
         }
 #endif
 
+        private static bool IsBase64String(string base64String)
+        {
+            if (string.IsNullOrEmpty(base64String)
+                || base64String.Length % 4 != 0
+                || base64String.Contains(" ")
+                || base64String.Contains("\t")
+                || base64String.Contains("\r")
+                || base64String.Contains("\n")
+                )
+            {
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    Convert.FromBase64String(base64String);
+                    return true;
+                }
+                catch (Exception exception)
+                {
+                    throw;
+                }
+            }
+        }
+
+        protected void ImageBase64Encoded(string base64String, string extension = "jpg", int percentage = 100)
+        {
+            if (!IsBase64String(base64String))
+            {
+#if DEBUG
+                CurrentCodeBlock.Placeholder.Text = $"Image string is not base64 encoded!";
+#endif
+                return;
+            }
+
+            Drawing drawing;
+            var imageTypePart = ImageHelper.GetImagePartType($".{extension}");
+
+            const long emusPerTwip = 635;
+            var maxWidthInEmus = GetPageContentWidthInTwips() * emusPerTwip;
+
+            byte[] bytes = Convert.FromBase64String(base64String);
+            using (MemoryStream ms = new MemoryStream(bytes))
+            {
+                drawing = ImageHelper.CreateDrawing(Package, ms, imageTypePart, percentage, maxWidthInEmus);
+            }
+
+            CurrentCodeBlock.Placeholder.InsertAfterSelf(drawing);
+
+            if (!CurrentCodeBlock.Placeholder.GetParent<Paragraph>().HasText())
+            {
+                // Insert a zero-width space, so the image doesn't get deleted by CodeBlock.RemoveEmptyParagraphs.
+                CurrentCodeBlock.Placeholder.Text = "\u200B";
+            }
+        }
+
         protected void Image(string filePath, int percentage = 100)
         {
             if (string.IsNullOrEmpty(Path.GetDirectoryName(filePath)) &&
