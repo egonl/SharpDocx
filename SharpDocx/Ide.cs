@@ -38,7 +38,7 @@ namespace SharpDocx
                         {
                             Process.Start(documentViewer, documentPath);
                         }
-#if NET35 || NET45
+#if NET35_OR_GREATER
                         else
                         {
                             Process.Start(documentPath);

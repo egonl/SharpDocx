@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SharpDocx</id>
-    <version>2.2.0</version>
+    <version>2.3.0</version>
     <authors>egonl</authors>
     <owners>egonl</owners>
     <license type="expression">MIT</license>
@@ -16,7 +16,13 @@
 - Supports .NET Framework 3.5/4.5+, .NET Standard 2.0, .NET Core 3.1, .NET 5.0 and .NET 6.0.
 - Based on Microsoft's Open XML SDK.
 - Source code, tutorial and examples on GitHub.</description>
-    <releaseNotes>Version 2.2.0 - January 20, 2022
+    <releaseNotes>Version 2.3.0 - October 9, 2022
+- Added support for EMF files (issue #51).
+- The IDs of DocProperties are now always unique (issue #51).
+- Changed the default for TargetFrameworks to net48 and net6.0 to better support Visual Studio 2022.
+- The NuGet package now also supports .NET Framework 4.0.
+    
+Version 2.2.0 - January 20, 2022
 - Added support for Visual Studio Code and Visual Studio 2022.
 - If a view gets updated it will now be recompiled automatically.
 - A copy of the view to a temporary file is now only made in Debug builds.
@@ -65,21 +71,28 @@ Version 1.0.0 - January 1, 2018
     <tags>openxml office word document sharpdocx</tags>
     <dependencies>
       <group targetFramework="net35">
-        <dependency id="DocumentFormat.OpenXml" version="2.15.0" />
+        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
       </group>            
+      <group targetFramework="net40">
+        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
+      </group>                  
       <group targetFramework="net45">
-        <dependency id="DocumentFormat.OpenXml" version="2.15.0" />
+        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
       </group>            
       <group targetFramework="netstandard2.0">
-        <dependency id="DocumentFormat.OpenXml" version="2.15.0" />
+        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="2.10.0" />
       </group>
     </dependencies>
   </metadata>
   <files>
     <file src="..\bin\Release\net35\SharpDocx.*" target="lib/net35" />
+    <file src="..\bin\Release\net40\SharpDocx.*" target="lib/net40" />
     <file src="..\bin\Release\net45\SharpDocx.*" target="lib/net45" />
     <file src="..\bin\Release\netstandard2.0\SharpDocx.*" target="lib/netstandard2.0" />
+    <file src="..\bin\Release\net35\SharpImage.*" target="lib/net35" />
+    <file src="..\bin\Release\net40\SharpImage.*" target="lib/net40" />
+    <file src="..\bin\Release\net45\SharpImage.*" target="lib/net45" />
     <file src="..\bin\Release\netstandard2.0\SharpImage.*" target="lib/netstandard2.0" />
   </files>
 </package>

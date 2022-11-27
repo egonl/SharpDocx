@@ -24,4 +24,4 @@ See also the Model sample.
 
 If you want to do something that's not supported by SharpDocx, you can do so by creating your own document subclass. See the Inheritance example.
 
-SharpDocx supports .NET Framework 3.5/4.5 and .NET Standard 2.0. Since it supports .NET Standard 2.0 it can be used in .NET Core 3.1, .NET 5.0 and .NET 6.0 projects as well.
+SharpDocx supports .NET Framework 3.5-4.8 and .NET Standard 2.0. Since it supports .NET Standard 2.0 it can be used in .NET Core 3.1, .NET 5.0 and .NET 6.0 projects as well.
