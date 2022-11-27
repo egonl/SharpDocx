@@ -1,6 +1,6 @@
 ﻿//#define DEBUG_DOCUMENT_CODE
 
-#if !(NET35 || NET45)
+#if !NET35_OR_GREATER
 #define AUTO_REFERENCE_SDK
 #endif
 
@@ -8,7 +8,7 @@
 using System.Linq;
 #endif
 
-#if NET35 || NET45
+#if NET35_OR_GREATER
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 #else
@@ -219,7 +219,7 @@ namespace {Namespace}
             Debug.WriteLine("***Source code***");
             Debug.WriteLine(sourceCode);
 
-#if NET35 || NET45
+#if NET35_OR_GREATER
             // Create the compiler.
 #if NET35
             var options = new Dictionary<string, string> {{"CompilerVersion", "v3.5"}};
@@ -417,7 +417,7 @@ namespace {Namespace}
 
         private static string FormatType(Type type)
         {
-#if !NET35
+#if NET45_OR_GREATER
             if (type.IsConstructedGenericType)
             {
                 var name = type.Name.Substring(0, type.Name.IndexOf("`"));

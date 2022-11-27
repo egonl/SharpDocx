@@ -1,10 +1,6 @@
 ﻿using System;
 using System.IO;
-#if NET35 || NET45
-using System.Windows.Media.Imaging;
-#else
 using SharpImage;
-#endif
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
@@ -22,25 +18,7 @@ namespace SharpDocx
             int percentage, long maxWidthInEmus)
         {
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
-#if NET35 || NET45
-            var img = new BitmapImage();
 
-            using (imageStream)
-            {
-                img.BeginInit();
-                img.StreamSource = imageStream;
-                img.EndInit();
-
-                imageStream.Seek(0, SeekOrigin.Begin);
-                imagePart.FeedData(imageStream);
-                // imagePart will also dispose the stream.
-            }
-
-            var widthPx = img.PixelWidth;
-            var heightPx = img.PixelHeight;
-            var horzRezDpi = (int)img.DpiX;
-            var vertRezDpi = (int)img.DpiY;
-#else
             ImageInfoBase imageInfo = null;
 
             using (imageStream)
@@ -61,7 +39,7 @@ namespace SharpDocx
             var heightPx = imageInfo.Height;
             var horzRezDpi = imageInfo.DpiH;
             var vertRezDpi = imageInfo.DpiV;
-#endif
+
             const int emusPerInch = 914400;
             var widthEmus = (long)widthPx * emusPerInch / horzRezDpi;
             var heightEmus = (long)heightPx * emusPerInch / vertRezDpi;
@@ -135,7 +113,6 @@ namespace SharpDocx
             return type.Value;
         }
 
-#if !(NET35 || NET45)
         public static ImageInfo.Type GetImageInfoType(ImagePartType imagePartType)
         {
             switch (imagePartType)
@@ -154,11 +131,13 @@ namespace SharpDocx
 
                 case ImagePartType.Tiff:
                     return ImageInfo.Type.Tiff;
+
+                case ImagePartType.Emf:
+                    return ImageInfo.Type.Emf;
             }
 
             return ImageInfo.Type.Unknown;
         }
-#endif
 
         private static Drawing GetDrawing(string relationshipId, long widthEmus, long heightEmus)
         {
