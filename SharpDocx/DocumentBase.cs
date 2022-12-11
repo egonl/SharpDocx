@@ -54,10 +54,10 @@ namespace SharpDocx
             try
             {
 #endif
-            using (Package = WordprocessingDocument.Open(documentPath, true))
-            {
-                GenerateInternal(model);
-            }
+                using (Package = WordprocessingDocument.Open(documentPath, true))
+                {
+                    GenerateInternal(model);
+                }
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
             }
@@ -83,10 +83,10 @@ namespace SharpDocx
             try
             {
 #endif
-            using (Package = WordprocessingDocument.Open(outputstream, true))
-            {
-                GenerateInternal(model);
-            }
+                using (Package = WordprocessingDocument.Open(outputstream, true))
+                {
+                    GenerateInternal(model);
+                }
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
             }
