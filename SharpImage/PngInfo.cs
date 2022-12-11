@@ -6,6 +6,8 @@ namespace SharpImage
     {
         public override void Init(Stream stream)
         {
+            Type = ImageType.Unknown;
+
             using (var bh = new ByteHelper(stream))
             {
                 bh.IsLsbf = false;
@@ -21,6 +23,8 @@ namespace SharpImage
                 {
                     return;
                 }
+
+                Type = ImageType.Png;
 
                 DpiH = DpiV = 96;
 

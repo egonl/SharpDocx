@@ -6,6 +6,8 @@ namespace SharpImage
     {
         public override void Init(Stream stream)
         {
+            Type = ImageType.Unknown;
+
             using (var bh = new ByteHelper(stream))
             {
                 bh.Seek(0, SeekOrigin.Begin);
@@ -36,6 +38,8 @@ namespace SharpImage
                     DpiV = dpiV;
                 }
             }
+
+            Type = ImageType.Bmp;
         }
     }
 }

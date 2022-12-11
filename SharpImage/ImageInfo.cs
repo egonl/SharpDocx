@@ -1,42 +1,32 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace SharpImage
 {
     public class ImageInfo
     {
-        public enum Type
-        {
-            Unknown = 0,
-            Bmp,
-            Gif,
-            Jpeg,
-            Png,
-            Tiff,
-            Emf
-        }
-
-        public static ImageInfoBase GetInfo(Type type, Stream stream)
+        public static ImageInfoBase GetInfo(ImageType type, Stream stream)
         {
             ImageInfoBase info;
 
             switch (type)
             {
-                case Type.Bmp:
+                case ImageType.Bmp:
                     info = new BmpInfo();
                     break;
-                case Type.Gif:
+                case ImageType.Gif:
                     info = new GifInfo();
                     break;
-                case Type.Jpeg:
+                case ImageType.Jpeg:
                     info = new JpegInfo();
                     break;
-                case Type.Png:
+                case ImageType.Png:
                     info = new PngInfo();
                     break;
-                case Type.Tiff:
+                case ImageType.Tiff:
                     info = new TiffInfo();
                     break;
-                case Type.Emf:
+                case ImageType.Emf:
                     info = new EmfInfo();
                     break;
                 default:
@@ -47,33 +37,54 @@ namespace SharpImage
             return info;
         }
 
-        public static Type GetType(string filename)
+        public static ImageInfoBase GetInfo(Stream s)
         {
-            var extension = Path.GetExtension(filename);
+            ImageInfoBase info;
+
+            if (!(info = GetInfo(s, new PngInfo())).IsValid)
+                if (!(info = GetInfo(s, new BmpInfo())).IsValid)
+                    if (!(info = GetInfo(s, new JpegInfo())).IsValid)
+                        if (!(info = GetInfo(s, new GifInfo())).IsValid)
+                            if (!(info = GetInfo(s, new TiffInfo())).IsValid)
+                                if (!(info = GetInfo(s, new EmfInfo())).IsValid)
+                                    return null;
+
+            return info;
+        }
+
+        private static ImageInfoBase GetInfo(Stream stream, ImageInfoBase info)
+        {
+            info.Init(stream);
+            return info;
+        }
+
+        public static ImageType GetType(string extension)
+        {
             if (extension == null)
             {
-                return Type.Unknown;
+                return ImageType.Unknown;
             }
 
-            switch (extension.ToLower())
+            extension = extension.Replace(".", "").ToLower();
+            switch (extension)
             {
-                case ".bmp":
-                    return Type.Bmp;
-                case ".gif":
-                    return Type.Gif;
-                case ".jpg":
-                case ".jpeg":
-                    return Type.Jpeg;
-                case ".png":
-                    return Type.Png;
-                case ".tif":
-                case ".tiff":
-                    return Type.Tiff;
-                case ".emf":
-                    return Type.Emf;
+                case "bmp":
+                    return ImageType.Bmp;
+                case "gif":
+                    return ImageType.Gif;
+                case "jpg":
+                case "jpeg":
+                    return ImageType.Jpeg;
+                case "png":
+                    return ImageType.Png;
+                case "tif":
+                case "tiff":
+                    return ImageType.Tiff;
+                case "emf":
+                    return ImageType.Emf;
             }
 
-            return Type.Unknown;
+            return ImageType.Unknown;
         }
     }
 }
