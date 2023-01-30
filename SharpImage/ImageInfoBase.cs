@@ -4,6 +4,8 @@ namespace SharpImage
 {
     public abstract class ImageInfoBase
     {
+        public ImageType Type { get; protected set; }
+
         public bool IsValid { get; protected set; }
 
         public int Width { get; protected set; }

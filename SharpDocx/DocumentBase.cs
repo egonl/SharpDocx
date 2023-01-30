@@ -10,6 +10,7 @@ using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
 using System.Diagnostics;
+using SharpImage;
 
 namespace SharpDocx
 {
@@ -211,22 +212,94 @@ namespace SharpDocx
 
             if (!File.Exists(filePath))
             {
-#if DEBUG
-                CurrentCodeBlock.Placeholder.Text = $"Image '{filePath}' not found.";
-#endif
+                HandleError($"Image '{filePath}' not found.");
                 return;
             }
 
-            var imageTypePart = ImageHelper.GetImagePartType(filePath);
+            var extension = Path.GetExtension(filePath);
+            var imagePartType = ImageHelper.GetImagePartType(extension);
 
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                ImageInternal(fs, imagePartType, percentage);
+            }
+        }
+
+        protected void ImageFromBase64(string base64, int percentage = 100, string extension = null)
+        {
+            if (string.IsNullOrEmpty(base64))
+            {
+                HandleError($"{nameof(base64)} can't be null or empty.");
+                return;
+            }
+
+            byte[] bytes;
+            try
+            {
+                bytes = Convert.FromBase64String(base64);
+            }
+            catch
+            {
+                HandleError("Image string is not a properly base64 encoded string.");
+                return;
+            }
+
+            using (var ms = new MemoryStream(bytes))
+            {
+                ImageFromStream(ms, percentage, extension);
+            }
+        }
+
+        protected void ImageFromUrl(string url, int percentage = 100, string extension = null)
+        {
+            try
+            {
+                byte[] imageData = null;
+
+                using (var wc = new System.Net.WebClient())
+                    imageData = wc.DownloadData(url);
+
+                using (var stream = new MemoryStream(imageData))
+                {
+                    ImageFromStream(stream, percentage, extension);
+                }
+            }
+            catch
+            {
+                HandleError($"Failed to load image from {url}.");
+                return;
+            }
+        }
+
+        protected void ImageFromStream(Stream stream, int percentage = 100, string extension = null)
+        {
+            ImagePartType imagePartType;
+
+            if (extension == null)
+            {
+                var info = ImageInfo.GetInfo(stream);
+                if (info == null)
+                {
+                    HandleError("Image could not be loaded.");
+                    return;
+                }
+
+                imagePartType = ImageHelper.GetImagePartType(info.Type);
+            }
+            else
+            {
+                imagePartType = ImageHelper.GetImagePartType(extension);
+            }
+
+            ImageInternal(stream, imagePartType, percentage);
+        }
+
+        protected void ImageInternal(Stream stream, ImagePartType type, int percentage = 100)
+        {
             const long emusPerTwip = 635;
             var maxWidthInEmus = GetPageContentWidthInTwips() * emusPerTwip;
 
-            Drawing drawing;
-            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                drawing = ImageHelper.CreateDrawing(Package, fs, imageTypePart, percentage, maxWidthInEmus);
-            }
+            Drawing drawing = ImageHelper.CreateDrawing(Package, stream, type, percentage, maxWidthInEmus);
 
             CurrentCodeBlock.Placeholder.InsertAfterSelf(drawing);
 
@@ -235,6 +308,14 @@ namespace SharpDocx
                 // Insert a zero-width space, so the image doesn't get deleted by CodeBlock.RemoveEmptyParagraphs.
                 CurrentCodeBlock.Placeholder.Text = "\u200B";
             }
+        }
+
+        protected void HandleError(string errorMessage)
+        {
+#if DEBUG
+            Console.WriteLine($"ERROR: {errorMessage}");
+            CurrentCodeBlock.Placeholder.Text = errorMessage;
+#endif                
         }
 
         protected long GetPageContentWidthInTwips()
@@ -317,7 +398,5 @@ namespace SharpDocx
 
             return list;
         }
-
-
     }
 }

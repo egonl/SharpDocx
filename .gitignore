@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # SharpDocx
 /SharpDocx/nupkg/push.bat
+/Samples/Documents

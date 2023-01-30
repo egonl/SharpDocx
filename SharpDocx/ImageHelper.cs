@@ -23,7 +23,7 @@ namespace SharpDocx
 
             using (imageStream)
             {
-                var type = GetImageInfoType(imagePartType);
+                var type = GetImageType(imagePartType);
                 imageInfo = ImageInfo.GetInfo(type, imageStream);
                 if (imageInfo == null)
                 {
@@ -61,82 +61,108 @@ namespace SharpDocx
             return drawing;
         }
 
-        public static ImagePartType GetImagePartType(string filePath)
+        internal static ImagePartType GetImagePartType(string extension)
         {
-            var extension = Path.GetExtension(filePath);
             if (extension == null)
             {
-                throw new ArgumentException("Unknown extension", filePath);
+                throw new ArgumentException("Unknown extension", nameof(extension));
             }
 
-            // TODO: test which types actually work.
             ImagePartType? type = null;
-            switch (extension.ToLower())
+
+            extension = extension.Replace(".", "").ToLower();
+            switch (extension)
             {
-                case ".bmp":
+                case "bmp":
                     type = ImagePartType.Bmp;
                     break;
-                case ".emf":
+                case "emf": // untested
                     type = ImagePartType.Emf;
                     break;
-                case ".gif":
+                case "gif":
                     type = ImagePartType.Gif;
                     break;
-                case ".ico":
-                case ".icon":
+                case "ico": // untested
+                case "icon":
                     type = ImagePartType.Icon;
                     break;
-                case ".jpg":
-                case ".jpeg":
+                case "jpg":
+                case "jpeg":
                     type = ImagePartType.Jpeg;
                     break;
-                case ".pcx":
+                case "pcx": // untested
                     type = ImagePartType.Pcx;
                     break;
-                case ".png":
+                case "png":
                     type = ImagePartType.Png;
                     break;
-                case ".tif":
-                case ".tiff":
+                case "tif":
+                case "tiff":
                     type = ImagePartType.Tiff;
                     break;
-                case ".wmf":
+                case "wmf":
                     type = ImagePartType.Wmf;
                     break;
             }
 
             if (type == null)
             {
-                throw new ArgumentException("Unknown extension", filePath);
+                throw new ArgumentException("Unknown extension", nameof(extension));
             }
 
             return type.Value;
         }
 
-        public static ImageInfo.Type GetImageInfoType(ImagePartType imagePartType)
+        internal static ImageType GetImageType(ImagePartType imagePartType)
         {
             switch (imagePartType)
             {
                 case ImagePartType.Bmp:
-                    return ImageInfo.Type.Bmp;
+                    return ImageType.Bmp;
 
                 case ImagePartType.Gif:
-                    return ImageInfo.Type.Gif;
+                    return ImageType.Gif;
 
                 case ImagePartType.Jpeg:
-                    return ImageInfo.Type.Jpeg;
+                    return ImageType.Jpeg;
 
                 case ImagePartType.Png:
-                    return ImageInfo.Type.Png;
+                    return ImageType.Png;
 
                 case ImagePartType.Tiff:
-                    return ImageInfo.Type.Tiff;
+                    return ImageType.Tiff;
 
                 case ImagePartType.Emf:
-                    return ImageInfo.Type.Emf;
+                    return ImageType.Emf;
             }
 
-            return ImageInfo.Type.Unknown;
+            return ImageType.Unknown;
+        }
+
+        internal static ImagePartType GetImagePartType(ImageType imageType)
+        {
+            switch (imageType)
+            {
+                case ImageType.Bmp:
+                    return ImagePartType.Bmp;
+
+                case ImageType.Gif:
+                    return ImagePartType.Gif;
+
+                case ImageType.Jpeg:
+                    return ImagePartType.Jpeg;
+
+                case ImageType.Png:
+                    return ImagePartType.Png;
+
+                case ImageType.Tiff:
+                    return ImagePartType.Tiff;
+
+                case ImageType.Emf:
+                    return ImagePartType.Emf;
+            }
+
+            return (ImagePartType) (-1);
         }
 
         private static Drawing GetDrawing(string relationshipId, long widthEmus, long heightEmus)

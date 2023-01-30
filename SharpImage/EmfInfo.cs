@@ -7,6 +7,7 @@ namespace SharpImage
         public override void Init(Stream stream)
         {
             // Inspired by https://www.codeproject.com/Articles/1307140/Parse-understand-and-demystify-Enhanced-Meta-Files
+            Type = ImageType.Unknown;
 
             using (var bh = new ByteHelper(stream))
             {
@@ -37,6 +38,8 @@ namespace SharpImage
                 DpiH = (int)(((long)deviceWidth * 254 / mmWidth + 5) / 10);
                 DpiV = (int)(((long)deviceHeight * 254 / mmHeight + 5) / 10);
             }
+
+            Type = ImageType.Emf;
         }
     }
 }

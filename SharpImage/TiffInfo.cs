@@ -7,6 +7,8 @@ namespace SharpImage
     {
         public override void Init(Stream stream)
         {
+            Type = ImageType.Unknown;
+
             ushort resolutionUnit = 0;
 
             using (var bh = new ByteHelper(stream))
@@ -116,6 +118,7 @@ namespace SharpImage
             }
 
             IsValid = true;
+            Type = ImageType.Tiff;
         }
 
         private enum FieldTypes
