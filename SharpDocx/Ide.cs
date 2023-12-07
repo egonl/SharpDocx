@@ -43,7 +43,7 @@ namespace SharpDocx
                         {
                             Process.Start(documentPath);
                         }
-#endif                    
+#endif
                     }
                     catch (Exception ex)
                     {

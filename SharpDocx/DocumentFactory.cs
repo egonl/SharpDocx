@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+
 #if NETSTANDARD2_0
 using System.Runtime.Loader;
 #endif
@@ -74,19 +75,25 @@ namespace SharpDocx
 #endif
 
         public static TBaseClass Create<TBaseClass>(string viewPath, object model = null, bool forceCompile = false)
-            where TBaseClass : DocumentBase
+            where TBaseClass : DocumentFileBase
         {
             return (TBaseClass)Create(viewPath, model, typeof(TBaseClass), forceCompile);
         }
 
-        public static DocumentBase Create(
+        public static TBaseClass Create<TBaseClass>(string viewName, Stream viewStream, object model = null, bool forceCompile = false)
+                    where TBaseClass : DocumentStreamBase
+        {
+            return (TBaseClass)Create(viewName, viewStream, model, typeof(TBaseClass), forceCompile);
+        }
+
+        public static DocumentFileBase Create(
             string viewPath,
             object model = null,
             Type baseClassType = null,
             bool forceCompile = false)
         {
             viewPath = Path.GetFullPath(viewPath);
-            
+
             if (!File.Exists(viewPath))
             {
                 throw new ArgumentException($"Could not find the file '{viewPath}'", nameof(viewPath));
@@ -96,7 +103,7 @@ namespace SharpDocx
 
             if (baseClassType == null)
             {
-                baseClassType = typeof(DocumentBase);
+                baseClassType = typeof(DocumentFileBase);
             }
 
             var baseClassName = baseClassType.Name;
@@ -118,8 +125,44 @@ namespace SharpDocx
                 }
             }
 
-            var document = (DocumentBase)da.Instance();
+            var document = (DocumentFileBase)da.Instance();
             document.Init(viewPath, model);
+            return document;
+        }
+
+        public static DocumentBase Create(
+            string viewName,
+            Stream stream,
+            object model = null,
+            Type baseClassType = null,
+            bool forceCompile = false)
+        {
+            if (baseClassType == null)
+            {
+                baseClassType = typeof(DocumentStreamBase);
+            }
+
+            var baseClassName = baseClassType.Name;
+            var modelTypeName = model?.GetType().Name ?? string.Empty;
+            DocumentAssembly da;
+
+            lock (AssembliesLock)
+            {
+                da = (DocumentAssembly)Assemblies[viewName + stream.GetHashCode() + baseClassName + modelTypeName];
+
+                if (da == null || forceCompile)
+                {
+                    da = new DocumentAssembly(
+                        stream,
+                        baseClassType,
+                        model?.GetType());
+
+                    Assemblies[viewName + stream.GetHashCode() + baseClassName + modelTypeName] = da;
+                }
+            }
+
+            var document = (DocumentStreamBase)da.Instance();
+            document.Init(model);
             return document;
         }
     }

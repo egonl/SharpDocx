@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using DocumentFormat.OpenXml.Wordprocessing;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
 using SharpDocx;
+
+using System.Collections.Generic;
 
 namespace Inheritance
 {
-    public abstract class MyDocument : DocumentBase
+    public abstract class MyDocument : DocumentFileBase
     {
         public string MyProperty { get; set; }
 
@@ -15,7 +15,7 @@ namespace Inheritance
             {
                 "using Inheritance;"
 
-                //"using static System.Math;" 
+                //"using static System.Math;"
                 // Requires support for C# 6.
                 // See https://stackoverflow.com/questions/31639602/using-c-sharp-6-features-with-codedomprovider-rosyln
             };

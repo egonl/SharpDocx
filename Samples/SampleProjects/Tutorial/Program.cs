@@ -1,6 +1,5 @@
-﻿using System;
+﻿using SharpDocx;
 using System.IO;
-using SharpDocx;
 
 namespace Tutorial
 {
@@ -21,7 +20,7 @@ namespace Tutorial
 
             Ide.Start(viewPath, documentPath, null, null, f => f.ImageDirectory = imageDirectory, documentViewer);
 #else
-            DocumentBase document = DocumentFactory.Create(viewPath);
+            DocumentFileBase document = DocumentFactory.Create(viewPath);
             document.ImageDirectory = imageDirectory;
             document.Generate(documentPath);
             Console.WriteLine($"Succesfully generated {documentPath} using view {viewPath}.");
