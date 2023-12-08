@@ -130,7 +130,7 @@ namespace SharpDocx
             return document;
         }
 
-        public static DocumentBase Create(
+        public static DocumentStreamBase Create(
             string viewName,
             Stream stream,
             object model = null,

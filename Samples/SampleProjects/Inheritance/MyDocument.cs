@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Wordprocessing;
 using SharpDocx;
-
+using System;
 using System.Collections.Generic;
 
 namespace Inheritance

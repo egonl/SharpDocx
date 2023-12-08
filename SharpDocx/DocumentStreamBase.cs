@@ -34,6 +34,7 @@ namespace SharpDocx
 
         public MemoryStream GenerateFromTemplate(Stream inputStream, object model = null)
         {
+            inputStream.Seek(0, SeekOrigin.Begin);
             MemoryStream outputstream = new MemoryStream();
             inputStream.CopyTo(outputstream);
 
@@ -46,6 +47,7 @@ namespace SharpDocx
             try
             {
 #endif
+            outputstream.Seek(0, SeekOrigin.Begin);
             using (Package = WordprocessingDocument.Open(outputstream, true))
             {
                 GenerateInternal(model);
