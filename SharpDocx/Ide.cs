@@ -32,13 +32,15 @@ namespace SharpDocx
                     Console.WriteLine($"Succesfully generated '{documentPath}'.");
 
                     var documentStreamPath = documentPath.Replace(".docx", ".stream.docx");
-                    MemoryStream ms = new MemoryStream(File.ReadAllBytes(viewPath));
-                    var documentStream = DocumentFactory.Create((new FileInfo(viewPath)).Name, ms, model, baseClassType, true);
-                    initializeDocument?.Invoke(documentStream);
-                    var result = documentStream.GenerateFromTemplate(ms);
-                    File.WriteAllBytes(documentStreamPath, result.ToArray());
-
-
+                    using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(viewPath)))
+                    {
+                        var documentStream = DocumentFactory.Create((new FileInfo(viewPath)).Name, ms, model, baseClassType, true);
+                        initializeDocument?.Invoke(documentStream);
+                        using (MemoryStream outputStream = documentStream.Generate(ms))
+                        {
+                            File.WriteAllBytes(documentStreamPath, outputStream.ToArray());
+                        }
+                    }
 
                     try
                     {

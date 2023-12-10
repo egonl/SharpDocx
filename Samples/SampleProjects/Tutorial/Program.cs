@@ -1,4 +1,4 @@
-﻿using SharpDocx;
+using SharpDocx;
 using System.IO;
 
 namespace Tutorial
@@ -20,10 +20,19 @@ namespace Tutorial
 
             Ide.Start(viewPath, documentPath, null, null, f => f.ImageDirectory = imageDirectory, documentViewer);
 #else
+
             DocumentFileBase document = DocumentFactory.Create(viewPath);
             document.ImageDirectory = imageDirectory;
             document.Generate(documentPath);
             Console.WriteLine($"Succesfully generated {documentPath} using view {viewPath}.");
+
+            var documentStreamPath = documentPath.Replace(".docx", ".stream.docx");
+            MemoryStream ms = new MemoryStream(File.ReadAllBytes(viewPath));
+            var documentStream = DocumentFactory.Create((new FileInfo(viewPath)).Name, ms);
+            documentStream.ImageDirectory = imageDirectory;
+            var outputStream = documentStream.Generate(ms);
+            File.WriteAllBytes(documentStreamPath, outputStream.ToArray());
+
 #endif
         }
     }

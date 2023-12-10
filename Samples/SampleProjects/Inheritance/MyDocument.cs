@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Inheritance
 {
-    public abstract class MyDocument : DocumentFileBase
+    public abstract class MyDocument : DocumentStreamBase
     {
         public string MyProperty { get; set; }
 

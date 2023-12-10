@@ -7,32 +7,7 @@ namespace SharpDocx
 {
     public abstract class DocumentStreamBase : DocumentBase
     {
-        public void Generate(Stream documentStream, object model = null)
-        {
-#if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
-            // Due to a bug in System.IO.Packaging writing large uncompressed parts (>10MB) isn't thread safe in .NET 3.5.
-            // Workaround: make writing in all threads and processes sequential.
-            // Microsoft fixed this in .NET 4.5 (see https://maheshkumar.wordpress.com/2014/10/21/).
-            PackageMutex.WaitOne(Timeout.Infinite, false);
-
-            try
-            {
-#endif
-            using (Package = WordprocessingDocument.Open(documentStream, true))
-            {
-                GenerateInternal(model);
-            }
-
-#if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
-            }
-            finally
-            {
-                PackageMutex.ReleaseMutex();
-            }
-#endif
-        }
-
-        public MemoryStream GenerateFromTemplate(Stream inputStream, object model = null)
+        public MemoryStream Generate(Stream inputStream, object model = null)
         {
             inputStream.Seek(0, SeekOrigin.Begin);
             MemoryStream outputstream = new MemoryStream();

@@ -45,6 +45,13 @@ namespace LoadContext
             DocumentFileBase document = DocumentFactory.Create(viewPath);
             document.ImageDirectory = imageDirectory;
             document.Generate(documentPath);
+
+            var documentStreamPath = documentPath.Replace(".docx", ".stream.docx");
+            MemoryStream ms = new MemoryStream(File.ReadAllBytes(viewPath));
+            var documentStream = DocumentFactory.Create((new FileInfo(viewPath)).Name, ms);
+            var outputStream = documentStream.Generate(ms);
+            File.WriteAllBytes(documentStreamPath, outputStream.ToArray());
+
 #endif
             loadContextRef = new WeakReference(loadCtx);
 
