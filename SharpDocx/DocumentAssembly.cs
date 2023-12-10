@@ -1,24 +1,55 @@
-﻿using System;
+﻿using SharpDocx.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using SharpDocx.Extensions;
 
 namespace SharpDocx
 {
     internal class DocumentAssembly
     {
         private readonly Assembly _assembly;
-        private readonly string _className;
+        private string _className;
 
         internal DocumentAssembly(
             string viewPath,
             Type baseClass,
             Type modelType)
         {
+            var partial = PartialInitialize(baseClass, modelType);
+            // Create an assembly for this class.
+            _assembly = DocumentCompiler.Compile(
+                viewPath,
+                _className,
+                baseClass.Name,
+                modelType,
+                partial.usingDirectives,
+                partial.referencedAssemblies);
+        }
+
+        internal DocumentAssembly(
+            Stream viewStream,
+            Type baseClass,
+            Type modelType)
+        {
+            var partial = PartialInitialize(baseClass, modelType);
+            // Create an assembly for this class.
+            _assembly = DocumentCompiler.Compile(
+                viewStream,
+                _className,
+                baseClass.Name,
+                modelType,
+                partial.usingDirectives,
+                partial.referencedAssemblies);
+        }
+
+        private (List<string> usingDirectives, List<string> referencedAssemblies) PartialInitialize(
+            Type baseClass,
+            Type modelType)
+        {
             if (baseClass == null)
             {
-                throw new ArgumentNullException(nameof(baseClass));                
+                throw new ArgumentNullException(nameof(baseClass));
             }
 
             // Load base class assembly.
@@ -45,17 +76,16 @@ namespace SharpDocx
 
             // Get user defined using directives by calling the static DocumentBase.GetUsingDirectives method.
             var usingDirectives =
-                (List<string>) a.Invoke(
+                (List<string>)a.Invoke(
                     baseClass.FullName,
                     null,
                     "GetUsingDirectives",
                     null)
                 ?? new List<string>();
-            
 
             // Get user defined assemblies to reference.
             var referencedAssemblies =
-                (List<string>) a.Invoke(
+                (List<string>)a.Invoke(
                     baseClass.FullName,
                     null,
                     "GetReferencedAssemblies",
@@ -79,15 +109,7 @@ namespace SharpDocx
 
             // Create a unique class name.
             _className = $"SharpDocument_{Guid.NewGuid():N}";
-
-            // Create an assembly for this class.
-            _assembly = DocumentCompiler.Compile(
-                viewPath,
-                _className,
-                baseClass.Name,
-                modelType,
-                usingDirectives,
-                referencedAssemblies);
+            return (usingDirectives, referencedAssemblies);
         }
 
         public object Instance()

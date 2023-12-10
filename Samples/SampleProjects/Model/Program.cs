@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-#if !NET35 
+
+#if !NET35
 using System.Threading.Tasks;
 #endif
+
 using Model.Models;
 using Model.Repositories;
 using SharpDocx;
@@ -20,7 +22,7 @@ namespace Model
         {
 #if DEBUG
             var viewPath = $"{BasePath}/Views/Model.cs.docx";
-            var documentPath = $"{BasePath}/Documents/Model.docx";            
+            var documentPath = $"{BasePath}/Documents/Model.docx";
             var model = CreateViewModel();
 
             string documentViewer = null; // NET35 and NET45 will automatically search for a Docx viewer.
@@ -54,6 +56,16 @@ namespace Model
 
             var document = DocumentFactory.Create(viewPath, model);
             document.Generate(documentPath);
+
+            var documentStreamPath = documentPath.Replace(".docx", ".stream.docx");
+            using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(viewPath)))
+            {
+                var documentStream = DocumentFactory.Create((new FileInfo(viewPath)).Name, ms, model);
+                using (var outputStream = documentStream.Generate(ms))
+                {
+                    File.WriteAllBytes(documentStreamPath, outputStream.ToArray());
+                }
+            }
         }
 
         private static MyViewModel CreateViewModel()
@@ -68,8 +80,8 @@ namespace Model
                 Date = DateTime.Now.ToShortDateString(),
                 Countries = countries,
                 AveragePopulation = countries.Count > 0
-                    ? (int) countries.Average(c => c.Population)
-                    : (int?) null,
+                    ? (int)countries.Average(c => c.Population)
+                    : (int?)null,
                 AverageDateProclaimed = GetAverageDateProclaimed(countries)
             };
         }
@@ -86,7 +98,7 @@ namespace Model
                 return null;
             }
 
-            return new DateTime((long) dates
+            return new DateTime((long)dates
                 .Aggregate<DateTime, double>(0, (current, date) => current + date.Ticks / dates.Count));
         }
     }

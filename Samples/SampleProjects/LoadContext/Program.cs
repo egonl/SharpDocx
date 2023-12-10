@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SharpDocx;
+using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
-using SharpDocx;
 
 namespace LoadContext
 {
@@ -42,9 +42,16 @@ namespace LoadContext
             Ide.Start(viewPath, documentPath, null, null, f => f.ImageDirectory = imageDirectory);
 
 #else
-            DocumentBase document = DocumentFactory.Create(viewPath);
+            DocumentFileBase document = DocumentFactory.Create(viewPath);
             document.ImageDirectory = imageDirectory;
             document.Generate(documentPath);
+
+            var documentStreamPath = documentPath.Replace(".docx", ".stream.docx");
+            MemoryStream ms = new MemoryStream(File.ReadAllBytes(viewPath));
+            var documentStream = DocumentFactory.Create((new FileInfo(viewPath)).Name, ms);
+            var outputStream = documentStream.Generate(ms);
+            File.WriteAllBytes(documentStreamPath, outputStream.ToArray());
+
 #endif
             loadContextRef = new WeakReference(loadCtx);
 
@@ -53,7 +60,7 @@ namespace LoadContext
             Console.WriteLine(string.Join(Environment.NewLine, assemblyNames));
 
             Console.WriteLine("---------------------Assemblies Loaded In Context-------------------------------");
-             assemblyNames = loadCtx.Assemblies.Select(s => s.FullName).ToArray();
+            assemblyNames = loadCtx.Assemblies.Select(s => s.FullName).ToArray();
             Console.WriteLine(string.Join(Environment.NewLine, assemblyNames));
 
             loadCtx.Unload();

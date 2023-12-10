@@ -5,12 +5,16 @@
 #endif
 
 #if !NET35
+
 using System.Linq;
+
 #endif
 
 #if NET35_OR_GREATER
+
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+
 #else
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -79,33 +83,51 @@ namespace {Namespace}
             List<string> usingDirectives,
             List<string> referencedAssemblies)
         {
-            List<CodeBlock> codeBlocks;
-
 #if DEBUG
             // Copy the template to a temporary file, so it can be opened even when the template is open in Word.
             // This makes testing templates a lot easier.
             var tempFilePath = $"{Path.GetTempPath()}{Guid.NewGuid():N}.cs.docx";
             File.Copy(viewPath, tempFilePath, true);
+            Stream viewStream = File.OpenRead(tempFilePath);
 
             try
             {
-                using (var package = WordprocessingDocument.Open(tempFilePath, false))
-                {
-                    var codeBlockBuilder = new CodeBlockBuilder(package);
-                    codeBlocks = codeBlockBuilder.CodeBlocks;
-                }
+                var compiled = Compile(viewStream, className, baseClassName, modelType, usingDirectives, referencedAssemblies);
+                return compiled;
             }
             finally
             {
+                if (viewStream != null)
+                {
+                    viewStream.Close();
+                    viewStream.Dispose();
+                }
                 File.Delete(tempFilePath);
             }
+
 #else
-            using (var package = WordprocessingDocument.Open(viewPath, false))
+            using(Stream viewStream = File.OpenRead(viewPath))
+            {
+                return Compile(viewStream, className, baseClassName, modelType, usingDirectives, referencedAssemblies);
+            }
+#endif
+        }
+
+        internal static Assembly Compile(
+            Stream viewStream,
+            string className,
+            string baseClassName,
+            Type modelType,
+            List<string> usingDirectives,
+            List<string> referencedAssemblies)
+        {
+            List<CodeBlock> codeBlocks;
+
+            using (var package = WordprocessingDocument.Open(viewStream, false))
             {
                 var codeBlockBuilder = new CodeBlockBuilder(package);
                 codeBlocks = codeBlockBuilder.CodeBlocks;
             }
-#endif
 
             var invokeDocumentCodeBody = new StringBuilder();
             Stack<TextBlock> currentTextBlockStack = new Stack<TextBlock>();
@@ -203,7 +225,7 @@ namespace {Namespace}
             if (assembly.StartsWith("~/") || assembly.StartsWith("~\\"))
             {
                 // Work around for loading custom assemblies .NET Core:
-                //   <%@ Assembly Name="~/ClassLibrary1" %> 
+                //   <%@ Assembly Name="~/ClassLibrary1" %>
                 // will search ClassLibrary1.dll in the same directory that contains SharpDocx.dll.
                 string path = Path.GetDirectoryName(typeof(DocumentBase).Assembly.Location);
                 assembly = path + assembly.Substring(1);
