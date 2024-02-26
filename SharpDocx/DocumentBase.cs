@@ -3,17 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
-using System.Diagnostics;
 using SharpImage;
 
-namespace SharpDocx
-{
+namespace SharpDocx {
     public abstract class DocumentBase
     {
         public string ImageDirectory { get; set; }
@@ -273,7 +270,7 @@ namespace SharpDocx
 
         protected void ImageFromStream(Stream stream, int percentage = 100, string extension = null)
         {
-            ImagePartType imagePartType;
+            PartTypeInfo imagePartType;
 
             if (extension == null)
             {
@@ -284,7 +281,7 @@ namespace SharpDocx
                     return;
                 }
 
-                imagePartType = ImageHelper.GetImagePartType(info.Type);
+                imagePartType = ImageHelper.GetImagePartType(info.Type).GetValueOrDefault();
             }
             else
             {
@@ -294,7 +291,7 @@ namespace SharpDocx
             ImageInternal(stream, imagePartType, percentage);
         }
 
-        protected void ImageInternal(Stream stream, ImagePartType type, int percentage = 100)
+        protected void ImageInternal(Stream stream, PartTypeInfo type, int percentage = 100)
         {
             const long emusPerTwip = 635;
             var maxWidthInEmus = GetPageContentWidthInTwips() * emusPerTwip;

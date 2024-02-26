@@ -14,7 +14,7 @@ namespace SharpDocx
         public static Drawing CreateDrawing(
             WordprocessingDocument package,
             Stream imageStream,
-            ImagePartType imagePartType,
+            PartTypeInfo imagePartType,
             int percentage, long maxWidthInEmus)
         {
             var imagePart = package.MainDocumentPart.AddImagePart(imagePartType);
@@ -61,14 +61,14 @@ namespace SharpDocx
             return drawing;
         }
 
-        internal static ImagePartType GetImagePartType(string extension)
+        internal static PartTypeInfo GetImagePartType(string extension)
         {
             if (extension == null)
             {
                 throw new ArgumentException("Unknown extension", nameof(extension));
             }
 
-            ImagePartType? type = null;
+            PartTypeInfo? type = null;
 
             extension = extension.Replace(".", "").ToLower();
             switch (extension)
@@ -113,33 +113,33 @@ namespace SharpDocx
             return type.Value;
         }
 
-        internal static ImageType GetImageType(ImagePartType imagePartType)
+        internal static ImageType GetImageType(PartTypeInfo imagePartType)
         {
             switch (imagePartType)
             {
-                case ImagePartType.Bmp:
+                case PartTypeInfo part when part == ImagePartType.Bmp:
                     return ImageType.Bmp;
 
-                case ImagePartType.Gif:
+                case PartTypeInfo part when part == ImagePartType.Gif:
                     return ImageType.Gif;
 
-                case ImagePartType.Jpeg:
+                case PartTypeInfo part when part == ImagePartType.Jpeg:
                     return ImageType.Jpeg;
 
-                case ImagePartType.Png:
+                case PartTypeInfo part when part == ImagePartType.Png:
                     return ImageType.Png;
 
-                case ImagePartType.Tiff:
+                case PartTypeInfo part when part == ImagePartType.Tiff:
                     return ImageType.Tiff;
 
-                case ImagePartType.Emf:
+                case PartTypeInfo part when part == ImagePartType.Emf:
                     return ImageType.Emf;
             }
 
             return ImageType.Unknown;
         }
 
-        internal static ImagePartType GetImagePartType(ImageType imageType)
+        internal static PartTypeInfo? GetImagePartType(ImageType imageType)
         {
             switch (imageType)
             {
@@ -162,7 +162,7 @@ namespace SharpDocx
                     return ImagePartType.Emf;
             }
 
-            return (ImagePartType) (-1);
+            return null;
         }
 
         private static Drawing GetDrawing(string relationshipId, long widthEmus, long heightEmus)
