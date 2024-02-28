@@ -3,6 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+#if SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
+using System.Threading;
+#endif
+
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Drawing.Wordprocessing;
@@ -10,7 +14,8 @@ using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
 using SharpImage;
 
-namespace SharpDocx {
+namespace SharpDocx 
+{
     public abstract class DocumentBase
     {
         public string ImageDirectory { get; set; }
