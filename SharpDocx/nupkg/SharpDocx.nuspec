@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SharpDocx</id>
-    <version>2.4.0</version>
+    <version>2.4.1</version>
     <authors>egonl</authors>
     <owners>egonl</owners>
     <license type="expression">MIT</license>
@@ -16,11 +16,14 @@
 - Supports .NET Framework 3.5/4.5+, .NET Standard 2.0, .NET Core 3.1, .NET 5.0 and .NET 6.0.
 - Based on Microsoft's Open XML SDK.
 - Source code, tutorial and examples on GitHub.</description>
-    <releaseNotes>Version 2.4.0 - January 30, 2023
+    <releaseNotes>Version 2.4.1 - April 18, 2024
+- Updated to DocumentFormat.OpenXml version 3.0.2.
+
+Version 2.4.0 - January 30, 2023
 - Added ImageFromBase64, ImageFromUrl and ImageFromStream methods.
 - Added ImageFromBase64 and ImageFromUrl examples to the tutorial.
     
-    Version 2.3.0 - October 9, 2022
+Version 2.3.0 - October 9, 2022
 - Added support for EMF files (issue #51).
 - The IDs of DocProperties are now always unique (issue #51).
 - Changed the default for TargetFrameworks to net48 and net6.0 to better support Visual Studio 2022.
@@ -75,16 +78,16 @@ Version 1.0.0 - January 1, 2018
     <tags>openxml office word document sharpdocx</tags>
     <dependencies>
       <group targetFramework="net35">
-        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
+        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
       </group>            
       <group targetFramework="net40">
-        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
+        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
       </group>                  
       <group targetFramework="net45">
-        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
+        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
       </group>            
       <group targetFramework="netstandard2.0">
-        <dependency id="DocumentFormat.OpenXml" version="2.18.0" />
+        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="2.10.0" />
       </group>
     </dependencies>
