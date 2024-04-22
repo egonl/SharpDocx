@@ -82,9 +82,9 @@ namespace {Namespace}
             List<CodeBlock> codeBlocks;
 
 #if DEBUG
-                using var package = WordprocessingDocument.Open(viewStream, false);
-                var codeBlockBuilder = new CodeBlockBuilder(package);
-                codeBlocks = codeBlockBuilder.CodeBlocks;
+            using var package = WordprocessingDocument.Open(viewStream, false);
+            var codeBlockBuilder = new CodeBlockBuilder(package);
+            codeBlocks = codeBlockBuilder.CodeBlocks;
 #else
             using (var package = WordprocessingDocument.Open(viewStream, false))
             {
