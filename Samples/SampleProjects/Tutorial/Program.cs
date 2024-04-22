@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using SharpDocx;
+#if NET35 || NET40
+using System.Net;
+#endif
 
 namespace Tutorial
 {
@@ -11,6 +14,11 @@ namespace Tutorial
 
         private static void Main()
         {
+#if NET35 || NET40
+            // The Tutorial fetches an image from https://github.com/egonl/SharpDocx/blob/master/Samples/Images/test3.emf?raw=true,
+            // which requires TLS 1.2. 
+            ServicePointManager.SecurityProtocol |= (SecurityProtocolType)3072;
+#endif
             var viewPath = $"{BasePath}/Views/Tutorial.cs.docx";
             var documentPath = $"{BasePath}/Documents/Tutorial.docx";
             var imageDirectory = $"{BasePath}/Images";
