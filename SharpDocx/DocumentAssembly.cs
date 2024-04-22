@@ -8,17 +8,35 @@ namespace SharpDocx
 {
     internal class DocumentAssembly
     {
-        private readonly Assembly _assembly;
-        private readonly string _className;
+        private Assembly _assembly;
+        private string _className;
+
+        internal DocumentAssembly(
+            Stream viewStream,
+            Type baseClass,
+            Type modelType)
+        {
+            Create(viewStream, baseClass, modelType);
+        }
 
         internal DocumentAssembly(
             string viewPath,
             Type baseClass,
             Type modelType)
         {
+            using var viewStream = File.OpenRead(viewPath);
+            Create(viewStream, baseClass, modelType);
+        }
+
+
+        private void Create(
+            Stream viewStream,
+            Type baseClass,
+            Type modelType)
+        {
             if (baseClass == null)
             {
-                throw new ArgumentNullException(nameof(baseClass));                
+                throw new ArgumentNullException(nameof(baseClass));
             }
 
             // Load base class assembly.
@@ -51,7 +69,6 @@ namespace SharpDocx
                     "GetUsingDirectives",
                     null)
                 ?? new List<string>();
-            
 
             // Get user defined assemblies to reference.
             var referencedAssemblies =
@@ -82,7 +99,7 @@ namespace SharpDocx
 
             // Create an assembly for this class.
             _assembly = DocumentCompiler.Compile(
-                viewPath,
+                viewStream,
                 _className,
                 baseClass.Name,
                 modelType,
