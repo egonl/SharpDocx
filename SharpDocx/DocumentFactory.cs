@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.Security.Cryptography;
 #if NETSTANDARD2_0
 using System.Runtime.Loader;
 #endif
@@ -86,14 +87,66 @@ namespace SharpDocx
             bool forceCompile = false)
         {
             viewPath = Path.GetFullPath(viewPath);
-            
+
             if (!File.Exists(viewPath))
             {
                 throw new ArgumentException($"Could not find the file '{viewPath}'", nameof(viewPath));
             }
 
             var viewLastWriteTime = new FileInfo(viewPath).LastWriteTime.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+            var viewId = viewPath + viewLastWriteTime;
 
+#if DEBUG
+            // Copy the template to a temporary file, so it can be opened even when the template is open in Word.
+            // This makes testing templates a lot easier.
+            var tempFilePath = $"{Path.GetTempPath()}{Guid.NewGuid():N}.cs.docx";
+            File.Copy(viewPath, tempFilePath, true);
+            using var viewStream = File.OpenRead(tempFilePath);
+
+            DocumentBase documentBase;
+            try
+            {
+                documentBase = CreateInternal(viewId, viewStream, model, baseClassType, forceCompile);
+            }
+            finally
+            {
+                viewStream.Close();
+                File.Delete(tempFilePath);
+            }
+#else
+            using var viewStream = File.OpenRead(viewPath);
+            var documentBase = CreateInternal(viewId, viewStream, model, baseClassType, forceCompile);
+#endif
+
+            documentBase.ViewPath = viewPath;
+            return documentBase;
+        }
+
+        public static TBaseClass Create<TBaseClass>(Stream viewStream, object model = null, bool forceCompile = false)
+            where TBaseClass : DocumentBase
+        {
+            return (TBaseClass)Create(viewStream, model, typeof(TBaseClass), forceCompile);
+        }
+
+        public static DocumentBase Create(
+            Stream viewStream,
+            object model = null,
+            Type baseClassType = null,
+            bool forceCompile = false)
+        {
+            var viewId = GetHash(viewStream);
+            var documentBase = CreateInternal(viewId, viewStream, model, baseClassType, forceCompile);
+            documentBase.ViewStream = viewStream;
+            return documentBase;
+        }
+
+        private static DocumentBase CreateInternal(
+            string viewId,
+            Stream viewStream,
+            object model = null,
+            Type baseClassType = null,
+            bool forceCompile = false)
+        {
             if (baseClassType == null)
             {
                 baseClassType = typeof(DocumentBase);
@@ -105,22 +158,30 @@ namespace SharpDocx
 
             lock (AssembliesLock)
             {
-                da = (DocumentAssembly)Assemblies[viewPath + viewLastWriteTime + baseClassName + modelTypeName];
+                da = (DocumentAssembly)Assemblies[viewId + baseClassName + modelTypeName];
 
                 if (da == null || forceCompile)
                 {
                     da = new DocumentAssembly(
-                        viewPath,
+                        viewStream,
                         baseClassType,
                         model?.GetType());
 
-                    Assemblies[viewPath + viewLastWriteTime + baseClassName + modelTypeName] = da;
+                    Assemblies[viewId + baseClassName + modelTypeName] = da;
                 }
             }
 
             var document = (DocumentBase)da.Instance();
-            document.Init(viewPath, model);
+            document.Init(model);
             return document;
+        }
+
+        private static string GetHash(Stream s)
+        {
+            using SHA256 sha256 = SHA256.Create();
+            s.Seek(0, SeekOrigin.Begin);
+            var hashBytes = sha256.ComputeHash(s);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
     }
 }

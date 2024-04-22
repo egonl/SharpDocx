@@ -23,6 +23,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

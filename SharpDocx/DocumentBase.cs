@@ -20,7 +20,9 @@ namespace SharpDocx
     {
         public string ImageDirectory { get; set; }
 
-        public string ViewPath { get; private set; }
+        public string ViewPath { get; internal set; }
+
+        public Stream ViewStream { get; internal set; }
 
         protected List<CodeBlock> CodeBlocks;
 
@@ -45,7 +47,7 @@ namespace SharpDocx
         public void Generate(string documentPath, object model = null)
         {
             documentPath = Path.GetFullPath(documentPath);
-            File.Copy(ViewPath, documentPath, true);
+            using var documentStream = GetDocumentStream(documentPath);
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
             // Due to a bug in System.IO.Packaging writing large uncompressed parts (>10MB) isn't thread safe in .NET 3.5.
@@ -56,7 +58,7 @@ namespace SharpDocx
             try
             {
 #endif
-                using (Package = WordprocessingDocument.Open(documentPath, true))
+                using (Package = WordprocessingDocument.Open(documentStream, true))
                 {
                     GenerateInternal(model);
                 }
@@ -70,11 +72,9 @@ namespace SharpDocx
 #endif
         }
 
-        public MemoryStream Generate(object model = null)
+        public Stream Generate(object model = null)
         {
-            var viewBytes = File.ReadAllBytes(ViewPath);
-            MemoryStream outputstream = new MemoryStream();
-            outputstream.Write(viewBytes, 0, viewBytes.Length);
+            var documentStream = GetDocumentStream();
 
 #if NET35 && SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
             // Due to a bug in System.IO.Packaging writing large uncompressed parts (>10MB) isn't thread safe in .NET 3.5.
@@ -85,7 +85,7 @@ namespace SharpDocx
             try
             {
 #endif
-                using (Package = WordprocessingDocument.Open(outputstream, true))
+                using (Package = WordprocessingDocument.Open(documentStream, true))
                 {
                     GenerateInternal(model);
                 }
@@ -98,8 +98,43 @@ namespace SharpDocx
             }
 #endif
             // Reset position of stream.
-            outputstream.Seek(0, SeekOrigin.Begin);
-            return outputstream;
+            documentStream.Seek(0, SeekOrigin.Begin);
+            return documentStream;
+        }
+
+        protected Stream GetDocumentStream(string documentPath = null)
+        {
+            if (ViewPath != null && documentPath != null)
+            {
+                // Both the view and the document are files. Copy view to document.
+                File.Copy(ViewPath, documentPath, true);
+                return new FileStream(documentPath, FileMode.Open, FileAccess.ReadWrite);
+            }
+
+            Stream documentStream;
+            if (documentPath != null)
+            {
+                documentStream = new FileStream(documentPath, FileMode.Create, FileAccess.ReadWrite);
+            }
+            else
+            {
+                documentStream = new MemoryStream();
+            }
+
+            if (ViewPath != null)
+            {
+                // The view is a file. Copy view file to document stream (file or memory).
+                using var viewStream = File.OpenRead(ViewPath);
+                viewStream.CopyTo(documentStream);
+            }
+            else if (ViewStream != null)
+            {
+                // The view is a stream. Copy view stream to document stream (file or memory).
+                ViewStream.Seek(0, SeekOrigin.Begin);
+                ViewStream.CopyTo(documentStream);
+            }
+
+            return documentStream;
         }
 
         protected void GenerateInternal(object model)
@@ -135,9 +170,8 @@ namespace SharpDocx
             return null;
         }
 
-        internal void Init(string viewPath, object model)
+        internal void Init(object model)
         {
-            ViewPath = viewPath;
             SetModel(model);
         }
 
