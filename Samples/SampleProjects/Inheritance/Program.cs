@@ -1,5 +1,8 @@
 ﻿using System.IO;
 using SharpDocx;
+#if NET35
+using SharpDocx.Extensions;
+#endif
 
 namespace Inheritance
 {
@@ -19,22 +22,26 @@ namespace Inheritance
 
             Ide.Start(viewPath, documentPath, null, typeof(MyDocument), f => ((MyDocument) f).MyProperty = "The code", documentViewer);
 #else
-            var myDocument = DocumentFactory.Create<MyDocument>(viewPath);
-            myDocument.MyProperty = "The Code";
-            
-            // It's possible to generate a file or a stream.
-            
-            // 1. Generate a file
-            // myDocument.Generate(documentPath);
+            // 1 - It's possible to use a file or a stream for a view.
 
-            //2. Generate an output stream.
-            using (var outputStream = myDocument.Generate())
-            {
-                using (var outputFile = File.Open(documentPath, FileMode.Create))
-                {
-                    outputFile.Write(outputStream.GetBuffer(), 0, (int)outputStream.Length);
-                }
-            }
+            // 1a - Use a file for a view
+            //var myDocument = DocumentFactory.Create<MyDocument>(viewPath);
+
+            // 1b - Or use a stream for a view
+            using var viewStream = File.OpenRead(viewPath);
+            var myDocument = DocumentFactory.Create<MyDocument>(viewStream);
+
+            myDocument.MyProperty = "The Code";
+
+            // 2 - It's also possible to generate a file or a stream.
+
+            // 2a - Generate a file
+            //myDocument.Generate(documentPath);
+
+            // 2b - Or generate an output stream.
+            using var outputStream = myDocument.Generate();
+            using var outputFile = File.Open(documentPath, FileMode.Create);
+            outputStream.CopyTo(outputFile);
 #endif
         }
     }
