@@ -5,6 +5,7 @@
     <!-- Possible TargetFrameworks: net35, net40, net45, net46, net47, net48, netstandard2.0, netcoreapp3.1, net5.0, net6.0 -->      
     <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <RootNamespace>Inheritance</RootNamespace>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">

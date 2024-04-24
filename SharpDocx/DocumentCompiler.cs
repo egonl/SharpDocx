@@ -72,7 +72,7 @@ namespace {Namespace}
 }";
 
         internal static Assembly Compile(
-            string viewPath,
+            Stream viewStream,
             string className,
             string baseClassName,
             Type modelType,
@@ -82,25 +82,11 @@ namespace {Namespace}
             List<CodeBlock> codeBlocks;
 
 #if DEBUG
-            // Copy the template to a temporary file, so it can be opened even when the template is open in Word.
-            // This makes testing templates a lot easier.
-            var tempFilePath = $"{Path.GetTempPath()}{Guid.NewGuid():N}.cs.docx";
-            File.Copy(viewPath, tempFilePath, true);
-
-            try
-            {
-                using (var package = WordprocessingDocument.Open(tempFilePath, false))
-                {
-                    var codeBlockBuilder = new CodeBlockBuilder(package);
-                    codeBlocks = codeBlockBuilder.CodeBlocks;
-                }
-            }
-            finally
-            {
-                File.Delete(tempFilePath);
-            }
+            using var package = WordprocessingDocument.Open(viewStream, false);
+            var codeBlockBuilder = new CodeBlockBuilder(package);
+            codeBlocks = codeBlockBuilder.CodeBlocks;
 #else
-            using (var package = WordprocessingDocument.Open(viewPath, false))
+            using (var package = WordprocessingDocument.Open(viewStream, false))
             {
                 var codeBlockBuilder = new CodeBlockBuilder(package);
                 codeBlocks = codeBlockBuilder.CodeBlocks;
