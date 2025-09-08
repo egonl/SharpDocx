@@ -8,11 +8,11 @@
     <Authors>egonl</Authors>
     <Product>SharpDocx</Product>
     <PackageId>SharpDocx</PackageId>
-    <AssemblyVersion>2.5.0.0</AssemblyVersion>
-    <FileVersion>2.5.0.0</FileVersion>
+    <AssemblyVersion>2.6.0.0</AssemblyVersion>
+    <FileVersion>2.6.0.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>C# based template engine for generating Word documents</Description>
-    <Copyright>Copyright 2017-2024 egonl</Copyright>
+    <Copyright>Copyright 2017-2025 egonl</Copyright>
     <PackageLicenseUrl>https://github.com/egonl/SharpDocx/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/egonl/SharpDocx</PackageProjectUrl>
     <!-- <PackageIconUrl>Icon URL</PackageIconUrl> -->

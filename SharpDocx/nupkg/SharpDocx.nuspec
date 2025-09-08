@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SharpDocx</id>
-    <version>2.5.0</version>
+    <version>2.6.0</version>
     <authors>egonl</authors>
     <owners>egonl</owners>
     <license type="expression">MIT</license>
@@ -13,10 +13,16 @@
     <description>SharpDocx enables you to generate Word documents based on a view. The view itself is a Word document and can be as simple or complex as you want.
 - Use C# code inside the view for inserting text, images or tables.
 - Supports the MVC pattern, so you can use your own C# model in the template.
-- Supports .NET Framework 3.5/4.5+, .NET Standard 2.0, .NET Core 3.1, .NET 5.0 and .NET 6.0.
+- Supports .NET Framework 3.5/4.5+, .NET Standard 2.0, .NET Core 3.1, .NET 5.0 - 9.0.
 - Based on Microsoft's Open XML SDK.
 - Source code, tutorial and examples on GitHub.</description>
-    <releaseNotes>Version 2.5.0 - April 24, 2024
+    <releaseNotes>Version 2.6.0 - September 8, 2025
+- Added support for dynamic model binding (#84).
+- Fixed issue with AssemblyLoadContext (#85).
+- Updated DocumentFormat.OpenXml to version 3.3.0 (#86).
+- Added Function App example (#87).
+
+Version 2.5.0 - April 24, 2024
 - Added support for view streams.
 
 Version 2.4.1 - April 18, 2024
@@ -81,16 +87,16 @@ Version 1.0.0 - January 1, 2018
     <tags>openxml office word document sharpdocx</tags>
     <dependencies>
       <group targetFramework="net35">
-        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
+        <dependency id="DocumentFormat.OpenXml" version="3.3.0" />
       </group>            
       <group targetFramework="net40">
-        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
+        <dependency id="DocumentFormat.OpenXml" version="3.3.0" />
       </group>                  
       <group targetFramework="net45">
-        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
+        <dependency id="DocumentFormat.OpenXml" version="3.3.0" />
       </group>            
       <group targetFramework="netstandard2.0">
-        <dependency id="DocumentFormat.OpenXml" version="3.0.2" />
+        <dependency id="DocumentFormat.OpenXml" version="3.3.0" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="2.10.0" />
       </group>
     </dependencies>
