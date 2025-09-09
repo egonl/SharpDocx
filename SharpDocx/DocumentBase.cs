@@ -2,7 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 #if SUPPORT_MULTI_THREADING_AND_LARGE_DOCUMENTS_IN_NET35
 using System.Threading;
 #endif
@@ -13,6 +17,8 @@ using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using SharpDocx.CodeBlocks;
 using SharpDocx.Extensions;
 using SharpImage;
+
+using Svg;
 
 namespace SharpDocx 
 {
@@ -307,6 +313,37 @@ namespace SharpDocx
             }
         }
 
+        protected void ImageFromSvgXml(XmlDocument xml, int pixelWidth, int pixelHeight, int percentage = 100, string extension = null)
+        {
+            var svg = SvgDocument.Open(xml);
+            var svgStream = new MemoryStream();
+            var bitmap = svg.Draw(pixelWidth, pixelHeight);
+            bitmap.Save(svgStream, ImageFormat.Png);
+            ImageFromStream(svgStream, percentage, extension);
+        }
+        
+        protected void ImageFromBase64Svg(string base64, int pixelWidth, int pixelHeight, int percentage = 100, string extension = null)
+        {
+            ImageFromSvg(Encoding.UTF8.GetString(Convert.FromBase64String(base64)), pixelWidth, pixelHeight, percentage, extension);
+        }
+        
+        protected void ImageFromSvg(string svgXmlString, int pixelWidth, int pixelHeight, int percentage = 100, string extension = null)
+        { 
+            using var svgStream = PngStreamFromSvg(svgXmlString, pixelWidth, pixelHeight);
+            ImageFromStream(svgStream, percentage, extension);
+        }
+
+        private Stream PngStreamFromSvg(string svgString, int rasterWidth, int rasterHeight)
+        {
+            var serializer = new XmlSerializer(typeof(XmlDocument));
+            var res = serializer.Deserialize(new StringReader(svgString)) as XmlDocument;
+            var svg = SvgDocument.Open(res);
+            var svgStream = new MemoryStream();
+            var bitmap = svg.Draw(rasterWidth, rasterHeight);
+            bitmap.Save(svgStream, ImageFormat.Png);
+            return svgStream;
+        }
+        
         protected void ImageFromStream(Stream stream, int percentage = 100, string extension = null)
         {
             PartTypeInfo imagePartType;
