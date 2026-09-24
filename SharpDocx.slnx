@@ -16,6 +16,10 @@
     <File Path="Samples/Views/Model.cs.docx" />
     <File Path="Samples/Views/Tutorial.cs.docx" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
   <Project Path="SharpDocx/SharpDocx.csproj">
     <BuildDependency Project="SharpImage/SharpImage.csproj" />
   </Project>
