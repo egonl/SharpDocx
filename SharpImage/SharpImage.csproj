@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <!--<TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>-->
+    <!--<TargetFrameworks>netstandard2.0</TargetFrameworks>-->
+    <TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>
     <RepositoryUrl>https://github.com/egonl/SharpDocx</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
