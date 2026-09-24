@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/Samples/">
+    <Project Path="Samples/SampleProjects/FunctionApp/FunctionApp.csproj" />
+    <Project Path="Samples/SampleProjects/Inheritance/Inheritance.csproj" />
+    <Project Path="Samples/SampleProjects/LoadContext/LoadContext.csproj" />
+    <Project Path="Samples/SampleProjects/Model/Model.csproj" />
+    <Project Path="Samples/SampleProjects/Tutorial/Tutorial.csproj" />
+  </Folder>
+  <Folder Name="/Samples/Documents/">
+    <File Path="Samples/Documents/Inheritance.docx" />
+    <File Path="Samples/Documents/Model.docx" />
+    <File Path="Samples/Documents/Tutorial.docx" />
+  </Folder>
+  <Folder Name="/Samples/Views/">
+    <File Path="Samples/Views/Inheritance.cs.docx" />
+    <File Path="Samples/Views/Model.cs.docx" />
+    <File Path="Samples/Views/Tutorial.cs.docx" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="SharpDocx/SharpDocx.csproj">
+    <BuildDependency Project="SharpImage/SharpImage.csproj" />
+  </Project>
+  <Project Path="SharpImage/SharpImage.csproj" />
+</Solution>

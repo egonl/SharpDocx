@@ -2,19 +2,58 @@
     "version": "0.2.0",
     "configurations": [
         {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-            "name": ".NET Core Launch (console)",
-            "type":  "coreclr",
+            "name": "Debug: FunctionApp",
+            "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Samples/SampleProjects/Tutorial/bin/Debug/net6.0/Tutorial.dll",
+            "preLaunchTask": "build: FunctionApp",
+            "program": "${workspaceFolder}/Samples/SampleProjects/FunctionApp/bin/Debug/net10.0/FunctionApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Samples/SampleProjects/FunctionApp",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug: Inheritance",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Inheritance",
+            "program": "${workspaceFolder}/Samples/SampleProjects/Inheritance/bin/Debug/net10.0/Inheritance.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Samples/SampleProjects/Inheritance",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug: LoadContext",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: LoadContext",
+            "program": "${workspaceFolder}/Samples/SampleProjects/LoadContext/bin/Debug/net10.0/LoadContext.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Samples/SampleProjects/LoadContext",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug: Model",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Model",
+            "program": "${workspaceFolder}/Samples/SampleProjects/Model/bin/Debug/net10.0/Model.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Samples/SampleProjects/Model",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug: Tutorial",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Tutorial",
+            "program": "${workspaceFolder}/Samples/SampleProjects/Tutorial/bin/Debug/net10.0/Tutorial.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Samples/SampleProjects/Tutorial",
-            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console":"externalTerminal",
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {

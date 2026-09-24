@@ -2,7 +2,55 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build: FunctionApp",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Samples/SampleProjects/FunctionApp/FunctionApp.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build: Inheritance",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Samples/SampleProjects/Inheritance/Inheritance.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build: LoadContext",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Samples/SampleProjects/LoadContext/LoadContext.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build: Model",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Samples/SampleProjects/Model/Model.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build: Tutorial",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -14,29 +62,79 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "publish",
+            "label": "run: FunctionApp",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "publish",
-                "${workspaceFolder}/Samples/SampleProjects/Tutorial/Tutorial.csproj",
+                "run",
+                "--project",
+                "${workspaceFolder}/Samples/SampleProjects/FunctionApp/FunctionApp.csproj",
+                "--framework",
+                "net10.0",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch",
+            "label": "run: Inheritance",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "watch",
                 "run",
-                "${workspaceFolder}/Samples/SampleProjects/Tutorial/Tutorial.csproj",
+                "--project",
+                "${workspaceFolder}/Samples/SampleProjects/Inheritance/Inheritance.csproj",
+                "--framework",
+                "net10.0",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
-        }
-    ]
+        },
+        {
+            "label": "run: LoadContext",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/Samples/SampleProjects/LoadContext/LoadContext.csproj",
+                "--framework",
+                "net10.0",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run: Model",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/Samples/SampleProjects/Model/Model.csproj",
+                "--framework",
+                "net10.0",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run: Tutorial",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/Samples/SampleProjects/Tutorial/Tutorial.csproj",
+                "--framework",
+                "net10.0",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+   ]
 }

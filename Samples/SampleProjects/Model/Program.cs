@@ -23,8 +23,8 @@ namespace Model
             var documentPath = $"{BasePath}/Documents/Model.docx";            
             var model = CreateViewModel();
 
-            string documentViewer = null; // NET35 and NET45 will automatically search for a Docx viewer.
-            //var documentViewer = @"C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; // NETCOREAPP3_1 and NET6_0 won't.
+            string documentViewer = null; // Try to find a document viewer automatically.
+            //var documentViewer = @"C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; // Or specify a document viewer manually. 
 
             Ide.Start(viewPath, documentPath, model, null, null, documentViewer);
 #else

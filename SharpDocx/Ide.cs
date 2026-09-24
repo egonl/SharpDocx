@@ -38,12 +38,14 @@ namespace SharpDocx
                         {
                             Process.Start(documentViewer, documentPath);
                         }
-#if NET35_OR_GREATER
                         else
                         {
-                            Process.Start(documentPath);
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = documentPath,
+                                UseShellExecute = true
+                            });
                         }
-#endif                    
                     }
                     catch (Exception ex)
                     {
